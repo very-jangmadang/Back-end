@@ -7,8 +7,8 @@ spring:
   # DB ??
   datasource:
     url: jdbc:mysql://localhost:3306/mydb
-    username:
-    password:
+    username: root
+    password: ?? ????
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # jpa ??
