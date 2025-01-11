@@ -1,23 +1,47 @@
-# spring ???
-spring:
+# 공통 URL 관리
+base-url: "http://localhost:8080"  # 배포 시 실제 도메인으로 변경 예정
+redirect-url: "http://localhost:8080/swagger-ui/index.html" # 소셜 로그인 성공 후 리다이렉트 되는 주소 -> 프론트 주소로 변경 예정
 
-  # ?? ??? ?? ( ??? ????? ??? ?? )
+# 포트 설정
+server:
+  port: 8080
+
+
+# spring 설정들
+spring:
+  web:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+
+  # 기본 시간대 설정 ( 베이스 엔티티에는 미적용 상태 )
   time-zone: Asia/Seoul
 
-  # DB ??
+  # DB 설정
   datasource:
     url: jdbc:mysql://localhost:3306/jmarket
     username: root
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  # jpa ??
+  # jpa 설정
   jpa:
     hibernate:
-      ddl-auto: update # ??? ?? ??? update ? ?? ??
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
     security:
       enable-csrf: false
+
+  # jwt 설정
+  jwt:
+    secret: "hadgfsfsfsfsssfsfssfsfsfsffasadad1234567890"
+    expiration:
+      access-token: 3600  # 1 day
+      refresh-token: 604800  # 7 days
+
+  # 소셜 로그인 설정
