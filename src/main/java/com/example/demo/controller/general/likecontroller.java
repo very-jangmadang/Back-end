@@ -3,7 +3,7 @@ package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
 import com.example.demo.entity.Like;
-import com.example.demo.entity.Rapple;
+import com.example.demo.entity.Raffle;
 import com.example.demo.web.dto.Like.LikeListResponseDTO;
 import com.example.demo.web.dto.Like.LikeRequestDTO;
 import com.example.demo.web.dto.Like.LikeResponseDTO;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/rapple")
+@RequestMapping("/raffle")
     public class likecontroller {
 
     @Autowired
@@ -27,28 +27,28 @@ import java.util.stream.Collectors;
 
     //찜하기
     @Transactional
-    @PostMapping("{rappleId}/like")
+    @PostMapping("{raffleId}/like")
     public ApiResponse<LikeResponseDTO> addLike(
-            @PathVariable Long rappleId,
+            @PathVariable Long raffleId,
             @RequestBody LikeRequestDTO likeRequest) {
 
         Long user = likeRequest.getUserId();
 
-        LikeResponseDTO likeResponse = new LikeResponseDTO(1L, rappleId, likeRequest.getUserId());
+        LikeResponseDTO likeResponse = new LikeResponseDTO(1L, raffleId, likeRequest.getUserId());
         return new ApiResponse<>(true, "COMMON200", "성공입니다.", likeResponse);
     }
 
     //찜 삭제
     @Transactional
-    @DeleteMapping("{rappleId}/like")
+    @DeleteMapping("{raffleId}/like")
     public ApiResponse<String> deleteLike(
-            @PathVariable Long rappleId,
+            @PathVariable Long raffleId,
             @RequestBody LikeRequestDTO likeRequest) {
 
         Long userId = likeRequest.getUserId();
 
         // 찜 내역 조회
-        Like like = likeRepository.findByUserIdAndRappleId(userId, rappleId)
+        Like like = likeRepository.findByUserIdAndRaffleId(userId, raffleId)
                 .orElseThrow(() -> new IllegalArgumentException("찜하지 않은 항목입니다."));
 
         // 찜 삭제
@@ -66,11 +66,11 @@ import java.util.stream.Collectors;
 
         List<LikeListResponseDTO> likeResponseList = likes.stream()
                 .map(like -> {
-                    Rapple rapple = like.getRapple();  // 찜한 Rapple 객체
+                    Raffle raffle = like.getRaffle();  // 찜한 Rapple 객체
                     return new LikeListResponseDTO(
                             like.getId(),            // likeId
-                            rapple.getId(),          // rappleId
-                            rapple.getName(),        // productName
+                            raffle.getId(),          // raffleId
+                            raffle.getName(),        // productName
                             like.getUser().getId()   // userId
                     );
                 }).collect(Collectors.toList());

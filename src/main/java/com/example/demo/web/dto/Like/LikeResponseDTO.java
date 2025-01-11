@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class LikeResponseDTO {
 
     private Long likeId;
-    private Long rappleId;
+    private Long raffleId;
     private Long userId;
 
 }
