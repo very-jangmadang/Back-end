@@ -53,7 +53,7 @@ public class Raffle extends BaseEntity{
 
     private int view;
 
-    @OneToMany(mappedBy = "rapple", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
 
 }
