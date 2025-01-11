@@ -6,15 +6,15 @@ import lombok.Getter;
 public class LikeListResponseDTO {
 
     private Long likeId;
-    private Long rappleId;
-    private String rappleName;
+    private Long raffleId;
+    private String raffleName;
     private Long userId;
 
     // 생성자
-    public LikeListResponseDTO(Long likeId, Long rappleId, String productName, Long userId) {
+    public LikeListResponseDTO(Long likeId, Long rappleId, String raffleName, Long userId) {
         this.likeId = likeId;
-        this.rappleId = rappleId;
-        this.rappleName = rappleName;
+        this.raffleId = rappleId;
+        this.raffleName = raffleName;
         this.userId = userId;
     }
 
@@ -23,12 +23,12 @@ public class LikeListResponseDTO {
         return likeId;
     }
 
-    public Long getRappleId() {
-        return rappleId;
+    public Long getRaffleId() {
+        return raffleId;
     }
 
-    public String getRappleName() {
-        return rappleName;
+    public String getRaffleName() {
+        return raffleName;
     }
 
     public Long getUserId() {
