@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -52,5 +53,7 @@ public class Rapple extends BaseEntity{
 
     private int view;
 
+    @OneToMany(mappedBy = "rapple", cascade = CascadeType.ALL)
+    List<Apply> applyList;
 
 }
