@@ -11,6 +11,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.ApplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class ApplyServiceImpl implements ApplyService {
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
 
+    @Transactional(readOnly = true)
     public ApiResponse<ApplyResponseDTO.EnterDto> getEnterRaffle(Long raffleId) {
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new RuntimeException("Raffle not found with id: " + raffleId));
@@ -38,6 +40,7 @@ public class ApplyServiceImpl implements ApplyService {
         );
     }
 
+    @Transactional
     public ApiResponse<ApplyResponseDTO.ApplyDto> applyRaffle(Long userId, Long raffleId) {
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new RuntimeException("Raffle not found with id: " + raffleId));
