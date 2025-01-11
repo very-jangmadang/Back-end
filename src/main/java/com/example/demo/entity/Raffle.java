@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Rapple extends BaseEntity{
+public class Raffle extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rapple_id")
+    @Column(name = "raffle_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
