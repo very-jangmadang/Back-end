@@ -19,8 +19,8 @@ public class Inquiry extends BaseEntity{
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rapple_id")
-    private Rapple rapple;
+    @JoinColumn(name = "raffle_id")
+    private Raffle raffle;
 
     @Column(length = 30)
     private String title;
