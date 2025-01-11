@@ -20,4 +20,4 @@ spring:
         format_sql: true
         use_sql_comments: true
     security:
-      ena
+      enable-csrf: false
