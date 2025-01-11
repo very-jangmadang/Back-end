@@ -16,8 +16,8 @@ public class Like extends BaseEntity{
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rapple_id")
-    private Rapple rapple;
+    @JoinColumn(name = "raffle_id")
+    private Raffle raffle;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
