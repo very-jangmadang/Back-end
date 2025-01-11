@@ -47,8 +47,12 @@ import java.util.stream.Collectors;
 
         Long userId = likeRequest.getUserId();
 
-        // userId와 rappleId로 찜 항목 삭제
-        likeRepository.deleteByUserIdAndRappleId(userId, rappleId);
+        // 찜 내역 조회
+        Like like = likeRepository.findByUserIdAndRappleId(userId, rappleId)
+                .orElseThrow(() -> new IllegalArgumentException("찜하지 않은 항목입니다."));
+
+        // 찜 삭제
+        likeRepository.delete(like);
 
         return new ApiResponse<>(true, "COMMON200", "찜이 삭제되었습니다.", null);
     }
