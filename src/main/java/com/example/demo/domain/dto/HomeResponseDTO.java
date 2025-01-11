@@ -15,16 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 public class HomeResponseDTO {
 
-    private List<RappleDTO> approaching;
-    private List<RappleDTO> myLikeRapples;
-    private List<RappleDTO> rapples;
+    private List<RaffleDTO> approaching;
+    private List<RaffleDTO> myLikeRaffles;
+    private List<RaffleDTO> raffles;
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class RappleDTO {
-        private Long rappleId;
+    public static class RaffleDTO {
+        private Long raffleId;
         private String name;
         private int ticketNum;
         private Duration timeUntilEnd;
