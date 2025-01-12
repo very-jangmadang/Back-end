@@ -25,6 +25,16 @@ public class CommonException {
     // 비밀 번호 규칙 : 영문자, 숫자, 특수문자 또는 밑줄을 최소 하나씩 포함해야 하며, 길이는 8~20자 사이여야 한다.
     public static final String PASSWORD_PATTERN = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\\W_])[a-zA-Z0-9\\W_]{8,20}$";
 
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ApiResponse<Object>> handleCustomException(CustomException ex) {
+        log.error("Custom Error: {} - Code: {} - Status: {}",
+                ex.getMessage(),
+                ex.getClass().getSimpleName(),
+                ex.getErrorStatus().getHttpStatus());
+
+        return CustomException.createErrorResponse(ex.getErrorStatus(), null);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse<Object>> handleConstraintViolation(ConstraintViolationException ex) {
         Map<String, String> errors = ex.getConstraintViolations().stream()
