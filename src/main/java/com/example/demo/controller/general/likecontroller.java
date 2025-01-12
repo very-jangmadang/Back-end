@@ -2,18 +2,14 @@ package com.example.demo.controller.general;
 
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.entity.Like;
-import com.example.demo.entity.Raffle;
 import com.example.demo.service.general.LikeService;
-import com.example.demo.web.dto.Like.LikeListResponseDTO;
-import com.example.demo.web.dto.Like.LikeRequestDTO;
-import com.example.demo.web.dto.Like.LikeResponseDTO;
-import jakarta.transaction.Transactional;
+import com.example.demo.domain.dto.Like.LikeListResponseDTO;
+import com.example.demo.domain.dto.Like.LikeRequestDTO;
+import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

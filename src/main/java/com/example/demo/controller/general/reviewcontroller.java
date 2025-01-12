@@ -1,10 +1,7 @@
 package com.example.demo.controller.general;
 import com.example.demo.base.ApiResponse;
-import com.example.demo.entity.Review;
-import com.example.demo.web.dto.Like.LikeRequestDTO;
-import com.example.demo.web.dto.Like.LikeResponseDTO;
-import com.example.demo.web.dto.Review.ReviewRequestDTO;
-import com.example.demo.web.dto.Review.ReviewResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewRequestDTO;
+import com.example.demo.domain.dto.Review.ReviewResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
