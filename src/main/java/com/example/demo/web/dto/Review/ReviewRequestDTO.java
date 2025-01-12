@@ -2,6 +2,7 @@ package com.example.demo.web.dto.Review;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 public class ReviewRequestDTO {
