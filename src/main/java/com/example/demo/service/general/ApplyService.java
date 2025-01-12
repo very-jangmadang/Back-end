@@ -5,11 +5,11 @@ import com.example.demo.domain.dto.ApplyResponseDTO;
 
 public interface ApplyService {
 
-    ApiResponse<ApplyResponseDTO.EnterDto> getEnterRaffle(Long raffleId);
+    ApplyResponseDTO.EnterDto getEnterRaffle(Long raffleId);
 
-    ApiResponse<ApplyResponseDTO.ApplyDto> applyRaffle(Long userId, Long raffleId);
+    ApplyResponseDTO.ApplyDto applyRaffle(Long userId, Long raffleId);
 
-    ApiResponse<ApplyResponseDTO.SuccessDto> successApply(Long userId, Long raffleId);
+    ApplyResponseDTO.SuccessDto successApply(Long userId, Long raffleId);
 
-    ApiResponse<ApplyResponseDTO.FailDto> failApply(Long userId, Long raffleId);
+    ApplyResponseDTO.FailDto failApply(Long userId, Long raffleId);
 }

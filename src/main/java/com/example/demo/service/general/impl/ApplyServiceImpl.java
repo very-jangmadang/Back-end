@@ -1,6 +1,8 @@
 package com.example.demo.service.general.impl;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.dto.ApplyResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Raffle;
@@ -13,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.demo.domain.converter.ApplyConverter.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -23,32 +27,21 @@ public class ApplyServiceImpl implements ApplyService {
     private final ApplyRepository applyRepository;
 
 
-    public ApiResponse<ApplyResponseDTO.EnterDto> getEnterRaffle(Long raffleId) {
+    public ApplyResponseDTO.EnterDto getEnterRaffle(Long raffleId) {
         Raffle raffle = raffleRepository.findById(raffleId)
-                .orElseThrow(() -> new RuntimeException("Raffle not found with id: " + raffleId));
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-        ApplyResponseDTO.EnterDto enterDto = new ApplyResponseDTO.EnterDto(
-                "image url",
-                raffle.getName(),
-                raffle.getTicketNum()
-        );
-
-        return new ApiResponse<>(
-                true,
-                "COMMON200",
-                "성공입니다",
-                enterDto
-        );
+        return toEnterDto(raffle);
     }
 
     @Transactional
-    public ApiResponse<ApplyResponseDTO.ApplyDto> applyRaffle(Long userId, Long raffleId) {
+    public ApplyResponseDTO.ApplyDto applyRaffle(Long raffleId, Long userId) {
         Raffle raffle = raffleRepository.findById(raffleId)
-                .orElseThrow(() -> new RuntimeException("Raffle not found with id: " + raffleId));
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
         int raffleTicket = raffle.getTicketNum();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
         int userTicket = user.getTicket_num();
 
         if (raffleTicket <= userTicket) {
@@ -58,44 +51,33 @@ public class ApplyServiceImpl implements ApplyService {
                     .build();
             applyRepository.save(apply);
 
-            ApplyResponseDTO.ApplyDto applyDto = new ApplyResponseDTO.ApplyDto("/raffles/{raffle-id}/apply/{user-id}/success");
+            return ApplyResponseDTO.ApplyDto.builder()
+                    .redirectUrl("/raffles/{raffle-id}/apply/{user-id}/success")
+                    .build();
 
-            return new ApiResponse<>(
-                    true,
-                    "COMMON200",
-                    "성공입니다",
-                    applyDto
-            );
         } else {
-            ApplyResponseDTO.ApplyDto applyDto = new ApplyResponseDTO.ApplyDto("/raffles/{raffle-id}/apply/{user-id}/fail");
 
-            return new ApiResponse<>(
-                    false,
-                    "APPLY4001",
-                    "보유 티켓 수가 부족합니다.",
-                    applyDto
-            );
+            return ApplyResponseDTO.ApplyDto.builder()
+                    .redirectUrl("/raffles/{raffle-id}/apply/{user-id}/fail")
+                    .build();
         }
     }
 
-    public ApiResponse<ApplyResponseDTO.SuccessDto> successApply(Long userId, Long raffleId) {
-        ApplyResponseDTO.SuccessDto successDto = new ApplyResponseDTO.SuccessDto("image url");
+    public ApplyResponseDTO.SuccessDto successApply(Long raffleId, Long userId) {
+        Raffle raffle = raffleRepository.findById(raffleId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-        return new ApiResponse<>(
-                true,
-                "COMMON200",
-                "성공입니다",
-                successDto
-        );
+        return toSuccessDto(raffle);
+
     }
 
-    public ApiResponse<ApplyResponseDTO.FailDto> failApply(Long userId, Long raffleId) {
+    public ApplyResponseDTO.FailDto failApply(Long raffleId, Long userId) {
         Raffle raffle = raffleRepository.findById(raffleId)
-                .orElseThrow(() -> new RuntimeException("Raffle not found with id: " + raffleId));
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
         int raffleTicket = raffle.getTicketNum();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
         int userTicket = user.getTicket_num();
 
         int missingTicket = raffleTicket - userTicket;
@@ -104,11 +86,6 @@ public class ApplyServiceImpl implements ApplyService {
                 missingTicket
         );
 
-        return new ApiResponse<>(
-                false,
-                "APPLY4001",
-                "보유 티켓 수가 부족합니다",
-                failDto
-        );
+        return toFailDto(raffle, missingTicket);
     }
 }
