@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.base.enums.Category;
 import com.example.demo.entity.base.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,8 +25,8 @@ public class Raffle extends BaseEntity{
     @JoinColumn(name = "winner_id")
     private User winner;
 
-    @Enumerated (EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10)")
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(length = 30)

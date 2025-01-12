@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/permit")
 public class RaffleController {
 
     private final RaffleService raffleService;
@@ -36,12 +37,11 @@ public class RaffleController {
     @GetMapping("/raffles/{raffleId}")
     public ApiResponse<RaffleResponseDTO.RaffleDetailDTO> getPostById(@PathVariable Long raffleId) {
 
-        // 1. raffle id를 받아서, service에서 해당 raffle 가져오기
-        Raffle raffle = raffleService.getRaffleDetails(raffleId);
+        // 1. 래플id로 해당 detailDTO 받아오기
 
-        // 2. 해당 raffle을 converter를 통해 detailDTO로 변환하기
+        RaffleResponseDTO.RaffleDetailDTO raffleDetailDTO = raffleService.getRaffleDetailsDTO(raffleId);
 
-        // 3. 성공 응답 + 해당 detailDTO 반환
-        return ApiResponse.of(SuccessStatus.RAFFLE_FETCH_SUCCESS, RaffleConverter.toDetailDTO(raffle));
+        // 2. 성공 응답 + 해당 detailDTO 반환
+        return ApiResponse.of(SuccessStatus.RAFFLE_FETCH_SUCCESS, raffleDetailDTO);
     }
 }
