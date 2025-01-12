@@ -16,12 +16,12 @@ public class RaffleConverter {
 
         return HomeResponseDTO.RaffleDTO.builder()
                 .raffleId(raffle.getId())
-                .like(false)
+                // .like(false)
                 .name(raffle.getName())
                 .ticketNum(raffle.getTicketNum())
                 .timeUntilEnd(duration)
                 .participantNum(raffle.getApplyList().size())
-                .finish(false)
+                // .finish(false)
                 .build();
     }
 
