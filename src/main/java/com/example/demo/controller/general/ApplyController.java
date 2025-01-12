@@ -11,7 +11,7 @@ import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/raffles")
+@RequestMapping("/api/permit/raffles")
 public class ApplyController {
 
     private final ApplyService applyService;
