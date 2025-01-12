@@ -5,6 +5,8 @@ import com.example.demo.domain.dto.RaffleResponseDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 
+import java.util.Optional;
+
 public class RaffleConverter {
 
     public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, User user) {
@@ -12,7 +14,7 @@ public class RaffleConverter {
         return Raffle.builder()
                 .user(user)
                 .winner(null)
-                .category(request.getCategory())
+//                .category(request.getCategory())
                 .name(request.getName())
                 .status(request.getStatus())
                 .description(request.getDescription())
@@ -35,7 +37,7 @@ public class RaffleConverter {
     public static RaffleResponseDTO.RaffleDetailDTO toDetailDTO(Raffle raffle) {
         return RaffleResponseDTO.RaffleDetailDTO.builder()
                 .name(raffle.getName())
-                .category(raffle.getCategory())
+//                .category(raffle.getCategory().getName())
                 .ticketNum(raffle.getTicketNum())
                 .startAt(raffle.getStartAt())
                 .endAt(raffle.getEndAt())

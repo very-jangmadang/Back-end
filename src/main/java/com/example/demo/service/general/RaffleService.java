@@ -11,5 +11,5 @@ public interface RaffleService {
     Raffle uploadRaffle(RaffleRequestDTO.UploadDTO request, User user);
 
     // 래플 상세조회
-    Raffle getRaffleDetails(Long id);
+    RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long id);
 }

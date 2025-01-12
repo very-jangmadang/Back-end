@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -29,7 +31,10 @@ public class RaffleServiceImpl implements RaffleService {
     }
 
     @Override
-    public Raffle getRaffleDetails(Long id) {
-        return raffleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 래플이 존재하지 않습니다 :" + id));
+    public RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long id) {
+        Raffle raffle = raffleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Raffle not found with id: " + id));
+
+        return RaffleConverter.toDetailDTO(raffle);
     }
 }
