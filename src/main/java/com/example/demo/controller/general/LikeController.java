@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/raffle")
-    public class likecontroller {
+    public class LikeController {
 
     @Autowired
     private likeRepository likeRepository;
