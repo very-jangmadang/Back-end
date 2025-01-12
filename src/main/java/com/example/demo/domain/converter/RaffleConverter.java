@@ -13,15 +13,16 @@ public class RaffleConverter {
         LocalDateTime endAt = raffle.getEndAt();
 
         Duration duration = Duration.between(now, endAt);
+        boolean finish = duration.isNegative();
 
         return HomeResponseDTO.RaffleDTO.builder()
                 .raffleId(raffle.getId())
                 // .like(false)
                 .name(raffle.getName())
                 .ticketNum(raffle.getTicketNum())
-                .timeUntilEnd(duration)
+                .timeUntilEnd(duration.toMinutes())
                 .participantNum(raffle.getApplyList().size())
-                // .finish(false)
+                .finish(finish)
                 .build();
     }
 
