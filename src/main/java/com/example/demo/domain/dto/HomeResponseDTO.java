@@ -27,8 +27,8 @@ public class HomeResponseDTO {
         private Long raffleId;
         private String name;
         private int ticketNum;
-        private Duration timeUntilEnd;
-        // private boolean finish;
+        private Long timeUntilEnd;
+        private boolean finish;
         private int participantNum;
         // private boolean like;
     }

@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,41 +25,52 @@ public class HomeServiceImpl implements HomeService {
 
     public HomeResponseDTO getHome(){
 
-        HomeResponseDTO result = new HomeResponseDTO();
-        List<Raffle> rapples = raffleRepository.findAll();
+        List<Raffle> raffles = raffleRepository.findAll();
 
 
         // 마감임박인 래플 5개 조회
         LocalDateTime now = LocalDateTime.now();
 
-        List<Raffle> rafflesSortedByEndAt = rapples.stream()
+        List<Raffle> rafflesSortedByEndAt = raffles.stream()
                 .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
                 .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
                 .limit(5)
                 .toList();
 
+        List<HomeResponseDTO.RaffleDTO> rafflesSortedByEndAtDTO = new ArrayList<>();
+
         for (Raffle raffle : rafflesSortedByEndAt) {
             HomeResponseDTO.RaffleDTO raffleDTO = RaffleConverter.toRaffleDTO(raffle);
-            result.getApproaching().add(raffleDTO);
+            rafflesSortedByEndAtDTO.add(raffleDTO);
         }
 
-        // 응모자순으로 래플 조회
-        List<Raffle> rafflesSortedByApplyList = rapples.stream()
-                .sorted((r1, r2) -> Integer.compare(
-                        r2.getApplyList() != null ? r2.getApplyList().size() : 0,
-                        r1.getApplyList() != null ? r1.getApplyList().size() : 0
-                ))
-                .toList();
+        // 응모자순으로 래플 조회 (응모 안마감된것 우선)
+        List<Raffle> rafflesSortedByApplyList = Stream.concat(
+                raffles.stream()
+                        .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
+                        .sorted((r1, r2) -> Integer.compare(
+                                r2.getApplyList() != null ? r2.getApplyList().size() : 0,
+                                r1.getApplyList() != null ? r1.getApplyList().size() : 0
+                        )),
+                raffles.stream()
+                        .filter(r -> Duration.between(now, r.getEndAt()).toMillis() < 0)
+                        .sorted((r1, r2) -> Integer.compare(
+                                r2.getApplyList() != null ? r2.getApplyList().size() : 0,
+                                r1.getApplyList() != null ? r1.getApplyList().size() : 0
+                        ))
+        ).toList();
 
+        List<HomeResponseDTO.RaffleDTO> rafflesSortedByApplyListDTO = new ArrayList<>();
 
         for (Raffle raffle : rafflesSortedByApplyList) {
             HomeResponseDTO.RaffleDTO raffleDTO = RaffleConverter.toRaffleDTO(raffle);
-            result.getRaffles().add(raffleDTO);
+            rafflesSortedByApplyListDTO.add(raffleDTO);
         }
 
-        //TODO 내가 찜한 래플 조회 (로그인이 됐을 시)
-
-        return result;
+        return HomeResponseDTO.builder()
+                .approaching(rafflesSortedByEndAtDTO)
+                .raffles(rafflesSortedByApplyListDTO)
+                .build();
     }
 
 }
