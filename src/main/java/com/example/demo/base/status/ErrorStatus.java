@@ -41,6 +41,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // 5. Hyungjin - 래플 관련 에러
     RAFFLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RAFFLE_4001", "해당 래플을 찾을 수 없습니다."),
 
+    // 6. 응모 관련 에러
+    APPLY_FAILED_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
+
     // 6. Hyungjin - 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_4001", "해당 카테고리를 찾을 수 없습니다."),
 
@@ -64,6 +67,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     ;
 
+    ;
 
 
     private final HttpStatus httpStatus;
