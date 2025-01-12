@@ -1,9 +1,10 @@
-package com.example.demo.service;
+package com.example.demo.service.general.impl;
 
 import com.example.demo.domain.converter.RaffleConverter;
 import com.example.demo.domain.dto.HomeResponseDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.repository.RaffleRepository;
+import com.example.demo.service.general.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class HomeService {
+public class HomeServiceImpl implements HomeService {
 
     private final RaffleRepository raffleRepository;
 
