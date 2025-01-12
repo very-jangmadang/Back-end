@@ -1,4 +1,4 @@
-package com.example.demo.web.dto.Like;
+package com.example.demo.domain.dto.Like;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
