@@ -23,6 +23,7 @@ public class HomeServiceImpl implements HomeService {
 
     private final RaffleRepository raffleRepository;
 
+    @Override
     public HomeResponseDTO getHome(){
 
         List<Raffle> raffles = raffleRepository.findAll();
