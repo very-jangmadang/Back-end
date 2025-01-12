@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/home")
+@RequestMapping("/api/permit/home")
 @RequiredArgsConstructor
 public class HomeController {
 
