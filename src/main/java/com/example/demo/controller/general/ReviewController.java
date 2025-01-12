@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/review")
+@RequestMapping("permit/review")
 public class ReviewController {
 
     private final ReviewRepository reviewRepository;
