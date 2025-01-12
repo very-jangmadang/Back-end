@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/raffle")
+@RequestMapping("api/permit/raffle")
     public class LikeController {
 
     @Autowired
