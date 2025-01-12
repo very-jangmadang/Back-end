@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.base.enums.Category;
 import com.example.demo.entity.base.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,10 +12,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Rapple extends BaseEntity{
+public class Raffle extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rapple_id")
+    @Column(name = "raffle_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,8 +26,8 @@ public class Rapple extends BaseEntity{
     @JoinColumn(name = "winner_id")
     private User winner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @Enumerated (EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
     private Category category;
 
     @Column(length = 30)
@@ -48,9 +49,7 @@ public class Rapple extends BaseEntity{
 
     private int minTicket;
 
-    private int likeCount;
+    private int likeCount = 0; // 초기값 0
 
-    private int view;
-
-
+    private int view = 0; // 초기값 0
 }
