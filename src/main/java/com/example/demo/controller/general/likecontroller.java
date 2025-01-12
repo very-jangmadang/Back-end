@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/raffle")
+@RequestMapping("api/permit/raffle")
     public class likecontroller {
 
     private final LikeService likeService;
