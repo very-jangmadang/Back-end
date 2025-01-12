@@ -24,6 +24,8 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+
+    // 소셜 로그인
     private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
     private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
 
@@ -33,11 +35,11 @@ public class SecurityConfig {
                 .httpBasic(HttpBasicConfigurer::disable)
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                //.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> {
                     authorize
                             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                            .requestMatchers("/api/permit/**", "/login/**").permitAll()
+                            .requestMatchers("/api/permit/**").permitAll()
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(oauth -> {

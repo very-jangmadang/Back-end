@@ -12,14 +12,23 @@ import java.io.IOException;
 @WebFilter("/*")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) throws IOException {
-        this.jwtUtil = jwtUtil;
-    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        String requestURI = request.getRequestURI();
+        if (isPermittedRequest(requestURI)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        filterChain.doFilter(request, response);
     }
 
+    private boolean isPermittedRequest(String requestURI) {
+        return requestURI.startsWith("/swagger-ui/") ||
+                requestURI.startsWith("/v3/api-docs") ||
+                requestURI.startsWith("/swagger-resources") ||
+                requestURI.startsWith("/webjars") ||
+                requestURI.startsWith("/api/permit/") ||
+                requestURI.equals("/favicon.ico") ||
+                requestURI.equals("/login");
+    }
 }
