@@ -5,9 +5,9 @@ import com.example.demo.entity.Raffle;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class RaffleConverter {
+public class HomeConverter {
 
-    public static HomeResponseDTO.RaffleDTO toRaffleDTO(Raffle raffle){
+    public static HomeResponseDTO.RaffleDTO toHomeRaffleDTO(Raffle raffle){
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endAt = raffle.getEndAt();

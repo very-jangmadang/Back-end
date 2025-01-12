@@ -1,6 +1,6 @@
 package com.example.demo.service.general.impl;
 
-import com.example.demo.domain.converter.RaffleConverter;
+import com.example.demo.domain.converter.HomeConverter;
 import com.example.demo.domain.dto.HomeResponseDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.repository.RaffleRepository;
@@ -40,7 +40,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeResponseDTO.RaffleDTO> rafflesSortedByEndAtDTO = new ArrayList<>();
 
         for (Raffle raffle : rafflesSortedByEndAt) {
-            HomeResponseDTO.RaffleDTO raffleDTO = RaffleConverter.toRaffleDTO(raffle);
+            HomeResponseDTO.RaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle);
             rafflesSortedByEndAtDTO.add(raffleDTO);
         }
 
@@ -63,12 +63,21 @@ public class HomeServiceImpl implements HomeService {
         List<HomeResponseDTO.RaffleDTO> rafflesSortedByApplyListDTO = new ArrayList<>();
 
         for (Raffle raffle : rafflesSortedByApplyList) {
-            HomeResponseDTO.RaffleDTO raffleDTO = RaffleConverter.toRaffleDTO(raffle);
+            HomeResponseDTO.RaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle);
             rafflesSortedByApplyListDTO.add(raffleDTO);
         }
 
+        return getHomeResponseDTO(rafflesSortedByEndAtDTO, null, rafflesSortedByApplyListDTO);
+    }
+
+
+
+
+    // HomeResponseDTO 만드는 메소드 분리
+    private static HomeResponseDTO getHomeResponseDTO(List<HomeResponseDTO.RaffleDTO> rafflesSortedByEndAtDTO, List<HomeResponseDTO.RaffleDTO> myLikeRafflesDTO, List<HomeResponseDTO.RaffleDTO> rafflesSortedByApplyListDTO) {
         return HomeResponseDTO.builder()
                 .approaching(rafflesSortedByEndAtDTO)
+                .myLikeRaffles(myLikeRafflesDTO)
                 .raffles(rafflesSortedByApplyListDTO)
                 .build();
     }
