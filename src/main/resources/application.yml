@@ -21,9 +21,9 @@ spring:
 
   # DB 설정
   datasource:
-    url: jdbc:mysql://localhost:3306/jmarket
+    url: jdbc:mysql://localhost:3306/jangMarket
     username: root
-    password: ${DB_PASSWORD}
+    password: kkhj7346
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # jpa 설정
