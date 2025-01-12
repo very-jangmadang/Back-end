@@ -15,8 +15,8 @@ public class Apply extends BaseEntity{
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rapple_id")
-    private Raffle rapple;
+    @JoinColumn(name = "raffle_id")
+    private Raffle raffle;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
