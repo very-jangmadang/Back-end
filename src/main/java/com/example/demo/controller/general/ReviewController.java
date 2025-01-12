@@ -28,13 +28,12 @@ public class ReviewController {
 
         Long userId = reviewrequest.getUserId();
         Long reviewerId = reviewrequest.getReviewerId();
-        Integer score = reviewrequest.getScore();
         String text = reviewrequest.getText();
-
+        float score = reviewrequest.getScore();
         LocalDateTime timestamp = LocalDateTime.now();
 
         ReviewResponseDTO reviewResponse = new ReviewResponseDTO(
-                1L, userId, reviewerId, score, text, timestamp);
+                1L, userId, reviewerId, score, text);
 
         return new ApiResponse<>(true, "COMMON200", "성공입니다.", reviewResponse);
     }
