@@ -1,4 +1,4 @@
-package com.example.demo.web.dto.Review;
+package com.example.demo.domain.dto.Review;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
