@@ -28,7 +28,7 @@ public class RaffleResponseDTO {
     public static class RaffleDetailDTO{
 //        private String imageUrl
         private String name;
-//        private String category;
+        private String category;
         private int ticketNum;
         private LocalDateTime startAt;
         private LocalDateTime endAt;
