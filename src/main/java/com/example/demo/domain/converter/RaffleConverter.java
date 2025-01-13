@@ -2,19 +2,18 @@ package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.RaffleRequestDTO;
 import com.example.demo.domain.dto.RaffleResponseDTO;
+import com.example.demo.entity.Category;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 
-import java.util.Optional;
-
 public class RaffleConverter {
 
-    public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, User user) {
+    public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, Category category, User user) {
 
         return Raffle.builder()
                 .user(user)
                 .winner(null)
-//                .category(request.getCategory())
+                .category(category)
                 .name(request.getName())
                 .status(request.getStatus())
                 .description(request.getDescription())
@@ -22,7 +21,7 @@ public class RaffleConverter {
                 .minTicket(request.getMinTicket())
                 .startAt(request.getStartAt())
                 .endAt(request.getEndAt())
-//                .imageUrl() 일요일 이후 공부 후 구현 예정
+//                .imageUrl() 일요일 이후 구현 예정
                 .build();
     }
 
@@ -37,7 +36,7 @@ public class RaffleConverter {
     public static RaffleResponseDTO.RaffleDetailDTO toDetailDTO(Raffle raffle) {
         return RaffleResponseDTO.RaffleDetailDTO.builder()
                 .name(raffle.getName())
-//                .category(raffle.getCategory().getName())
+                .category(raffle.getCategory().getName())
                 .ticketNum(raffle.getTicketNum())
                 .startAt(raffle.getStartAt())
                 .endAt(raffle.getEndAt())

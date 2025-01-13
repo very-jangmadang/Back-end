@@ -1,6 +1,4 @@
 package com.example.demo.domain.dto;
-
-import com.example.demo.entity.Category;
 import com.example.demo.entity.base.enums.Status;
 import lombok.Getter;
 
@@ -10,8 +8,7 @@ public class RaffleRequestDTO {
 
     @Getter
     public static class UploadDTO {
-
-//        String category;
+        String category;
         String name;
         Status status;
         String description;
