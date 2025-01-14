@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 public class CustomException extends RuntimeException {
 
     private final ErrorStatus errorStatus;
+
     public CustomException(ErrorStatus errorStatus) {
         super(errorStatus.getMessage());
         this.errorStatus = errorStatus;

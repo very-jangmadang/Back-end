@@ -49,11 +49,12 @@ public class Raffle extends BaseEntity{
 
     private int minTicket;
 
-    private int likeCount;
-
-    private int view;
-
+    private int likeCount = 0; // 초기값 0
+  
+    private int view = 0; // 초기값 0
+  
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
+
 
 }

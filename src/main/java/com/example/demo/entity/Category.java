@@ -10,12 +10,11 @@ import lombok.*;
 @AllArgsConstructor
 public class Category extends BaseEntity{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private Long id;
 
-    @Column(length = 30)
     private String name;
-
 
 }

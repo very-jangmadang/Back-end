@@ -2,6 +2,7 @@ package com.example.demo.base.status;
 
 import com.example.demo.base.code.BaseErrorCode;
 import com.example.demo.base.code.ErrorReasonDTO;
+import com.example.demo.entity.Raffle;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -35,10 +36,13 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 4. Yoon - 소셜 로그인 관련 에러
     OAUTH_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "OAUTH_4001", "OAuth 로그인에 실패했습니다."),
-    OAUTH_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAUTH_4002", "OAuth 로그인 처리에 실패했습니다.")
+    OAUTH_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAUTH_4002", "OAuth 로그인 처리에 실패했습니다."),
 
+    // 5. Hyungjin - 래플 관련 에러
+    RAFFLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RAFFLE_4001", "해당 래플을 찾을 수 없습니다."),
 
-    ;
+    // 6. Hyungjin - 카테고리 관련 에러
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_4001", "해당 카테고리를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
