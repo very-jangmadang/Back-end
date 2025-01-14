@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -49,6 +50,11 @@ public class Raffle extends BaseEntity{
     private int minTicket;
 
     private int likeCount = 0; // 초기값 0
-
+  
     private int view = 0; // 초기값 0
+  
+    @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
+    List<Apply> applyList;
+
+
 }
