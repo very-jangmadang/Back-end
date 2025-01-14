@@ -25,9 +25,11 @@ public enum SuccessStatus implements BaseCode {
     // 3. Yoon - 관리자 모드 관련 성공
     ADMIN_TURN_ADMIN(HttpStatus.OK, "ADMIN_2001", "관리자 모드로 변환에 성공하였습니다."),
     ADMIN_TURN_USER(HttpStatus.OK, "ADMIN_2002", "사용자 모드로 변환에 성공하였습니다."),
-    ADMIN_GET_ALL_USER(HttpStatus.OK, "ADMIN_2003", "모든 사용자를 조회하였습니다.")
+    ADMIN_GET_ALL_USER(HttpStatus.OK, "ADMIN_2003", "모든 사용자를 조회하였습니다."),
 
-
+    // 4. HyungJin - 래플 관련 성공
+    RAFFLE_UPLOAD_SUCCESS(HttpStatus.OK, "Raffle_2001", "래플 업로드에 성공하셨습니다."),
+    RAFFLE_FETCH_SUCCESS(HttpStatus.OK, "Raffle_2002", "래플 조회에 성공하셨습니다.")
     ;
 
 
