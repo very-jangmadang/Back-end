@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     Optional<Raffle> findById(Long id);
+
 }
