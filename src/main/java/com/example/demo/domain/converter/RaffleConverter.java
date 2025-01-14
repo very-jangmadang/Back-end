@@ -8,7 +8,7 @@ import com.example.demo.entity.User;
 
 public class RaffleConverter {
 
-    public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, Category category, User user) {
+    public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, Category category, User user, String imageUrl) {
 
         return Raffle.builder()
                 .user(user)
@@ -21,13 +21,13 @@ public class RaffleConverter {
                 .minTicket(request.getMinTicket())
                 .startAt(request.getStartAt())
                 .endAt(request.getEndAt())
-//                .imageUrl() 일요일 이후 구현 예정
+                .imageUrl(imageUrl)
                 .build();
     }
 
     public static RaffleResponseDTO.UploadResultDTO toUploadResultDTO(Raffle raffle) {
         return RaffleResponseDTO.UploadResultDTO.builder()
-//                .imageUrl(raffle.getImageUrl())
+                .imageUrl(raffle.getImageUrl())
                 .title(raffle.getName())
                 .ticketNum(raffle.getTicketNum())
                 .build();

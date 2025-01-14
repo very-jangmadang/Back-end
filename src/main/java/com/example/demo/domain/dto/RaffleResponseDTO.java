@@ -15,7 +15,7 @@ public class RaffleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UploadResultDTO{
-//        private String imageUrl;
+        private String imageUrl;
         private String title;
         private int ticketNum;
 
