@@ -1,25 +1,15 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.base.code.exception.CustomException;
-import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
-import com.example.demo.domain.converter.RaffleConverter;
 import com.example.demo.domain.dto.RaffleRequestDTO;
 import com.example.demo.domain.dto.RaffleResponseDTO;
-import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.RaffleService;
 import com.example.demo.service.general.S3UploadService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -49,8 +39,8 @@ public class RaffleController {
         return ApiResponse.of(SuccessStatus.RAFFLE_FETCH_SUCCESS, raffleDetailDTO);
     }
 
-    // 연습
-
+//     연습
+//
 //    @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public ApiResponse<String> uploadImage(
 //            @RequestParam("file") MultipartFile file) throws Exception {
@@ -59,3 +49,4 @@ public class RaffleController {
 //    }
 
 }
+

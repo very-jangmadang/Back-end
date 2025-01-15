@@ -65,7 +65,7 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: raffle-test-image-3
+      bucket: ${AWS_BUKET}
     credentials:
       access-key: ${AWS_ACCESS_KEY_ID}
       secret-key: ${AWS_SECRET_ACCESS_KEY}

@@ -33,30 +33,13 @@ public class RaffleServiceImpl implements RaffleService {
     @Transactional
     public RaffleResponseDTO.UploadResultDTO uploadRaffle(RaffleRequestDTO.UploadDTO request) {
 
-        log.info("uploadRaffle called with request: {}", request);
-
         // 0. 업로드 작성자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-        log.info("User found: {}", user.getNickname());
-
 
         // 1. 요청받은 카테고리 이름으로 Category 엔티티 가져오기
-        log.info("Request data: {}", request);
-        log.info("Searching for category with name: {}", request.getCategory());
-        log.info("All fields: file={}, category={}, name={}, status={}, description={}, ticketNum={}, minTicket={}, startAt={}, endAt={}",
-                request.getFile(),
-                request.getCategory(),
-                request.getName(),
-                request.getStatus(),
-                request.getDescription(),
-                request.getTicketNum(),
-                request.getMinTicket(),
-                request.getStartAt(),
-                request.getEndAt());
         Category category = categoryRepository.findByName(request.getCategory())
                 .orElseThrow(() -> new CustomException(ErrorStatus.CATEGORY_NOT_FOUND));
-
 
         // request 파일에서 url 추출
         String imageUrl = s3UploadService.saveFile(request.getFile());
