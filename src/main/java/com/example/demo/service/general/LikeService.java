@@ -27,5 +27,7 @@ public interface LikeService {
     //찜 목록 조회
     List<LikeListResponseDTO> getLikedItems(Long userId);
 
+    //찜 수 조회
+    Long getLikeCount(Long raffleId);
 
 }

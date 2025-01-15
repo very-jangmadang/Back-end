@@ -57,4 +57,10 @@ public class LikeServiceImpl implements LikeService {
                     );
                 }).collect(Collectors.toList());
     }
+
+    //찜 수 조회
+    public Long getLikeCount(Long raffleId) {
+
+        return likeRepository.countByRaffleId(raffleId);
+    }
 }
