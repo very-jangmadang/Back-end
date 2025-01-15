@@ -7,7 +7,10 @@ import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
 import com.example.demo.entity.Like;
 import com.example.demo.entity.Raffle;
+import com.example.demo.entity.User;
 import com.example.demo.repository.LikeRepository;
+import com.example.demo.repository.RaffleRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.LikeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +27,25 @@ import java.util.stream.Collectors;
 public class LikeServiceImpl implements LikeService {
 
     private final LikeRepository likeRepository;
+    private final RaffleRepository raffleRepository;
+    private final UserRepository userRepository;
 
     // 찜하기
     public LikeResponseDTO addLike(Long raffleId, LikeRequestDTO likeRequest) {
 
-        LikeResponseDTO likeResponse = LikeConverter.ToLikeResponseDTO(likeRequest,raffleId);
+        // Raffle과 User를 ID로 조회
+        Raffle raffle = raffleRepository.findById(raffleId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid raffle ID"));
+
+        User user = userRepository.findById(likeRequest.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+
+        // Like 객체 생성
+        Like like = new Like(raffle, user);
+        likeRepository.save(like);
+
+        // 저장된 Like 객체를 DTO로 변환
+        LikeResponseDTO likeResponse = LikeConverter.ToLikeResponseDTO(like);
 
         return likeResponse;
     }
