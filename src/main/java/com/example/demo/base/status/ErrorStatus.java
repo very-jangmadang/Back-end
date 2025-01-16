@@ -2,7 +2,6 @@ package com.example.demo.base.status;
 
 import com.example.demo.base.code.BaseErrorCode;
 import com.example.demo.base.code.ErrorReasonDTO;
-import com.example.demo.entity.Raffle;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -42,7 +41,7 @@ public enum ErrorStatus implements BaseErrorCode {
     RAFFLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RAFFLE_4001", "해당 래플을 찾을 수 없습니다."),
 
     // 6. 응모 관련 에러
-    APPLY_FAILED_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
+    APPLY_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
 
     // 6. Hyungjin - 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_4001", "해당 카테고리를 찾을 수 없습니다."),
