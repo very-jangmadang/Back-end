@@ -1,7 +1,6 @@
 package com.example.demo.service.general.impl;
 
 import com.example.demo.domain.converter.HomeConverter;
-import com.example.demo.domain.converter.RaffleConverter;
 import com.example.demo.domain.dto.HomeResponseDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.repository.RaffleRepository;
@@ -76,9 +75,27 @@ public class HomeServiceImpl implements HomeService {
     public HomeResponseDTO getHomeCategories(Long categoryId) {
 
         List<Raffle> raffles = raffleRepository.findByCategoryId(categoryId);
+        LocalDateTime now = LocalDateTime.now();
         List<HomeResponseDTO.RaffleDTO> result = new ArrayList<>();
 
-        for (Raffle raffle : raffles) {
+        // 카테고리별 조회 + 응모자순으로 래플 조회 (응모 안마감된것 우선)
+        List<Raffle> rafflesSortedByApplyList = Stream.concat(
+                raffles.stream()
+                        .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
+                        .sorted((r1, r2) -> Integer.compare(
+                                r2.getApplyList() != null ? r2.getApplyList().size() : 0,
+                                r1.getApplyList() != null ? r1.getApplyList().size() : 0
+                        )),
+                raffles.stream()
+                        .filter(r -> Duration.between(now, r.getEndAt()).toMillis() < 0)
+                        .sorted((r1, r2) -> Integer.compare(
+                                r2.getApplyList() != null ? r2.getApplyList().size() : 0,
+                                r1.getApplyList() != null ? r1.getApplyList().size() : 0
+                        ))
+        ).toList();
+
+
+        for (Raffle raffle : rafflesSortedByApplyList) {
             HomeResponseDTO.RaffleDTO homeRaffleDTO = HomeConverter.toHomeRaffleDTO(raffle);
             result.add(homeRaffleDTO);
         }
