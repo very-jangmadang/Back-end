@@ -1,6 +1,7 @@
 package com.example.demo.service.general.impl;
 
 import com.example.demo.domain.converter.HomeConverter;
+import com.example.demo.domain.converter.RaffleConverter;
 import com.example.demo.domain.dto.HomeResponseDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.repository.RaffleRepository;
@@ -71,7 +72,21 @@ public class HomeServiceImpl implements HomeService {
         return getHomeResponseDTO(rafflesSortedByEndAtDTO, null, rafflesSortedByApplyListDTO);
     }
 
+    @Override
+    public HomeResponseDTO getHomeCategories(Long categoryId) {
 
+        List<Raffle> raffles = raffleRepository.findByCategoryId(categoryId);
+        List<HomeResponseDTO.RaffleDTO> result = new ArrayList<>();
+
+        for (Raffle raffle : raffles) {
+            HomeResponseDTO.RaffleDTO homeRaffleDTO = HomeConverter.toHomeRaffleDTO(raffle);
+            result.add(homeRaffleDTO);
+        }
+
+        return HomeResponseDTO.builder()
+                .raffles(result).build();
+
+    }
 
 
     // HomeResponseDTO 만드는 메소드 분리
