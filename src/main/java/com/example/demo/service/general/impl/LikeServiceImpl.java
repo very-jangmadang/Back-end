@@ -40,6 +40,10 @@ public class LikeServiceImpl implements LikeService {
         User user = userRepository.findById(likeRequest.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
+        if (likeRepository.existsByRaffleAndUser(raffle, user)) {
+            throw new IllegalStateException("Duplicate Id");
+        }
+
         // Like 객체 생성
         Like like = new Like(raffle, user);
         likeRepository.save(like);
