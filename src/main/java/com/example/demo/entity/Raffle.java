@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,9 +14,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Raffle extends BaseEntity{
+public class Raffle extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "raffle_id")
     private Long id;
 
@@ -36,9 +38,7 @@ public class Raffle extends BaseEntity{
 
     private String description;
 
-    private String imageUrl;
-
-    @Enumerated (EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
     private ItemStatus itemStatus;
 
@@ -62,5 +62,13 @@ public class Raffle extends BaseEntity{
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
 
+    @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
+    @Builder.Default
+    List<Image> images = new ArrayList<>();
 
+    // 연관관계 편의 메서드
+    public void addImage(Image image) {
+        this.images.add(image); //
+        image.setRaffle(this);
+    }
 }

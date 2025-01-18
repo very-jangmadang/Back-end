@@ -1,6 +1,5 @@
-package com.example.demo.domain.dto;
+package com.example.demo.domain.dto.Raffle;
 
-import com.example.demo.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,9 +14,7 @@ public class RaffleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UploadResultDTO{
-        private String imageUrl;
-        private String title;
-        private int ticketNum;
+        private Long raffle_id;
 
     }
 

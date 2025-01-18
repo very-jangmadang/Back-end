@@ -1,8 +1,7 @@
 package com.example.demo.service.general;
 
-import com.example.demo.domain.dto.RaffleRequestDTO;
-import com.example.demo.domain.dto.RaffleResponseDTO;
-import com.example.demo.entity.User;
+import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
+import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
 
 public interface RaffleService {
 

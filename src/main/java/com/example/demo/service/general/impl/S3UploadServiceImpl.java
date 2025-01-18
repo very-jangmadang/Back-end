@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,18 +21,22 @@ public class S3UploadServiceImpl implements S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String saveFile(MultipartFile multipartFile) {
-        String originalFilename = multipartFile.getOriginalFilename();
+    public List<String> saveFile(List<MultipartFile> multipartFiles) {
+        List<String> imageUrls = new ArrayList<>();
 
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(multipartFile.getSize());
-        metadata.setContentType(multipartFile.getContentType());
+        for (MultipartFile multipartFile : multipartFiles) {
+            String originalFilename = multipartFile.getOriginalFilename();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(multipartFile.getSize());
+            metadata.setContentType(multipartFile.getContentType());
 
-        try {
-            amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            try {
+                amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            imageUrls.add(amazonS3.getUrl(bucket, originalFilename).toString());
         }
-        return amazonS3.getUrl(bucket, originalFilename).toString();
+        return imageUrls;
     }
 }
