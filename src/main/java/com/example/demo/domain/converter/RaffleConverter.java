@@ -1,14 +1,16 @@
 package com.example.demo.domain.converter;
 
-import com.example.demo.domain.dto.RaffleRequestDTO;
-import com.example.demo.domain.dto.RaffleResponseDTO;
+import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
+import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 
+import java.util.List;
+
 public class RaffleConverter {
 
-    public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, Category category, User user, String imageUrl) {
+    public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, Category category, User user) {
 
         return Raffle.builder()
                 .user(user)
@@ -21,15 +23,12 @@ public class RaffleConverter {
                 .minTicket(request.getMinTicket())
                 .startAt(request.getStartAt())
                 .endAt(request.getEndAt())
-                .imageUrl(imageUrl)
                 .build();
     }
 
     public static RaffleResponseDTO.UploadResultDTO toUploadResultDTO(Raffle raffle) {
         return RaffleResponseDTO.UploadResultDTO.builder()
-                .imageUrl(raffle.getImageUrl())
-                .title(raffle.getName())
-                .ticketNum(raffle.getTicketNum())
+                .raffle_id(raffle.getId())
                 .build();
     }
 
