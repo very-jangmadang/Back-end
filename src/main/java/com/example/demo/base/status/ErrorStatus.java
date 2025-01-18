@@ -35,8 +35,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 4. Yoon - 소셜 로그인 관련 에러
     OAUTH_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "OAUTH_4001", "OAuth 로그인에 실패했습니다."),
-    OAUTH_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAUTH_4002", "OAuth 로그인 처리에 실패했습니다.")
+    OAUTH_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAUTH_4002", "OAuth 로그인 처리에 실패했습니다."),
 
+    // dohyun- 후기 관련 에러
+    REVIEW_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "REVIEW_4001", "해당 리뷰를 찾을 수 없습니다.");
 
     ;
 
