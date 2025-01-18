@@ -3,6 +3,7 @@ package com.example.demo.domain.converter;
 import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
 import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
 import com.example.demo.entity.Category;
+import com.example.demo.entity.Image;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 
@@ -34,18 +35,20 @@ public class RaffleConverter {
 
     public static RaffleResponseDTO.RaffleDetailDTO toDetailDTO(Raffle raffle) {
         return RaffleResponseDTO.RaffleDetailDTO.builder()
-                .name(raffle.getName())
-                .category(raffle.getCategory().getName())
-                .ticketNum(raffle.getTicketNum())
-                .startAt(raffle.getStartAt())
-                .endAt(raffle.getEndAt())
-                .view(raffle.getView())
-                .likeCount(raffle.getLikeCount())
+                .imageUrls(raffle.getImages().stream().map(Image::getImageUrl).toList()) // 이미지 url
+                .name(raffle.getName()) // 상품명
+                .description(raffle.getDescription()) // 상품설명
+                .category(raffle.getCategory().getName()) // 카테고리명
+                .ticketNum(raffle.getTicketNum()) // 응모에 필요한 티켓 수
+                .startAt(raffle.getStartAt()) // 응모 오픈
+                .endAt(raffle.getEndAt()) // 응모 마감
+                .view(raffle.getView()) // 조회
+                .likeCount(raffle.getLikeCount()) // 찜
 
-                .minTicket(raffle.getMinTicket())
+                .minTicket(raffle.getMinTicket()) // 최소 티켓 수
                 // 현재 참여자 수 필요
 
-                .nickname(raffle.getUser().getNickname())
+                .nickname(raffle.getUser().getNickname()) // 판매자 닉네임
                 // 팔로우 수, 후기 수 필요
                 .build();
     }

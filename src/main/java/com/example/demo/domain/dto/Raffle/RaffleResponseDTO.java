@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class RaffleResponseDTO {
 
@@ -23,7 +24,7 @@ public class RaffleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RaffleDetailDTO{
-//        private String imageUrl
+        private List<String> imageUrls;
         private String name;
         private String category;
         private int ticketNum;
@@ -33,7 +34,6 @@ public class RaffleResponseDTO {
         private int minTicket;
         private int view;
         private int likeCount;
-
         private String nickname;
 
 
