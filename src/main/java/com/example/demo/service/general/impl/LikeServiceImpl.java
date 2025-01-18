@@ -1,5 +1,7 @@
 package com.example.demo.service.general.impl;
 
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.LikeConverter;
 import com.example.demo.domain.dto.Like.LikeListResponseDTO;
 import com.example.demo.domain.dto.Like.LikeRequestDTO;
@@ -35,13 +37,13 @@ public class LikeServiceImpl implements LikeService {
 
         // Raffle과 User를 ID로 조회
         Raffle raffle = raffleRepository.findById(raffleId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid raffle ID"));
+                .orElseThrow(() ->new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
         User user = userRepository.findById(likeRequest.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new CustomException(ErrorStatus. USER_NOT_FOUND));
 
         if (likeRepository.existsByRaffleAndUser(raffle, user)) {
-            throw new IllegalStateException("Duplicate Id");
+            throw new CustomException(ErrorStatus.LIKE_ALREADY_FOUND);
         }
 
         // Like 객체 생성
@@ -58,7 +60,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public void deleteLike(Long raffleId, Long userId) {
         Like like = likeRepository.findByUserIdAndRaffleId(userId, raffleId)
-                .orElseThrow(() -> new EntityNotFoundException("Like not found for raffleId: " + raffleId + " and userId: " + userId));
+                .orElseThrow(() ->  new CustomException(ErrorStatus. LIKE_NOT_FOUND));
         likeRepository.delete(like);
     }
 
