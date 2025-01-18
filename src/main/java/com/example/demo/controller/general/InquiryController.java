@@ -37,7 +37,7 @@ public class InquiryController {
     //문의글 삭제
     @Operation(summary = "문의글 삭제")
     @DeleteMapping("/{inquiryId}")
-    public ApiResponse<ReviewResponseDTO> deleteInquiry(
+    public ApiResponse<InquiryResponseDTO> deleteInquiry(
             @PathVariable Long inquiryId,
             @RequestBody InquiryDeleteDTO inquiryDelete) {
 
