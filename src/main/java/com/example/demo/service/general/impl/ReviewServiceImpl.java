@@ -3,14 +3,11 @@ import com.example.demo.base.ApiResponse;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
-import com.example.demo.domain.converter.RaffleConverter;
 import com.example.demo.domain.converter.ReviewConverter;
 import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewDeleteDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
-import com.example.demo.entity.Category;
-import com.example.demo.entity.Raffle;
 import com.example.demo.entity.Review;
 import com.example.demo.entity.User;
 import com.example.demo.repository.ReviewRepository;
@@ -67,11 +64,10 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 리뷰 내역 조회
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorStatus.REVIEW_NOT_FOUND));
 
         // 삭제
         reviewRepository.deleteById(reviewId);
 
     }
 }
-
