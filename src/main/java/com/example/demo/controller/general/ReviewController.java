@@ -1,59 +1,45 @@
 package com.example.demo.controller.general;
 import com.example.demo.base.ApiResponse;
-import com.example.demo.entity.Review;
-import com.example.demo.repository.ReviewRepository;
+import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Review.ReviewDeleteDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.service.general.ReviewService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("api/permit/review")
+@RequiredArgsConstructor
 public class ReviewController {
 
-    private final ReviewRepository reviewRepository;
-
-    public ReviewController(ReviewRepository reviewRepository) {
-        this.reviewRepository = reviewRepository;
-    }
+    private final ReviewService reviewService;
 
     //리뷰 작성
-    @Transactional
+    @Operation(summary = "리뷰 작성")
     @PostMapping("/")
     public ApiResponse<ReviewResponseDTO> addReview(
-            @RequestBody ReviewRequestDTO reviewrequest) {
+            @RequestBody ReviewRequestDTO reviewRequest) {
 
-        Long userId = reviewrequest.getUserId();
-        Long reviewerId = reviewrequest.getReviewerId();
-        String text = reviewrequest.getText();
-        float score = reviewrequest.getScore();
-        LocalDateTime timestamp = LocalDateTime.now();
+        ReviewResponseDTO reviewResponse = reviewService.addReview(reviewRequest);
 
-        ReviewResponseDTO reviewResponse = new ReviewResponseDTO(
-                1L, userId, reviewerId, score, text);
+        return ApiResponse.of(SuccessStatus._OK, reviewResponse);
 
-        return new ApiResponse<>(true, "COMMON200", "성공입니다.", reviewResponse);
     }
 
     //리뷰 삭제
-    @Transactional
+    @Operation(summary = "리뷰 삭제")
     @DeleteMapping("/{reviewId}")
     public ApiResponse<ReviewResponseDTO> deleteReview(
             @PathVariable Long reviewId,
             @RequestBody ReviewDeleteDTO reviewDelete) {
-        {
 
-            // 리뷰 내역 조회
-            Review review = reviewRepository.findById(reviewId)
-                    .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 없습니다"));
+        reviewService.deleteReview(reviewId,reviewDelete);
 
-            // 리뷰 삭제
-            reviewRepository.deleteById(reviewId);
-
-            return new ApiResponse<>(true, "COMMON200", "리뷰가 삭제되었습니다.", null);
-        }
+        return ApiResponse.of(SuccessStatus._OK, null);
     }
 }
