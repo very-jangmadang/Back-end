@@ -10,6 +10,7 @@ import com.example.demo.entity.Image;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import com.example.demo.repository.CategoryRepository;
+import com.example.demo.repository.ImageRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.ImageService;
