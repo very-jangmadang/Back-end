@@ -15,7 +15,7 @@ public class Image extends BaseEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "raffle_raffle_id")
+    @JoinColumn(name = "raffle_id")
     private Raffle raffle;
 
     private String ImageUrl;

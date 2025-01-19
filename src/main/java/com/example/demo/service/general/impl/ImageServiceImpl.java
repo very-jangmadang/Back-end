@@ -15,14 +15,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-    ImageRepository imageRepository;
-
     public List<Image> saveImages(List<String> imageUrls) {
 
-        //1. 전달받은 imageUrls를 통해 Image 엔티티로 변환
+        // 이미지 엔티티로 변환
         return ImageConverter.toImage(imageUrls);
-
-//        //2. 변환 후 영속성 컨텍스트에 저장
-//        return imageRepository.saveAll(images);
     }
 }
