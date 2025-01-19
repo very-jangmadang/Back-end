@@ -2,11 +2,13 @@ package com.example.demo.service.general.impl;
 
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.domain.converter.InquiryConverter;
+import com.example.demo.domain.converter.LikeConverter;
 import com.example.demo.domain.dto.Inquiry.InquiryDeleteDTO;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.dto.Inquiry.InquiryRequestDTO;
 import com.example.demo.domain.dto.Inquiry.InquiryResponseDTO;
+import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.entity.Inquiry;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
@@ -43,7 +45,9 @@ public class InquiryServiceImpl implements InquiryService {
 
         inquiryRepository.save(inquiry);
 
-        return InquiryConverter.ToInquiryResponseDTO(inquiryRequest);
+        InquiryResponseDTO inquiryResponse = InquiryConverter.ToInquiryResponseDTO(inquiry);
+
+        return inquiryResponse;
     }
 
     // 문의 삭제
@@ -51,7 +55,7 @@ public class InquiryServiceImpl implements InquiryService {
     public void deleteInquiry(Long inquiryId, InquiryDeleteDTO inquiryDelete) {
 
         // 문의 내역 조회
-        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+        Inquiry inquiry = inquiryRepository.findByUserIdAndId(inquiryDelete.getUserId(), inquiryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
 
         // 삭제
