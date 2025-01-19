@@ -2,7 +2,6 @@ package com.example.demo.base.status;
 
 import com.example.demo.base.code.BaseErrorCode;
 import com.example.demo.base.code.ErrorReasonDTO;
-import com.example.demo.entity.Raffle;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
