@@ -42,7 +42,10 @@ public enum ErrorStatus implements BaseErrorCode {
     RAFFLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RAFFLE_4001", "해당 래플을 찾을 수 없습니다."),
 
     // 6. Hyungjin - 카테고리 관련 에러
-    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_4001", "해당 카테고리를 찾을 수 없습니다.");
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_4001", "해당 카테고리를 찾을 수 없습니다."),
+
+    // dohyun- 후기 관련 에러
+    REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "REVIEW_4001", "해당 리뷰를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
