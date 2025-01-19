@@ -9,7 +9,4 @@ public interface ApplyService {
 
     ApplyResponseDTO.ApplyDto applyRaffle(Long userId, Long raffleId);
 
-    ApplyResponseDTO.SuccessDto successApply(Long userId, Long raffleId);
-
-    ApplyResponseDTO.FailDto failApply(Long userId, Long raffleId);
 }
