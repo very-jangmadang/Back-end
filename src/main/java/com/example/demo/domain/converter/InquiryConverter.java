@@ -19,14 +19,14 @@ public class InquiryConverter {
                 .build();
     }
 
-    public static InquiryResponseDTO ToInquiryResponseDTO(InquiryRequestDTO inquiryRequest) {
+    public static InquiryResponseDTO ToInquiryResponseDTO(Inquiry inquiry) {
 
         return InquiryResponseDTO.builder()
                 .inquiryId(1L)
-                .userId(inquiryRequest.getUserId())
-                .raffleId(inquiryRequest.getRaffleId())
-                .title(inquiryRequest.getTitle())
-                .content(inquiryRequest.getContent())
+                .userId(inquiry.getUser().getId())
+                .raffleId(inquiry.getRaffle().getId())
+                .title(inquiry.getTitle())
+                .content(inquiry.getContent())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
