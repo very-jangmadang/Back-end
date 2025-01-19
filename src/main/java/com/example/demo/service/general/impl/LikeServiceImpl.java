@@ -46,8 +46,11 @@ public class LikeServiceImpl implements LikeService {
             throw new CustomException(ErrorStatus.LIKE_ALREADY_FOUND);
         }
 
-        // Like 객체 생성
-        Like like = new Like(raffle, user);
+        Like like= Like.builder()
+                        .raffle(raffle)
+                        .user(user)
+                        .build();
+
         likeRepository.save(like);
 
         // 저장된 Like 객체를 DTO로 변환
