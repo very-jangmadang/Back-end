@@ -2,6 +2,7 @@ package com.example.demo.base.status;
 
 import com.example.demo.base.code.BaseErrorCode;
 import com.example.demo.base.code.ErrorReasonDTO;
+import com.example.demo.entity.Raffle;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -55,6 +56,7 @@ public enum ErrorStatus implements BaseErrorCode {
     APPLY_FINISHED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "이미 종료된 래플입니다.")
 
     ;
+
 
 
     private final HttpStatus httpStatus;
