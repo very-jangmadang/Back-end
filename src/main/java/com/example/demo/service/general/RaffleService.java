@@ -5,7 +5,7 @@ import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
 
 public interface RaffleService {
 
-    // 사용자가 래플 업로드
+    // 래플 업로드
     RaffleResponseDTO.UploadResultDTO uploadRaffle(RaffleRequestDTO.UploadDTO request);
 
     // 래플 상세조회
