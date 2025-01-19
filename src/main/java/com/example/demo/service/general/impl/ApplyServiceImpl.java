@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 import static com.example.demo.domain.converter.ApplyConverter.*;
 
 @Service
@@ -44,48 +46,20 @@ public class ApplyServiceImpl implements ApplyService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
         int userTicket = user.getTicket_num();
 
-        if (raffleTicket <= userTicket) {
-            Apply apply = Apply.builder()
-                    .raffle(raffle)
-                    .user(user)
-                    .build();
-            applyRepository.save(apply);
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isAfter(raffle.getEndAt()) || now.isEqual(raffle.getEndAt()))
+            throw new CustomException(ErrorStatus.APPLY_FINISHED_RAFFLE);
 
-            return ApplyResponseDTO.ApplyDto.builder()
-                    .redirectUrl("/raffles/{raffle-id}/apply/{user-id}/success")
-                    .build();
+        if (raffleTicket > userTicket)
+            throw new CustomException(ErrorStatus.APPLY_INSUFFICIENT_TICKET);
 
-        } else {
+        Apply apply = Apply.builder()
+                .raffle(raffle)
+                .user(user)
+                .build();
+        applyRepository.save(apply);
 
-            return ApplyResponseDTO.ApplyDto.builder()
-                    .redirectUrl("/raffles/{raffle-id}/apply/{user-id}/fail")
-                    .build();
-        }
+        return toApplyDto(apply);
     }
 
-    public ApplyResponseDTO.SuccessDto successApply(Long raffleId, Long userId) {
-        Raffle raffle = raffleRepository.findById(raffleId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
-
-        return toSuccessDto(raffle);
-
-    }
-
-    public ApplyResponseDTO.FailDto failApply(Long raffleId, Long userId) {
-        Raffle raffle = raffleRepository.findById(raffleId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
-        int raffleTicket = raffle.getTicketNum();
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-        int userTicket = user.getTicket_num();
-
-        int missingTicket = raffleTicket - userTicket;
-        ApplyResponseDTO.FailDto failDto = new ApplyResponseDTO.FailDto(
-                raffle.getName(),
-                missingTicket
-        );
-
-        return toFailDto(raffle, missingTicket);
-    }
 }

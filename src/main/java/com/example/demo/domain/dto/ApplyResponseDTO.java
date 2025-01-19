@@ -12,8 +12,9 @@ public class ApplyResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class EnterDto {
-        private String imageUrl;
+        private Long raffleId;
         private String raffleName;
+        private String raffleImage;
         private int ticketNum;
     }
 
@@ -22,23 +23,9 @@ public class ApplyResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ApplyDto {
-        private String redirectUrl;
+        private Long userId;
+        private Long raffleId;
+        private String raffleImage;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SuccessDto {
-        private String imageUrl;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FailDto {
-        private String raffleName;
-        private int missingTicket;
-    }
 }
