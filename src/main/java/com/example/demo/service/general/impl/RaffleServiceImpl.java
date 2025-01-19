@@ -10,6 +10,7 @@ import com.example.demo.entity.Image;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import com.example.demo.repository.CategoryRepository;
+import com.example.demo.repository.ImageRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.RaffleSchedulerService;
@@ -71,13 +72,26 @@ public class RaffleServiceImpl implements RaffleService {
     }
 
     @Override
-    public RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long id) {
+    @Transactional
+    public RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long raffleId) {
 
-        // 1. 요청받은 래플id와 일치하는 Raffle 가져오기
-        Raffle raffle = raffleRepository.findById(id)
+        // 1. 요청받은 래플 id로 엔티티 조회
+        Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-        // 2. 해당 raffle을 DetailDTO로 변환
-        return RaffleConverter.toDetailDTO(raffle);
+        Long userId = raffle.getUser().getId(); // userId 조회
+
+        // 2. 필요 데이터 조회 (쿼리 4개 날아가서 추후 개선 예정)
+        int likeCount, applyCount, followCount, reviewCount;
+        likeCount = raffleRepository.countLikeByRaffleId(raffleId);
+        applyCount = raffleRepository.countApplyByRaffleId(raffleId);
+        followCount = raffleRepository.countFollowsByUserId(userId);
+        reviewCount = raffleRepository.countReviewsByUserId(userId);
+
+        // 3. 조회 수 증가
+        raffle.addView();
+
+        // 4. DTO 변환 및 반환
+        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount);
     }
 }

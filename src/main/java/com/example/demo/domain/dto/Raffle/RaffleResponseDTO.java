@@ -34,8 +34,9 @@ public class RaffleResponseDTO {
         private int minTicket;
         private int view;
         private int likeCount;
+        private int applyCount;
         private String nickname;
-
-
+        private int followCount;
+        private int reviewCount;
     }
 }
