@@ -4,6 +4,7 @@ import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.entity.Raffle;
 import com.example.demo.jobs.*;
+import com.example.demo.service.general.RaffleSchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.*;
 import org.springframework.stereotype.Service;
@@ -13,12 +14,16 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-public class RaffleSchedulerServiceImpl {
+public class RaffleSchedulerServiceImpl implements RaffleSchedulerService {
 
     private final Scheduler scheduler;
 
     public void scheduleRaffleJob(Raffle raffle, boolean isStart) {
         try {
+
+            if (!scheduler.isStarted()) {
+                scheduler.start();
+            }
 
             JobDetail jobDetail = isStart ? buildStartJobDetail(raffle) : buildEndJobDetail(raffle);
             Trigger trigger = buildJobTrigger(isStart ? raffle.getStartAt() : raffle.getEndAt());
@@ -62,9 +67,13 @@ public class RaffleSchedulerServiceImpl {
     }
 
     private Trigger buildJobTrigger(LocalDateTime time) {
+        LocalDateTime adjustedTime = time.withSecond(0).withNano(0);
+        Date startDate = Date.from(adjustedTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
         return TriggerBuilder.newTrigger()
-                .startAt(Date.from(time.atZone(java.time.ZoneId.systemDefault()).toInstant()))
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+                .startAt(startDate)
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withMisfireHandlingInstructionFireNow())
                 .build();
     }
 }

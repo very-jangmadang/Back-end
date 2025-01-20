@@ -15,7 +15,7 @@ public class RaffleConverter {
                 .winner(null)
                 .category(category)
                 .name(request.getName())
-                .status(request.getStatus())
+                .itemStatus(request.getStatus())
                 .description(request.getDescription())
                 .ticketNum(request.getTicketNum())
                 .minTicket(request.getMinTicket())

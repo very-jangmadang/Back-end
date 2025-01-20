@@ -1,5 +1,5 @@
 package com.example.demo.domain.dto;
-import com.example.demo.entity.base.enums.Status;
+import com.example.demo.entity.base.enums.ItemStatus;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ public class RaffleRequestDTO {
     public static class UploadDTO {
         String category;
         String name;
-        Status status;
+        ItemStatus status;
         String description;
         int ticketNum;
         int minTicket;
