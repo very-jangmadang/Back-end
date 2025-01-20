@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class RaffleController {
 
     private final RaffleService raffleService;
-    private final S3UploadService s3UploadService;
 
     @PostMapping(value = "/raffles", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<RaffleResponseDTO.UploadResultDTO> upload(@ModelAttribute @Valid RaffleRequestDTO.UploadDTO request) {
