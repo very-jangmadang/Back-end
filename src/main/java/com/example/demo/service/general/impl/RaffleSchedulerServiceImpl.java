@@ -17,57 +17,27 @@ public class RaffleSchedulerServiceImpl {
 
     private final Scheduler scheduler;
 
-    public void scheduleRaffleStart(Raffle raffle) {
+    public void scheduleRaffleJob(Raffle raffle, boolean isStart) {
         try {
 
-            JobDetail jobDetail = buildStartJobDetail(raffle);
-            Trigger trigger = buildJobTrigger(raffle.getStartAt());
+            JobDetail jobDetail = isStart ? buildStartJobDetail(raffle) : buildEndJobDetail(raffle);
+            Trigger trigger = buildJobTrigger(isStart ? raffle.getStartAt() : raffle.getEndAt());
 
             scheduler.scheduleJob(jobDetail, trigger);
 
         } catch (SchedulerException e) {
             Throwable cause = e.getCause();  // 원인 예외 분석
 
+            // 예외 처리 로직
             if (cause instanceof JobPersistenceException) {
                 // JobPersistenceException: 작업을 저장할 수 없을 때 발생
                 throw new CustomException(ErrorStatus.JOB_STORE_FAILED);
             } else if (cause instanceof JobExecutionException) {
                 // JobExecutionException: 작업 실행에 문제가 있을 때 발생
                 throw new CustomException(ErrorStatus.JOB_EXECUTION_FAILED);
-
 //            } else if (cause instanceof JobInterruptException) {
-//                // JobInterruptException: 작업이 인터럽트되었을 때 발생
+//              // JobInterruptException: 작업이 인터럽트되었을 때 발생
 //                throw new CustomException(ErrorStatus.JOB_INTERRUPT);
-
-            } else {
-                // 그 외 다른 오류들
-                throw new CustomException(ErrorStatus.JOB_UNKNOWN);
-            }
-        }
-    }
-
-    public void scheduleRaffleEnd(Raffle raffle) {
-        try {
-
-            JobDetail jobDetail = buildEndJobDetail(raffle);
-            Trigger trigger = buildJobTrigger(raffle.getEndAt());
-
-            scheduler.scheduleJob(jobDetail, trigger);
-
-        } catch (SchedulerException e) {
-            Throwable cause = e.getCause();  // 원인 예외 분석
-
-            if (cause instanceof JobPersistenceException) {
-                // JobPersistenceException: 작업을 저장할 수 없을 때 발생
-                throw new CustomException(ErrorStatus.JOB_STORE_FAILED);
-            } else if (cause instanceof JobExecutionException) {
-                // JobExecutionException: 작업 실행에 문제가 있을 때 발생
-                throw new CustomException(ErrorStatus.JOB_EXECUTION_FAILED);
-
-//            } else if (cause instanceof JobInterruptException) {
-//                // JobInterruptException: 작업이 인터럽트되었을 때 발생
-//                throw new CustomException(ErrorStatus.JOB_INTERRUPT);
-
             } else {
                 // 그 외 다른 오류들
                 throw new CustomException(ErrorStatus.JOB_UNKNOWN);

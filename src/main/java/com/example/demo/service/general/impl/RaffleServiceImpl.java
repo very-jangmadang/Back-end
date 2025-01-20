@@ -45,8 +45,8 @@ public class RaffleServiceImpl implements RaffleService {
         // 3. 변환 후 DB에 저장
         raffleRepository.save(raffle);
 
-        raffleSchedulerService.scheduleRaffleStart(raffle);
-        raffleSchedulerService.scheduleRaffleEnd(raffle);
+        raffleSchedulerService.scheduleRaffleJob(raffle, true);
+        raffleSchedulerService.scheduleRaffleJob(raffle, false);
 
         // 4. Raffle 엔티티를 ResponseDTO로 변환하여 반환
         return RaffleConverter.toUploadResultDTO(raffle);
