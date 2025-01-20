@@ -22,7 +22,7 @@ public class InquiryConverter {
     public static InquiryResponseDTO ToInquiryResponseDTO(Inquiry inquiry) {
 
         return InquiryResponseDTO.builder()
-                .inquiryId(1L)
+                .inquiryId(inquiry.getId())
                 .userId(inquiry.getUser().getId())
                 .raffleId(inquiry.getRaffle().getId())
                 .title(inquiry.getTitle())
