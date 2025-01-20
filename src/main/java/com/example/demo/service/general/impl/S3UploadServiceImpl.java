@@ -2,6 +2,8 @@ package com.example.demo.service.general.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.service.general.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +24,7 @@ public class S3UploadServiceImpl implements S3UploadService {
     private String bucket;
 
     public List<String> saveFile(List<MultipartFile> multipartFiles) {
+
         List<String> imageUrls = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFiles) {
@@ -33,9 +36,11 @@ public class S3UploadServiceImpl implements S3UploadService {
             try {
                 amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new CustomException(ErrorStatus.IMAGE_UPLOAD_FAILED);
             }
+
             imageUrls.add(amazonS3.getUrl(bucket, originalFilename).toString());
+
         }
         return imageUrls;
     }

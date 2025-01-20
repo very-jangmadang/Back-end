@@ -49,9 +49,11 @@ public class Raffle extends BaseEntity {
 
     private int minTicket;
 
-    private int likeCount = 0; // 초기값 0
-
     private int view = 0; // 초기값 0
+
+//    private int likeCount = 0; // 초기값 0
+//
+//    private int apply_count = 0; // 초기값 0
 
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
@@ -65,4 +67,29 @@ public class Raffle extends BaseEntity {
         this.images.add(image); //
         image.setRaffle(this);
     }
+
+    // 조회수 증가
+    public void addView() {
+        this.view += 1;
+    }
+
+//    // 찜 횟수 증가
+//    public void upLikeCount(){
+//        this.likeCount += 1;
+//    }
+//
+//    // 찜 횟수 감소
+//    public void downLikeCount(){
+//        this.likeCount -= 1;
+//    }
+//
+//    // 응모 수 증가
+//    public void addApplyCount(){
+//        this.apply_count += 1;
+//    }
+//
+//    // 응모 수 감소
+//    public void downApplyCount(){
+//        this.apply_count -= 1;
+//    }
 }
