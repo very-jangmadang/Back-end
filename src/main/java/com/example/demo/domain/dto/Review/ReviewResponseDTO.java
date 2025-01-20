@@ -17,7 +17,7 @@ public class ReviewResponseDTO {
     private Long reviewId;
     private Long userId;
     private Long reviewerId;
-    private float score;
+    private double score;
     private String text;
     private List<String> imageUrls;
     private LocalDateTime timestamp;

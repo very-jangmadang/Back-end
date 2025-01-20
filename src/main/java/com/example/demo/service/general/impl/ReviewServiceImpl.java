@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -70,4 +71,28 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.deleteById(reviewId);
 
     }
+
+    //리뷰 조회
+    public List<ReviewResponseDTO> getReviewsByUserId(Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        // 사용자의 모든 후기 조회
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+
+        return reviews.stream()
+                .map(review -> new ReviewResponseDTO(
+                        review.getId(),               // reviewId
+                        review.getUser().getId(),     // userId
+                        review.getReviewer().getId(), // raffleId
+                        review.getScore(),            // score
+                        review.getText(),             // text
+                        review.getImageUrls(),        // imageUrls
+                        review.getCreatedAt()          // timestamp
+                ))
+                .collect(Collectors.toList());
+    }
 }
+

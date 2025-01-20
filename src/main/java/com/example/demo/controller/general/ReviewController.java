@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/permit/review")
@@ -51,6 +52,15 @@ public class ReviewController {
         reviewService.deleteReview(reviewId,reviewDelete);
 
         return ApiResponse.of(SuccessStatus._OK, null);
+    }
+
+    //리뷰 목록 조회
+    @GetMapping("/{userId}/review")
+    public ApiResponse<List<ReviewResponseDTO>> getReviewsByUserId(@PathVariable Long userId) {
+
+        List<ReviewResponseDTO> reviews = reviewService.getReviewsByUserId(userId);
+
+        return ApiResponse.of(SuccessStatus._OK, reviews);
     }
 }
 
