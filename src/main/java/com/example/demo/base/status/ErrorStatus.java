@@ -63,7 +63,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     ;
 
-    ;
 
 
     private final HttpStatus httpStatus;
