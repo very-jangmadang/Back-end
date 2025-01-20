@@ -11,6 +11,7 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.general.RaffleSchedulerService;
 import com.example.demo.service.general.RaffleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class RaffleServiceImpl implements RaffleService {
     private final RaffleRepository raffleRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final RaffleSchedulerService raffleSchedulerService;
 
     @Override
     @Transactional
@@ -42,6 +44,9 @@ public class RaffleServiceImpl implements RaffleService {
 
         // 3. 변환 후 DB에 저장
         raffleRepository.save(raffle);
+
+        raffleSchedulerService.scheduleRaffleStart(raffle);
+        raffleSchedulerService.scheduleRaffleEnd(raffle);
 
         // 4. Raffle 엔티티를 ResponseDTO로 변환하여 반환
         return RaffleConverter.toUploadResultDTO(raffle);

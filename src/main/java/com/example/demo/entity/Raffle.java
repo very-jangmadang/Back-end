@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.base.enums.Status;
+import com.example.demo.entity.base.enums.ItemStatus;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,7 +40,7 @@ public class Raffle extends BaseEntity{
 
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
-    private Status status;
+    private ItemStatus itemStatus;
 
     private LocalDateTime startAt;
 
@@ -52,6 +53,11 @@ public class Raffle extends BaseEntity{
     private int likeCount = 0; // 초기값 0
   
     private int view = 0; // 초기값 0
+
+    @Setter
+    @Enumerated (EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
+    private RaffleStatus raffleStatus;
   
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
