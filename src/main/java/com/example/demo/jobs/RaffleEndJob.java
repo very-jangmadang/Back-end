@@ -23,8 +23,8 @@ public class RaffleEndJob implements Job {
     @Autowired
     private RaffleRepository raffleRepository;
     // 관련 코드 PR 상태
-//    @Autowired
-//    private ApplyRepository applyRepository;
+    @Autowired
+    private ApplyRepository applyRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -36,27 +36,27 @@ public class RaffleEndJob implements Job {
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
         // 관련 코드 PR 상태
-//        int applyCount = raffleRepository.countApplyByRaffleId(raffleId);
+        int applyCount = raffleRepository.countApplyByRaffleId(raffleId);
 
-//        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket()) {
-//            raffle.setRaffleStatus(RaffleStatus.UNFULFILLED);
-//            raffleRepository.save(raffle);
-//
-//            // 티켓 반환
-//            List<Apply> applyList = applyRepository.findByRaffle(raffle);
-//            int refundTicket = raffle.getTicketNum();
-//
-//            for (Apply apply : applyList) {
-//                User user = apply.getUser();
-//                user.setTicket_num(user.getTicket_num() - refundTicket);
-//                userRepository.save(user);
-//            }
-//
-//        } else {
-//            raffle.setRaffleStatus(RaffleStatus.ENDED);
-//            raffleRepository.save(raffle);
-//
-//            // 당첨자 추첨 코드
-//        }
+        if (applyCount < raffle.getMinTicket()) {
+            raffle.setRaffleStatus(RaffleStatus.EXPIRED);
+            raffleRepository.save(raffle);
+
+            // 티켓 반환
+            List<Apply> applyList = applyRepository.findByRaffle(raffle);
+            int refundTicket = raffle.getTicketNum();
+
+            for (Apply apply : applyList) {
+                User user = apply.getUser();
+                user.setTicket_num(user.getTicket_num() - refundTicket);
+                userRepository.save(user);
+            }
+
+        } else {
+            raffle.setRaffleStatus(RaffleStatus.ENDED);
+            raffleRepository.save(raffle);
+
+            // 당첨자 추첨 코드
+        }
     }
 }
