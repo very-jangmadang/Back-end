@@ -47,11 +47,15 @@ public class ApplyServiceImpl implements ApplyService {
         int userTicket = user.getTicket_num();
 
         LocalDateTime now = LocalDateTime.now();
+        if (now.isBefore(raffle.getStartAt()) || now.isAfter(raffle.getStartAt()))
+            throw new CustomException(ErrorStatus.APPLY_UNOPENED_RAFFLE);
         if (now.isAfter(raffle.getEndAt()) || now.isEqual(raffle.getEndAt()))
             throw new CustomException(ErrorStatus.APPLY_FINISHED_RAFFLE);
 
         if (raffleTicket > userTicket)
             throw new CustomException(ErrorStatus.APPLY_INSUFFICIENT_TICKET);
+
+        user.setTicket_num(userTicket - raffleTicket);
 
         Apply apply = Apply.builder()
                 .raffle(raffle)
