@@ -27,7 +27,7 @@ public class ReviewConverter {
     public static ReviewResponseDTO ToReviewResponseDTO(Review review) {
 
         return ReviewResponseDTO.builder()
-                .reviewId(1L)
+                .reviewId(review.getId())
                 .userId(review.getUser().getId())
                 .reviewerId(review.getReviewer().getId())
                 .score((float) review.getScore())
