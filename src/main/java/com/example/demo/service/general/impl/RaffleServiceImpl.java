@@ -13,7 +13,6 @@ import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.ImageRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.general.RaffleSchedulerService;
 import com.example.demo.service.general.ImageService;
 import com.example.demo.service.general.RaffleService;
 import com.example.demo.service.general.S3UploadService;
