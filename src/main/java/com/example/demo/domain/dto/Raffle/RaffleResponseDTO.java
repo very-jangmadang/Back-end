@@ -1,12 +1,12 @@
-package com.example.demo.domain.dto;
+package com.example.demo.domain.dto.Raffle;
 
-import com.example.demo.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class RaffleResponseDTO {
 
@@ -15,9 +15,7 @@ public class RaffleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UploadResultDTO{
-//        private String imageUrl;
-        private String title;
-        private int ticketNum;
+        private Long raffle_id;
 
     }
 
@@ -26,7 +24,7 @@ public class RaffleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RaffleDetailDTO{
-//        private String imageUrl
+        private List<String> imageUrls;
         private String name;
         private String category;
         private int ticketNum;
@@ -36,9 +34,9 @@ public class RaffleResponseDTO {
         private int minTicket;
         private int view;
         private int likeCount;
-
+        private int applyCount;
         private String nickname;
-
-
+        private int followCount;
+        private int reviewCount;
     }
 }

@@ -51,8 +51,6 @@ public enum ErrorStatus implements BaseErrorCode {
     // 8.Dohyun- 후기 관련 에러
     REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "REVIEW_4001", "해당 리뷰를 찾을 수 없습니다.");
 
-
-
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
