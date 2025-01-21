@@ -59,7 +59,7 @@ public class Raffle extends BaseEntity {
     List<Apply> applyList;
 
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
-    @Builder.Default
+    @Builder.Default // 이슈
     List<Image> images = new ArrayList<>();
 
     // 연관관계 편의 메서드
