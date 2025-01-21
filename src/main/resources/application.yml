@@ -8,7 +8,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/jmarket
     username: root
-    password: Yeohuiju03 #${DB_PASSWORD}
+    password: ${DB_PASSWORD}
 
   servlet:
     multipart:
