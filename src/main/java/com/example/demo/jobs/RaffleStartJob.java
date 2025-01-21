@@ -8,18 +8,18 @@ import com.example.demo.repository.RaffleRepository;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
 public class RaffleStartJob implements Job {
 
-    @Autowired
-    private RaffleRepository raffleRepository;
+    private final RaffleRepository raffleRepository;
 
     @Override
+    @Transactional
     public void execute(JobExecutionContext context) {
 
         Long raffleId = context.getJobDetail().getJobDataMap().getLong("raffleId");

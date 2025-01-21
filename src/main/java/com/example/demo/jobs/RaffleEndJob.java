@@ -6,6 +6,7 @@ import com.example.demo.entity.Apply;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import com.example.demo.entity.base.enums.RaffleStatus;
+import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,43 +22,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RaffleEndJob implements Job {
 
-    @Autowired
-    private RaffleRepository raffleRepository;
-    // 관련 코드 PR 상태
-//    @Autowired
-//    private ApplyRepository applyRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final RaffleRepository raffleRepository;
+    private final ApplyRepository applyRepository;
+    private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public void execute(JobExecutionContext context) {
         Long raffleId = context.getJobDetail().getJobDataMap().getLong("raffleId");
 
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-        // 관련 코드 PR 상태
-//        int applyCount = raffleRepository.countApplyByRaffleId(raffleId);
+        int applyCount = applyRepository.countByRaffle(raffle);
 
-//        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket()) {
-//            raffle.setRaffleStatus(RaffleStatus.UNFULFILLED);
-//            raffleRepository.save(raffle);
-//
-//            // 티켓 반환
-//            List<Apply> applyList = applyRepository.findByRaffle(raffle);
-//            int refundTicket = raffle.getTicketNum();
-//
-//            for (Apply apply : applyList) {
-//                User user = apply.getUser();
-//                user.setTicket_num(user.getTicket_num() - refundTicket);
-//                userRepository.save(user);
-//            }
-//
-//        } else {
-//            raffle.setRaffleStatus(RaffleStatus.ENDED);
-//            raffleRepository.save(raffle);
-//
-//            // 당첨자 추첨 코드
-//        }
+        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket()) {
+            raffle.setRaffleStatus(RaffleStatus.UNFULFILLED);
+            raffleRepository.save(raffle);
+
+            // 티켓 반환
+            List<Apply> applyList = applyRepository.findByRaffle(raffle);
+            int refundTicket = raffle.getTicketNum();
+
+            applyList.forEach(apply -> {
+                User user = apply.getUser();
+                user.setTicket_num(user.getTicket_num() + refundTicket);
+                userRepository.save(user);
+            });
+
+        } else {
+            raffle.setRaffleStatus(RaffleStatus.ENDED);
+            raffleRepository.save(raffle);
+
+            // TODO: 당첨자 추첨 로직 추가
+        }
     }
 }

@@ -56,7 +56,7 @@ public class Raffle extends BaseEntity{
 
     @Setter
     @Enumerated (EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10)")
+    @Column(columnDefinition = "VARCHAR(15)")
     private RaffleStatus raffleStatus;
   
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)

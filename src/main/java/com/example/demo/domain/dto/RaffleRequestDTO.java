@@ -10,7 +10,7 @@ public class RaffleRequestDTO {
     public static class UploadDTO {
         String category;
         String name;
-        ItemStatus status;
+        ItemStatus itemStatus;
         String description;
         int ticketNum;
         int minTicket;
