@@ -1,10 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +23,7 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String nickname;
 
+    @Setter
     private int ticket_num = 0;
 
     //TODO: 후순위 기능인 rank
