@@ -79,6 +79,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // Huiju - 배송 관련 에러
     DELIVERY_NO_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "등록된 주소가 없습니다."),
 
+    // Huiju - 주소 관련 에러
+    ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "ADDRESS_4001", "해당 주소를 찾을 수 없습니다."),
+    ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4031", "선택한 주소가 해당 사용자에게 등록된 주소가 아닙니다."),
 
     ;
   
