@@ -55,7 +55,7 @@ public class ApplyServiceImpl implements ApplyService {
             throw new CustomException(ErrorStatus.APPLY_SELF_RAFFLE);
 
         if (applyRepository.existsByRaffleAndUser(raffle, user))
-            throw new CustomException(ErrorStatus.APPLY_ALREADY_APPLIED);
+            throw new CustomException(ErrorStatus.APPLY_ALREADY_APPILED);
 
         if (raffleTicket > userTicket)
             throw new CustomException(ErrorStatus.APPLY_INSUFFICIENT_TICKET);
