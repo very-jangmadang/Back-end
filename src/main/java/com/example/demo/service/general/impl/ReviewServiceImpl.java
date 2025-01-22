@@ -51,8 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         //래플의 주최자
-        User host= raffle.getUser();
-        if (!host.getId().equals(reviewRequest.getUserId())) {
+        if (!raffle.getUser().getId().equals(reviewRequest.getUserId())) {
             throw new CustomException(ErrorStatus.RAFFLE_USER_MISMATCH); // 주최자와 사용자가 일치하지 않음
         }
 
