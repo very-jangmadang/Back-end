@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,9 +13,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Raffle extends BaseEntity{
+public class Raffle extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "raffle_id")
     private Long id;
 
@@ -35,9 +37,7 @@ public class Raffle extends BaseEntity{
 
     private String description;
 
-    private String imageUrl;
-
-    @Enumerated (EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
     private Status status;
 
@@ -49,12 +49,47 @@ public class Raffle extends BaseEntity{
 
     private int minTicket;
 
-    private int likeCount = 0; // 초기값 0
-  
     private int view = 0; // 초기값 0
-  
+
+//    private int likeCount = 0; // 초기값 0
+//
+//    private int apply_count = 0; // 초기값 0
+
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
 
+    @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
+    @Builder.Default
+    List<Image> images = new ArrayList<>();
 
+    // 연관관계 편의 메서드
+    public void addImage(Image image) {
+        this.images.add(image); //
+        image.setRaffle(this);
+    }
+
+    // 조회수 증가
+    public void addView() {
+        this.view += 1;
+    }
+
+//    // 찜 횟수 증가
+//    public void upLikeCount(){
+//        this.likeCount += 1;
+//    }
+//
+//    // 찜 횟수 감소
+//    public void downLikeCount(){
+//        this.likeCount -= 1;
+//    }
+//
+//    // 응모 수 증가
+//    public void addApplyCount(){
+//        this.apply_count += 1;
+//    }
+//
+//    // 응모 수 감소
+//    public void downApplyCount(){
+//        this.apply_count -= 1;
+//    }
 }

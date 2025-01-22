@@ -61,10 +61,8 @@ public enum ErrorStatus implements BaseErrorCode {
     APPLY_SELF_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4004", "본인이 개최한 래플에는 응모할 수 없습니다."),
     APPLY_ALREADY_APPILED(HttpStatus.BAD_REQUEST, "APPLY_4005", "이미 응모한 래플입니다."),
 
-    ;
-
-
-
+    // 11. Hyungjin - 이미지 관련 에러
+    IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_4001", "이미지 업로드에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
