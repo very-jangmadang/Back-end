@@ -1,6 +1,5 @@
 package com.example.demo.service.general.impl;
 
-import com.example.demo.base.ApiResponse;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.dto.ApplyResponseDTO;
@@ -51,6 +50,12 @@ public class ApplyServiceImpl implements ApplyService {
             throw new CustomException(ErrorStatus.APPLY_UNOPENED_RAFFLE);
         if (raffle.getRaffleStatus() != RaffleStatus.ACTIVE)
             throw new CustomException(ErrorStatus.APPLY_FINISHED_RAFFLE);
+
+        if (raffle.getUser().getId().equals(user.getId()))
+            throw new CustomException(ErrorStatus.APPLY_SELF_RAFFLE);
+
+        if (applyRepository.existsByRaffleAndUser(raffle, user))
+            throw new CustomException(ErrorStatus.APPLY_ALREADY_APPILED);
 
         if (raffleTicket > userTicket)
             throw new CustomException(ErrorStatus.APPLY_INSUFFICIENT_TICKET);
