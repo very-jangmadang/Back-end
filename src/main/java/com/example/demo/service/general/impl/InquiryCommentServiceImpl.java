@@ -8,9 +8,11 @@ import com.example.demo.domain.dto.Inquiry.InquiryCommentRequestDTO;
 import com.example.demo.domain.dto.Inquiry.InquiryCommentResponseDTO;
 import com.example.demo.domain.dto.Inquiry.InquiryResponseDTO;
 import com.example.demo.entity.Inquiry;
+import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import com.example.demo.entity.InquiryComment;
 import com.example.demo.repository.InquiryCommentRepository;
+import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.InquiryCommentService;
 import com.example.demo.service.general.LikeService;
@@ -24,18 +26,25 @@ import com.example.demo.repository.InquiryRepository;
 @RequiredArgsConstructor
 public class InquiryCommentServiceImpl implements InquiryCommentService {
 
-    private final InquiryRepository inquiryRepository;
     private final UserRepository userRepository;
+    private final RaffleRepository raffleRepository;
     private final InquiryCommentRepository commentRepository;
 
     @Transactional
     public InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest) {
+
         // 사용자 조회
         User user = userRepository.findById(commentRequest.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
+        // 주최자 여부 확인
+        Raffle raffle = raffleRepository.findById(commentRequest.getRaffleId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+
+        boolean isHost = raffle.getUser().getId().equals(user.getId());
+
         // 댓글 작성
-        InquiryComment comment = InquiryCommentConverter.toComment(commentRequest, user);
+        InquiryComment comment = InquiryCommentConverter.toComment(commentRequest, user,isHost, raffle);
         commentRepository.save(comment);
 
         InquiryCommentResponseDTO commentResponse = InquiryCommentConverter.toCommentResponseDTO(comment);

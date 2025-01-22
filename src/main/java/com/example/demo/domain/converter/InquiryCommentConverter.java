@@ -3,16 +3,19 @@ package com.example.demo.domain.converter;
 import com.example.demo.domain.dto.Inquiry.InquiryCommentRequestDTO;
 import com.example.demo.domain.dto.Inquiry.InquiryCommentResponseDTO;
 import com.example.demo.entity.InquiryComment;
+import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 
 import java.time.LocalDateTime;
 
 public class InquiryCommentConverter {
 
-    public static InquiryComment toComment(InquiryCommentRequestDTO CommentRequest, User user) {
+    public static InquiryComment toComment(InquiryCommentRequestDTO CommentRequest, User user, boolean isHost, Raffle raffle) {
         return InquiryComment.builder()
-                .seller(user)
+                .user(user)
                 .content(CommentRequest.getContent())
+                .isHost(isHost)
+                .raffle(raffle)
                 .build();
     }
 
@@ -20,8 +23,9 @@ public class InquiryCommentConverter {
 
         return InquiryCommentResponseDTO.builder()
                 .CommentId(comment.getId())
-                .userId(comment.getSeller().getId())
+                .userId(comment.getUser().getId())
                 .content(comment.getContent())
+                .isHost(comment.isHost())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
