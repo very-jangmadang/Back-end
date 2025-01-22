@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 public class ApplyResponseDTO {
 
     @Getter
@@ -26,6 +28,7 @@ public class ApplyResponseDTO {
         private Long userId;
         private Long raffleId;
         private String raffleImage;
+        private LocalDateTime endAt;
     }
 
 }

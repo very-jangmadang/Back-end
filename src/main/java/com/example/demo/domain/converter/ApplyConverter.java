@@ -20,6 +20,7 @@ public class ApplyConverter {
                 .userId(apply.getUser().getId())
                 .raffleId(apply.getRaffle().getId())
                 .raffleImage(apply.getRaffle().getImages().get(0).getImageUrl())
+                .endAt(apply.getRaffle().getEndAt())
                 .build();
     }
 
