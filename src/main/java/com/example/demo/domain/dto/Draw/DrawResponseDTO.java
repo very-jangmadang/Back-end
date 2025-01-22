@@ -1,6 +1,5 @@
-package com.example.demo.domain.dto;
+package com.example.demo.domain.dto.Draw;
 
-import com.example.demo.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,8 +43,19 @@ public class DrawResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AddressDto {
+        private Long addressId;
         private String addressName;
         private String addressDetail;
         private Boolean isDefault;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddressChoiceDto {
+        private Long raffleId;
+        private Long winnerId;
+        private Long addressId;
     }
 }

@@ -1,7 +1,10 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.domain.dto.DrawResponseDTO;
+import com.example.demo.domain.dto.Draw.DrawRequestDTO;
+import com.example.demo.domain.dto.Draw.DrawResponseDTO;
+import com.example.demo.domain.dto.Like.LikeRequestDTO;
+import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.service.general.DrawService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +26,8 @@ public class DrawController {
     }
 
     @GetMapping("/{raffleId}/draw/result")
-    public ApiResponse<DrawResponseDTO.WinnerDto> getWinner
-            (@PathVariable Long raffleId) {
+    public ApiResponse<DrawResponseDTO.WinnerDto> getWinner(
+            @PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, drawService.getWinner(raffleId));
     }
@@ -33,6 +36,13 @@ public class DrawController {
     public ApiResponse<DrawResponseDTO.DeliveryDto> drawDelivery(@PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, drawService.getDelivery(raffleId));
+    }
+
+    @PostMapping("{raffleId}/draw/delivery")
+    public ApiResponse<DrawResponseDTO.AddressChoiceDto> chooseAddress(
+            @PathVariable Long raffleId, @RequestBody DrawRequestDTO drawRequestDTO) {
+
+        return ApiResponse.of(_OK, drawService.chooseAddress(raffleId, drawRequestDTO));
     }
 
 }

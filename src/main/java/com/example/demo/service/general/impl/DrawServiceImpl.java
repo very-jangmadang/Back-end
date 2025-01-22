@@ -2,11 +2,13 @@ package com.example.demo.service.general.impl;
 
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.domain.dto.DrawResponseDTO;
+import com.example.demo.domain.dto.Draw.DrawRequestDTO;
+import com.example.demo.domain.dto.Draw.DrawResponseDTO;
 import com.example.demo.entity.Address;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
+import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
@@ -29,6 +31,7 @@ public class DrawServiceImpl implements DrawService {
     private final ApplyRepository applyRepository;
     private final RaffleRepository raffleRepository;
     private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
 
     @Override
     public DrawResponseDTO.DrawDto getDrawRaffle(Long raffleId) {
@@ -85,6 +88,29 @@ public class DrawServiceImpl implements DrawService {
         }
 
         return toDeliveryDto(raffle, user, addressDtos);
+    }
+
+    @Override
+    @Transactional
+    public DrawResponseDTO.AddressChoiceDto chooseAddress(Long raffleId, DrawRequestDTO drawRequestDTO) {
+        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
+        User user = userRepository.findById(2L)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        Raffle raffle = raffleRepository.findById(raffleId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+
+        Long addressId = drawRequestDTO.getAddressId();
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
+
+        if (address.getUser() != user)
+            throw new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER);
+
+        raffle.setAddress(address);
+        raffleRepository.save(raffle);
+
+        return toAddressChoiceDto(raffle);
     }
 
 }

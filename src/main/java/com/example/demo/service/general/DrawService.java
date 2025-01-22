@@ -1,6 +1,7 @@
 package com.example.demo.service.general;
 
-import com.example.demo.domain.dto.DrawResponseDTO;
+import com.example.demo.domain.dto.Draw.DrawRequestDTO;
+import com.example.demo.domain.dto.Draw.DrawResponseDTO;
 
 public interface DrawService {
 
@@ -9,5 +10,7 @@ public interface DrawService {
     DrawResponseDTO.WinnerDto getWinner(Long raffleId);
 
     DrawResponseDTO.DeliveryDto getDelivery(Long raffleId);
+
+    DrawResponseDTO.AddressChoiceDto chooseAddress(Long raffleId, DrawRequestDTO drawRequestDTO);
 
 }
