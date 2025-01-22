@@ -38,6 +38,8 @@ public class Raffle extends BaseEntity {
 
     private String description;
 
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
     private ItemStatus itemStatus;
