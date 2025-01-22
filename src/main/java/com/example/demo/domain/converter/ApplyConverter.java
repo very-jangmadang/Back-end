@@ -10,7 +10,7 @@ public class ApplyConverter {
         return ApplyResponseDTO.EnterDto.builder()
                 .raffleId(raffle.getId())
                 .raffleName(raffle.getName())
-                .raffleImage(raffle.getImageUrl())
+                .raffleImage(raffle.getImages().get(0).getImageUrl())
                 .ticketNum(raffle.getTicketNum())
                 .build();
     }
@@ -19,7 +19,7 @@ public class ApplyConverter {
         return ApplyResponseDTO.ApplyDto.builder()
                 .userId(apply.getUser().getId())
                 .raffleId(apply.getRaffle().getId())
-                .raffleImage(apply.getRaffle().getImageUrl())
+                .raffleImage(apply.getRaffle().getImages().get(0).getImageUrl())
                 .build();
     }
 

@@ -1,5 +1,5 @@
 package com.example.demo.domain.dto.Raffle;
-import com.example.demo.entity.base.enums.Status;
+import com.example.demo.entity.base.enums.ItemStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +18,7 @@ public class RaffleRequestDTO {
         List<MultipartFile> files;
         String category;
         String name;
-        Status status;
+        ItemStatus itemStatus;
         String description;
         int ticketNum;
         int minTicket;

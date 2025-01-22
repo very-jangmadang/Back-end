@@ -6,9 +6,11 @@ import com.example.demo.entity.Category;
 import com.example.demo.entity.Image;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+
 
 @RequiredArgsConstructor
 public class RaffleConverter {
@@ -20,12 +22,13 @@ public class RaffleConverter {
                 .winner(null)
                 .category(category)
                 .name(request.getName())
-                .status(request.getStatus())
+                .itemStatus(request.getItemStatus())
                 .description(request.getDescription())
                 .ticketNum(request.getTicketNum())
                 .minTicket(request.getMinTicket())
                 .startAt(request.getStartAt())
                 .endAt(request.getEndAt())
+                .raffleStatus(RaffleStatus.UNOPENED)
                 .build();
     }
 

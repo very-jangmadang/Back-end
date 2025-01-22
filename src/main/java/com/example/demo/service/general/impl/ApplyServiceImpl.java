@@ -6,6 +6,7 @@ import com.example.demo.domain.dto.ApplyResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
@@ -45,17 +46,16 @@ public class ApplyServiceImpl implements ApplyService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
         int userTicket = user.getTicket_num();
 
-        LocalDateTime now = LocalDateTime.now();
-        if (now.isBefore(raffle.getStartAt()))
+        if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED)
             throw new CustomException(ErrorStatus.APPLY_UNOPENED_RAFFLE);
-        if (now.isAfter(raffle.getEndAt()) || now.isEqual(raffle.getEndAt()))
+        if (raffle.getRaffleStatus() != RaffleStatus.ACTIVE)
             throw new CustomException(ErrorStatus.APPLY_FINISHED_RAFFLE);
 
         if (raffle.getUser().getId().equals(user.getId()))
             throw new CustomException(ErrorStatus.APPLY_SELF_RAFFLE);
 
         if (applyRepository.existsByRaffleAndUser(raffle, user))
-            throw new CustomException(ErrorStatus.APPLY_ALREADY_APPILED);
+            throw new CustomException(ErrorStatus.APPLY_ALREADY_APPLIED);
 
         if (raffleTicket > userTicket)
             throw new CustomException(ErrorStatus.APPLY_INSUFFICIENT_TICKET);

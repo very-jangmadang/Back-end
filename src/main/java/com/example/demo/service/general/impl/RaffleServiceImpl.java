@@ -14,6 +14,7 @@ import com.example.demo.repository.ImageRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.ImageService;
+import com.example.demo.service.general.RaffleSchedulerService;
 import com.example.demo.service.general.RaffleService;
 import com.example.demo.service.general.S3UploadService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class RaffleServiceImpl implements RaffleService {
     private final RaffleRepository raffleRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final RaffleSchedulerService raffleSchedulerService;
     private final S3UploadService s3UploadService;
     private final ImageService imageService;
 
@@ -61,6 +63,9 @@ public class RaffleServiceImpl implements RaffleService {
 
         // 6. 래플 저장
         raffleRepository.save(raffle);
+
+        raffleSchedulerService.scheduleRaffleJob(raffle, true);
+        raffleSchedulerService.scheduleRaffleJob(raffle, false);
 
         // 7. 래플 엔티티를 ResponseDTO로 변환 후 반환
         return RaffleConverter.toUploadResultDTO(raffle);
