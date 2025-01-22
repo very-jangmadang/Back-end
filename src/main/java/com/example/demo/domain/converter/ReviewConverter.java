@@ -13,9 +13,10 @@ import java.util.List;
 
 public class ReviewConverter {
 
-    public static Review toReview(ReviewRequestDTO.ReviewUploadDTO Reviewrequest, User user,User reviewer, List<String> imageUrls) {
+    public static Review toReview(ReviewRequestDTO.ReviewUploadDTO Reviewrequest, Raffle raffle,User user,User reviewer, List<String> imageUrls) {
 
         return Review.builder()
+                .raffle(raffle)
                 .user(user)
                 .reviewer(reviewer)
                 .score(Reviewrequest.getScore())
@@ -29,6 +30,7 @@ public class ReviewConverter {
         return ReviewResponseDTO.builder()
                 .reviewId(review.getId())
                 .userId(review.getUser().getId())
+                .raffleId(review.getRaffle().getId())
                 .reviewerId(review.getReviewer().getId())
                 .score((float) review.getScore())
                 .text(review.getText())

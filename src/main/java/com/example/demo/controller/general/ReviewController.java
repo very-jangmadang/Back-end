@@ -35,7 +35,6 @@ public class ReviewController {
     public ApiResponse<ReviewResponseDTO> addReview(
             @ModelAttribute @Valid ReviewRequestDTO.ReviewUploadDTO reviewRequest) {
 
-
         ReviewResponseDTO reviewResponse = reviewService.addReview(reviewRequest);
 
         return ApiResponse.of(SuccessStatus._OK, reviewResponse);

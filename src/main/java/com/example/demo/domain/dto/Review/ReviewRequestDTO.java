@@ -18,10 +18,12 @@ public class ReviewRequestDTO{
     @Getter
     @Setter
     public static class ReviewUploadDTO {
-        @NotNull(message = "User ID must not be null")
-        private Long userId;
+        @NotNull(message = "raffle ID must not be null")
+        private Long raffleId;
         @NotNull(message = "Reviewer ID must not be null")
         private Long reviewerId;
+        @NotNull(message = "User ID must not be null")
+        private Long userId;
         private Float score;
         private String text;
 
