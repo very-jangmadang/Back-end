@@ -7,9 +7,9 @@ server:
 spring:
   datasource:
 
-    url: jdbc:mysql://localhost:3306/jmarket
+    url: jdbc:mysql://localhost:3306/jangMarket
     username: root
-    password: ${DB_PASSWORD}
+    password: kkhj7346
 
 
   web:
