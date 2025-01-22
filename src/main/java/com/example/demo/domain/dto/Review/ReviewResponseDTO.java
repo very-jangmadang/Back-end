@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -16,5 +18,6 @@ public class ReviewResponseDTO {
     private Long reviewerId;
     private float score;
     private String text;
+    private LocalDateTime timestamp;
 
 }

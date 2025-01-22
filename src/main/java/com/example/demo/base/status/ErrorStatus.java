@@ -44,7 +44,24 @@ public enum ErrorStatus implements BaseErrorCode {
     // 6. Hyungjin - 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_4001", "해당 카테고리를 찾을 수 없습니다."),
 
-    // 7. Hyungjin - 이미지 관련 에러
+    // 7. Dohyun - 찜 관련 에러
+    LIKE_ALREADY_FOUND(HttpStatus.BAD_REQUEST, "LIKE_4001", "이미 존재하는 찜입니다."),
+    LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "LIKE_4002", "해당 찜을 찾을 수 없습니다."),
+
+    // 8.Dohyun- 후기 관련 에러
+    REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "REVIEW_4001", "해당 리뷰를 찾을 수 없습니다."),
+
+    // 9. Dohyun - 문의 관련 에러
+    INQUIRY_NOT_FOUND(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "해당 문의를 찾을 수 없습니다."),
+
+    // 10. Huiju - 응모 관련 에러
+    APPLY_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
+    APPLY_UNOPENED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "아직 응모가 시작되지 않은 래플입니다."),
+    APPLY_FINISHED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 종료된 래플입니다."),
+    APPLY_SELF_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4004", "본인이 개최한 래플에는 응모할 수 없습니다."),
+    APPLY_ALREADY_APPILED(HttpStatus.BAD_REQUEST, "APPLY_4005", "이미 응모한 래플입니다."),
+
+    // 11. Hyungjin - 이미지 관련 에러
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_4001", "이미지 업로드에 실패했습니다.");
 
     private final HttpStatus httpStatus;

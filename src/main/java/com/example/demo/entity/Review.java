@@ -26,6 +26,5 @@ public class Review extends BaseEntity{
 
     private double score;
 
-    private String image;
 
 }
