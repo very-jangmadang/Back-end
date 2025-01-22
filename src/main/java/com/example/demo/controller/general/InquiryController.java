@@ -1,11 +1,14 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
-import com.example.demo.domain.dto.Inquiry.InquiryDeleteDTO;
-import com.example.demo.domain.dto.Inquiry.InquiryRequestDTO;
-import com.example.demo.domain.dto.Inquiry.InquiryResponseDTO;
+import com.example.demo.domain.dto.Inquiry.*;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.entity.Inquiry;
+import com.example.demo.repository.InquiryRepository;
+import com.example.demo.service.general.InquiryCommentService;
 import com.example.demo.service.general.InquiryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ import java.util.List;
 public class InquiryController {
 
     private final InquiryService inquiryService;
+    private final InquiryRepository inquiryRepository;
+    private final InquiryCommentService inquiryCommentService;
 
     //문의글 작성
     @Operation(summary = "문의글 작성")
@@ -53,6 +58,22 @@ public class InquiryController {
         List<InquiryResponseDTO> inquiries = inquiryService.getInquiriesByRaffleId(raffleId);
 
         return ApiResponse.of(SuccessStatus._OK, inquiries);
+    }
+
+    // 문의 댓글 작성
+    @PostMapping("/{inquiryId}/comment")
+    public ApiResponse<InquiryCommentResponseDTO> addComment(
+            @PathVariable Long inquiryId,
+            @RequestBody InquiryCommentRequestDTO commentRequest) {
+
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
+
+
+        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest);
+
+        return com.example.demo.base.ApiResponse.of(SuccessStatus._OK, commentResponse);
+
     }
 }
 
