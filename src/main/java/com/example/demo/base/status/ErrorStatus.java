@@ -51,14 +51,19 @@ public enum ErrorStatus implements BaseErrorCode {
     // 8.Dohyun- 후기 관련 에러
     REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "REVIEW_4001", "해당 리뷰를 찾을 수 없습니다."),
 
-
     // 9. Dohyun - 문의 관련 에러
     INQUIRY_NOT_FOUND(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "해당 문의를 찾을 수 없습니다."),
 
     // 10. Huiju - 응모 관련 에러
     APPLY_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
     APPLY_UNOPENED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "아직 응모가 시작되지 않은 래플입니다."),
+<<<<<<< HEAD
     APPLY_FINISHED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 종료된 래플입니다.");
+=======
+    APPLY_FINISHED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 종료된 래플입니다."),
+    APPLY_SELF_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4004", "본인이 개최한 래플에는 응모할 수 없습니다."),
+    APPLY_ALREADY_APPILED(HttpStatus.BAD_REQUEST, "APPLY_4005", "이미 응모한 래플입니다."),
+>>>>>>> 80be359322114126c9e273f0d88b13a2c7e5da2f
 
     ;
 
