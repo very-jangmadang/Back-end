@@ -35,7 +35,8 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String role;
 
-    private String address;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> addresses;
 
     private double score;
 
