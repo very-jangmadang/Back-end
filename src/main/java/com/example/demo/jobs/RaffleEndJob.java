@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -44,11 +45,13 @@ public class RaffleEndJob implements Job {
             List<Apply> applyList = applyRepository.findByRaffle(raffle);
             int refundTicket = raffle.getTicketNum();
 
-            applyList.forEach(apply -> {
-                User user = apply.getUser();
-                user.setTicket_num(user.getTicket_num() + refundTicket);
-                userRepository.save(user);
-            });
+            List<Long> userIds = applyList.stream()
+                    .map(apply -> apply.getUser().getId())
+                    .collect(Collectors.toList());
+
+            if (!userIds.isEmpty()) {
+                userRepository.batchUpdateTicketNum(refundTicket, userIds);
+            }
 
         } else {
             raffle.setRaffleStatus(RaffleStatus.ENDED);
