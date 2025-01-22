@@ -12,7 +12,7 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     int countByRaffle(Raffle raffle);
 
     List<Apply> findByRaffle(Raffle raffle);
-
+  
     boolean existsByRaffleAndUser(Raffle raffle, User user);
 
 }

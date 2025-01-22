@@ -9,6 +9,8 @@ import com.example.demo.entity.User;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 public class RaffleConverter {

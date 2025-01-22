@@ -70,7 +70,7 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_INTERRUPT(HttpStatus.SERVICE_UNAVAILABLE, "JOB_5031", "Job 인터럽트가 발생했습니다."),
 
     ;
-
+  
 
     private final HttpStatus httpStatus;
     private final String code;
