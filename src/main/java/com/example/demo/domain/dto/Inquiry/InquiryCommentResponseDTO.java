@@ -15,6 +15,7 @@ public class InquiryCommentResponseDTO {
     private Long CommentId;
     private Long userId;
     private String content;
+    private boolean isHost;
     private LocalDateTime timestamp;
 
 }
