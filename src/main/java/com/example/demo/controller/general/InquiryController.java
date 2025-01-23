@@ -66,9 +66,6 @@ public class InquiryController {
             @PathVariable Long inquiryId,
             @RequestBody InquiryCommentRequestDTO commentRequest) {
 
-        Inquiry inquiry = inquiryRepository.findById(inquiryId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
-
 
         InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest,inquiryId);
 
