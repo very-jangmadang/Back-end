@@ -70,6 +70,11 @@ public class Raffle extends BaseEntity {
     @Builder.Default
     List<Image> images = new ArrayList<>();
 
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     // 연관관계 편의 메서드
     public void addImage(Image image) {
         this.images.add(image); //

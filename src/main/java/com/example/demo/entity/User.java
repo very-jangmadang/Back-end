@@ -35,11 +35,13 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String role;
 
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> addresses;
+
     @Column(nullable = false)
     @Setter
     private double averageScore;
-
-    private String address;
 
     private double score;
 
