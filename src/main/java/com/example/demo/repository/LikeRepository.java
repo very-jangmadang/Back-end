@@ -5,8 +5,10 @@ import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
@@ -19,5 +21,9 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     Long countByRaffleId (Long raffleId);
 
     boolean existsByRaffleAndUser(Raffle raffle, User user);
+
+    @Query("SELECT l.raffle.id, COUNT(l) > 0 " +
+            "FROM Like l WHERE l.raffle.id IN :raffleIds AND l.user = :user GROUP BY l.raffle.id")
+    List<Object[]> checkLikesByRaffleIdsAndUser(@Param("raffleIds") List<Long> raffleIds, @Param("user") User user);
 
 }

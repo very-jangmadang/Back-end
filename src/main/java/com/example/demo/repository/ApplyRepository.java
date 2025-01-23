@@ -4,8 +4,11 @@ import com.example.demo.entity.Apply;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ApplyRepository extends JpaRepository<Apply, Long> {
 
@@ -15,6 +18,12 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
   
     boolean existsByRaffleAndUser(Raffle raffle, User user);
 
-    List<Apply> findByUser(User user);
+    @Query("SELECT a FROM Apply a JOIN FETCH a.raffle r WHERE a.user = :user")
+    List<Apply> findWithRaffleByUser(@Param("user") User user);
+
+    @Query("SELECT a.raffle.id, COUNT(a) FROM Apply a WHERE a.raffle.id IN :raffleIds GROUP BY a.raffle.id")
+    List<Object[]> countAppliesByRaffleIds(@Param("raffleIds") List<Long> raffleIds);
+
+
 
 }

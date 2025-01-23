@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,18 +37,31 @@ public class MypageServiceImpl implements MypageService {
         User user = userRepository.findById(2L)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Apply> applyList = applyRepository.findByUser(user);
+        List<Apply> applyList = applyRepository.findWithRaffleByUser(user);
+        applyList.sort(Comparator.comparing(Apply::getCreatedAt, Comparator.reverseOrder()));
 
-        List<MypageResponseDTO.RaffleDto> applyListDtos = new ArrayList<>();
-        for (Apply apply : applyList) {
-            Raffle raffle = apply.getRaffle();
+        List<Long> raffleIds = applyList.stream()
+                .map(apply -> apply.getRaffle().getId())
+                .collect(Collectors.toList());
 
-            int applyNum = applyRepository.countByRaffle(raffle);
-            boolean isLiked = likeRepository.existsByRaffleAndUser(raffle, user);
+        List<Object[]> applyCounts = applyRepository.countAppliesByRaffleIds(raffleIds);
+        List<Object[]> likeStatuses = likeRepository.checkLikesByRaffleIdsAndUser(raffleIds, user);
 
-            MypageResponseDTO.RaffleDto raffleDto = MypageConverter.toRaffleDto(raffle, applyNum, isLiked);
-            applyListDtos.add(raffleDto);
-        }
+        Map<Long, Integer> raffleApplyCountMap = applyCounts.stream()
+                .collect(Collectors.toMap(result -> (Long) result[0], result -> ((Long) result[1]).intValue()));
+
+        Map<Long, Boolean> raffleLikeMap = likeStatuses.stream()
+                .collect(Collectors.toMap(result -> (Long) result[0], result -> (Boolean) result[1]));
+
+        List<MypageResponseDTO.RaffleDto> applyListDtos = applyList.stream()
+                .map(apply -> {
+                    Raffle raffle = apply.getRaffle();
+                    int applyNum = raffleApplyCountMap.getOrDefault(raffle.getId(), 0);
+                    boolean isLiked = raffleLikeMap.getOrDefault(raffle.getId(), false);
+
+                    return MypageConverter.toRaffleDto(raffle, applyNum, isLiked);
+                })
+                .collect(Collectors.toList());
 
         return MypageResponseDTO.ApplyListDto.builder()
                 .raffleList(applyListDtos)
