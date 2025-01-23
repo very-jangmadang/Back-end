@@ -15,4 +15,6 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
   
     boolean existsByRaffleAndUser(Raffle raffle, User user);
 
+    List<Apply> findByUser(User user);
+
 }
