@@ -29,13 +29,22 @@ spring:
     port: 587
     username: ${SPRING_MAIL_USERNAME}
     password: ${SPRING_MAIL_PASSWORD}
-    protocol: smtp
-    smtp:
-      auth: true
-      starttls:
-        enable: true
-      ssl:
-        trust: smtp.gmail.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    # 캐시 설정 (배포 환경에서는 true로 설정할 수 있음)
+    cache: false
+    enable-spring-el-compiler: true
 
   jpa:
     hibernate:

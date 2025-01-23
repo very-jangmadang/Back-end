@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.format.DateTimeFormatter;
+
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -42,13 +44,15 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(user.getEmail());
             helper.setFrom(fromEmail);
 
-            String subject = "[장마당] " + raffle.getName() + "당첨 및 배송 안내";
+            String subject = "[장마당] " + raffle.getName() + " 당첨 및 배송 안내";
             helper.setSubject(subject);
 
             Context context = new Context();
             context.setVariable("userName", user.getNickname());
             context.setVariable("raffleName", raffle.getName());
-            context.setVariable("deliveryInfoEnd", raffle.getEndAt().plusDays(7));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            context.setVariable("deliveryInfoEnd", raffle.getEndAt().plusDays(7).format(formatter));
+            context.setVariable("fromEmail", fromEmail);
 
             String body = templateEngine.process("EmailTemplate.html", context);
             helper.setText(body, true);
