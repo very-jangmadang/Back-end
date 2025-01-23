@@ -2,7 +2,6 @@ package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.MypageResponseDTO;
-import com.example.demo.entity.Address;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.DeliveryStatus;

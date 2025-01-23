@@ -1,9 +1,7 @@
 package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.DrawResponseDTO;
-import com.example.demo.entity.Address;
 import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
 
 import java.math.BigDecimal;
 import java.util.List;

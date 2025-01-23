@@ -1,17 +1,14 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.base.code.exception.CustomException;
-import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.dto.DrawResponseDTO;
 import com.example.demo.service.general.DrawService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Map;
 
+import static com.example.demo.base.status.SuccessStatus.REDILECT_SUCCESS;
 import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
@@ -20,35 +17,16 @@ import static com.example.demo.base.status.SuccessStatus._OK;
 public class DrawController {
 
     private final DrawService drawService;
-    private final HttpServletResponse response;
 
     @GetMapping("/{raffleId}/draw")
     public ApiResponse<?> drawRaffle(@PathVariable Long raffleId) {
 
         Map<String, Object> result = drawService.getDrawRaffle(raffleId);
         DrawResponseDTO.DrawDto drawDto = (DrawResponseDTO.DrawDto) result.get("drawDto");
-        Long deliveryId = (Long) result.get("deliveryId");
+        String redirectUrl = (String) result.get("redirectUrl");
 
-        if (deliveryId != null) {
-            try {
-                String redirectUrl = String.format("/api/permit/delivery/%d/owner", deliveryId);
-                response.sendRedirect(redirectUrl);
-
-                return null;
-            } catch (IOException e) {
-                throw new CustomException(ErrorStatus.DRAW_OWNER_REDIRECT_FAILED);
-            }
-        } else if (drawDto == null) {
-            try {
-                String redirectUrl = String.format("/api/permit/raffles/%d/draw/owner/result", raffleId);
-                response.sendRedirect(redirectUrl);
-
-                return null;
-            } catch (IOException e) {
-                throw new CustomException(ErrorStatus.DRAW_OWNER_REDIRECT_FAILED);
-            }
-
-        }
+        if (drawDto == null)
+            return ApiResponse.of(REDILECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
 
         return ApiResponse.of(_OK, drawDto);
 
@@ -62,24 +40,22 @@ public class DrawController {
     }
 
     @GetMapping("/{raffleId}/draw/owner/result")
-    public ApiResponse<DrawResponseDTO.RaffleResultDto> getResult(@PathVariable Long raffleId) {
+    public ApiResponse<DrawResponseDTO.RaffleResultDto> getRaffleResult(@PathVariable Long raffleId) {
 
-        return ApiResponse.of(_OK, drawService.getResult(raffleId));
+        return ApiResponse.of(_OK, drawService.getRaffleResult(raffleId));
     }
 
-    @GetMapping("/{raffleId}/draw/owner/selfdraw")
-    public ApiResponse<?> selfDraw(@PathVariable Long raffleId) {
+    @GetMapping("/{raffleId}/draw/owner/draw")
+    public ApiResponse<Map<String, String>> selfDraw(@PathVariable Long raffleId) {
+        String redirectUrl = drawService.selfDraw(raffleId);
 
-        Long deliveryId = drawService.selfDraw(raffleId);
+        return ApiResponse.of(REDILECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
+    }
 
-        try {
-            String redirectUrl = String.format("/api/permit/delivery/%d/owner", deliveryId);
-            response.sendRedirect(redirectUrl);
+    @GetMapping("/{raffleId}/draw/owner/cancel")
+    public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(@PathVariable Long raffleId) {
 
-            return null;
-        } catch (IOException e) {
-            throw new CustomException(ErrorStatus.DRAW_OWNER_REDIRECT_FAILED);
-        }
+        return ApiResponse.of(_OK, drawService.forceCancel(raffleId));
     }
 
 }

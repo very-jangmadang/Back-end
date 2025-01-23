@@ -32,6 +32,7 @@ public class MypageConverter {
                 .liked(isLiked)
                 .build();
     }
+
     public static MypageResponseDTO.AddressDto toAddressDto(Address address) {
         return MypageResponseDTO.AddressDto.builder()
                 .addressId(address.getId())

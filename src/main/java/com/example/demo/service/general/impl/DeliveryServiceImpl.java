@@ -2,6 +2,7 @@ package com.example.demo.service.general.impl;
 
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
+import com.example.demo.domain.converter.MypageConverter;
 import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.MypageResponseDTO;
@@ -17,15 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.demo.domain.converter.DeliveryConverter.*;
-import static com.example.demo.domain.converter.MypageConverter.toAddressDto;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class DeliveryServiceImpl implements DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
@@ -33,51 +31,58 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final AddressRepository addressRepository;
     private final ApplyRepository applyRepository;
 
-    @Override
-    public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
+    private User getUser() {
         // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
+        return userRepository.findById(2L)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+    }
 
-        Delivery delivery = deliveryRepository.findById(deliveryId)
+    private Delivery getDeliveryById(Long deliveryId) {
+        return deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
+    }
 
-        User winner = delivery.getWinner();
-        if (user != winner)
+    private void updateDeliveryStatus(Delivery delivery, DeliveryStatus status) {
+        delivery.setDeliveryStatus(status);
+        deliveryRepository.save(delivery);
+    }
+
+    @Override
+    @Transactional(rollbackFor = CustomException.class)
+    public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
+
+        if (!user.equals(delivery.getWinner()))
             throw new CustomException(ErrorStatus.DELIVERY_FAIL);
 
         LocalDateTime now = LocalDateTime.now();
         if (delivery.getDeliveryStatus() == DeliveryStatus.ADDRESS_WAITING
-                && now.isAfter(delivery.getAddressDeadline()))
+                && now.isAfter(delivery.getAddressDeadline())) {
+            updateDeliveryStatus(delivery, DeliveryStatus.ADDRESS_EXPIRED);
             throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
+        }
 
         List<Address> addressList = user.getAddresses();
 
         if (addressList.isEmpty())
             throw new CustomException(ErrorStatus.ADDRESS_NOT_FOUND);
 
-        List<MypageResponseDTO.AddressDto> addressDtos = new ArrayList<>();
-        for (Address address : addressList) {
-            MypageResponseDTO.AddressDto addressDto = toAddressDto(address);
-            addressDtos.add(addressDto);
-        }
+        List<MypageResponseDTO.AddressDto> addressDtos = addressList.stream()
+                .map(MypageConverter::toAddressDto)
+                .toList();
 
         return toDeliveryDto(delivery, addressDtos);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CustomException.class)
     public DeliveryResponseDTO.AddressChoiceDto chooseAddress(
             Long deliveryId, DeliveryRequestDTO.WinnerDTO winnerDTO) {
-        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
 
-        Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
-
-        User winner = delivery.getWinner();
-        if (user != winner)
+        if (!user.equals(delivery.getWinner()))
             throw new CustomException(ErrorStatus.DELIVERY_FAIL);
 
         Long addressId = winnerDTO.getAddressId();
@@ -87,8 +92,10 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         LocalDateTime now = LocalDateTime.now();
         if (delivery.getDeliveryStatus() == DeliveryStatus.ADDRESS_WAITING
-                && now.isAfter(delivery.getAddressDeadline()))
+                && now.isAfter(delivery.getAddressDeadline())) {
+            updateDeliveryStatus(delivery, DeliveryStatus.ADDRESS_EXPIRED);
             throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
+        }
 
         LocalDateTime deadline = LocalDateTime.now().withSecond(0).withNano(0).plusHours(96);
 
@@ -101,24 +108,45 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional(rollbackFor = CustomException.class)
+    public void waitShipping(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
+
+        if (!user.equals(delivery.getWinner()))
+            throw new CustomException(ErrorStatus.DELIVERY_FAIL);
+
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+
+        if (deliveryStatus == DeliveryStatus.SHIPPED)
+            throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
+
+        if (deliveryStatus == DeliveryStatus.READY)
+            throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_NOT_EXPIRED);
+
+        LocalDateTime deadline = delivery.getShippingDeadline().plusHours(24);
+        delivery.setShippingDeadline(deadline);
+        deliveryRepository.save(delivery);
+
+    }
+
+    @Override
+    @Transactional(rollbackFor = CustomException.class)
     public DeliveryResponseDTO.ResultDto getResult(Long deliveryId) {
-        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
 
-        Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
-
-        if (user != delivery.getUser())
+        if (!user.equals(delivery.getUser()))
             throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
 
         LocalDateTime now = LocalDateTime.now();
         if (delivery.getDeliveryStatus() == DeliveryStatus.READY
-                && now.isAfter(delivery.getShippingDeadline()))
+                && now.isAfter(delivery.getShippingDeadline())) {
+            updateDeliveryStatus(delivery, DeliveryStatus.SHIPPING_EXPIRED);
             throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
+        }
 
         Raffle raffle = delivery.getRaffle();
-
         int applyNum = applyRepository.countByRaffle(raffle);
         int ticket = raffle.getTicketNum();
 
@@ -127,29 +155,27 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CustomException.class)
     public DeliveryResponseDTO.ShippingDto addInvoice(
             Long deliveryId, DeliveryRequestDTO.OwnerDTO ownerDTO) {
 
-        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
 
-        Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
-
-        if (user != delivery.getUser())
+        if (!user.equals(delivery.getUser()))
             throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
 
-        LocalDateTime now = LocalDateTime.now();
-        if (deliveryStatus == DeliveryStatus.READY
-                && now.isAfter(delivery.getShippingDeadline()))
-            throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
-
         if (deliveryStatus == DeliveryStatus.ADDRESS_WAITING)
             throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
+
+        LocalDateTime now = LocalDateTime.now();
+        if (delivery.getDeliveryStatus() == DeliveryStatus.READY
+                && now.isAfter(delivery.getShippingDeadline())) {
+            updateDeliveryStatus(delivery, DeliveryStatus.SHIPPING_EXPIRED);
+            throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
+        }
 
         if (now.isAfter(delivery.getAddressDeadline()))
             throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
@@ -166,15 +192,12 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public DeliveryResponseDTO.ResultDto waitAddress(Long deliveryId) {
-        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+    @Transactional(rollbackFor = CustomException.class)
+    public void waitAddress(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
 
-        Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
-
-        if (user != delivery.getUser())
+        if (!user.equals(delivery.getUser()))
             throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
@@ -182,14 +205,12 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (deliveryStatus == DeliveryStatus.READY)
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
 
+        if (deliveryStatus == DeliveryStatus.ADDRESS_WAITING)
+            throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_NOT_EXPIRED);
+
         LocalDateTime deadline = delivery.getAddressDeadline().plusHours(24);
         delivery.setAddressDeadline(deadline);
         deliveryRepository.save(delivery);
 
-        Raffle raffle = delivery.getRaffle();
-        int applyNum = applyRepository.countByRaffle(raffle);
-        int ticket = raffle.getTicketNum();
-
-        return toResultDto(delivery, applyNum * ticket);
     }
 }

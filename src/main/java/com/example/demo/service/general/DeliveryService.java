@@ -8,9 +8,11 @@ public interface DeliveryService {
 
     DeliveryResponseDTO.AddressChoiceDto chooseAddress(Long deliveryId, DeliveryRequestDTO.WinnerDTO winnerDTO);
 
+    void waitShipping(Long deliveryId);
+
     DeliveryResponseDTO.ResultDto getResult(Long deliveryId);
 
     DeliveryResponseDTO.ShippingDto addInvoice(Long deliveryId, DeliveryRequestDTO.OwnerDTO ownerDTO);
 
-    DeliveryResponseDTO.ResultDto waitAddress(Long deliveryId);
+    void waitAddress(Long deliveryId);
 }

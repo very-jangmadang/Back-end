@@ -40,4 +40,12 @@ public class DrawResponseDTO {
         private BigDecimal totalAmount;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CancelDto {
+        private Long raffleId;
+    }
+
 }

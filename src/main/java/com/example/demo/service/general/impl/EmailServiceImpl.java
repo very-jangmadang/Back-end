@@ -2,6 +2,7 @@ package com.example.demo.service.general.impl;
 
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
+import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import com.example.demo.service.general.EmailService;
@@ -32,7 +33,10 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendEmail(User user, Raffle raffle) {
+    public void sendEmail(Delivery delivery) {
+        User user = delivery.getUser();
+        Raffle raffle = delivery.getRaffle();
+
         try {
 
             if (user.getEmail() == null)
@@ -50,8 +54,8 @@ public class EmailServiceImpl implements EmailService {
             Context context = new Context();
             context.setVariable("userName", user.getNickname());
             context.setVariable("raffleName", raffle.getName());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            context.setVariable("deliveryInfoEnd", raffle.getEndAt().plusDays(7).format(formatter));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            context.setVariable("deliveryInfoEnd", delivery.getAddressDeadline());
             context.setVariable("fromEmail", fromEmail);
 
             String body = templateEngine.process("EmailTemplate.html", context);

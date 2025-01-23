@@ -70,15 +70,14 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_EXECUTION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4001", "Job 실행에 실패했습니다."),
     JOB_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5001", "Job 저장에 실패했습니다."),
     JOB_UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5002", "알 수 없는 Job 에러가 발생했습니다."),
-    JOB_INTERRUPT(HttpStatus.SERVICE_UNAVAILABLE, "JOB_5031", "Job 인터럽트가 발생했습니다."),
+//    JOB_INTERRUPT(HttpStatus.SERVICE_UNAVAILABLE, "JOB_5031", "Job 인터럽트가 발생했습니다."),
 
     // 13. Huiju - 당첨자 추첨 관련 에러
     DRAW_EMPTY(HttpStatus.BAD_REQUEST, "DRAW_4001", "응모한 사용자가 없습니다."),
     DRAW_NO_WINNER_EMAIL(HttpStatus.BAD_REQUEST, "DRAW_4002", "당첨자의 이메일이 존재하지 않습니다."),
-    DRAW_FAIL(HttpStatus.BAD_REQUEST, "DRAW_4003", "당첨자가 아닙니다."),
+    DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4003", "해당 래플의 개최자가 아닙니다."),
     DRAW_EMAIL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DRAW_5001", "이메일 전송에 실패하였습니다."),
-    DRAW_OWNER_REDIRECT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DRAW_5001", "개최자를 리다이렉트하는데 실패했습니다."),
-    DRAW_YET(HttpStatus.BAD_REQUEST, "DRAW_4002", "아직 마감 기한이 되지 않았습니다."),
+    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4004", "아직 마감 기한이 되지 않았습니다."),
 
     // 14. Huiju - 배송 관련 에러
     DELIVERY_FAIL(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "당첨자가 아닙니다."),
@@ -89,6 +88,8 @@ public enum ErrorStatus implements BaseErrorCode {
     DELIVERY_BEFORE_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4006", "당첨자의 주소가 입력되지 않았습니다."),
     DELIVERY_ALREADY_SHIPPED(HttpStatus.BAD_REQUEST, "DELIVERY_4007", "이미 운송장을 등록했습니다."),
     DELIVERY_ALREADY_READY(HttpStatus.BAD_REQUEST, "DELIVERY_4008", "이미 당첨자의 주소가 입력되었습니다."),
+    DELIVERY_ADDRESS_NOT_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4009", "아직 배송지 입력 기한이 만료되지 않았습니다."),
+    DELIVERY_SHIPPING_NOT_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4010", "아직 운송장 입력 기한이 만료되지 않았습니다."),
 
     // 15. Huiju - 주소 관련 에러
     ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "ADDRESS_4001", "사용자에게 등록된 주소가 없습니다."),

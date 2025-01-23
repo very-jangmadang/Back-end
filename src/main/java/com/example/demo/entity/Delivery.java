@@ -2,10 +2,8 @@ package com.example.demo.entity;
 
 import com.example.demo.entity.base.enums.CourierCompany;
 import com.example.demo.entity.base.enums.DeliveryStatus;
-import com.example.demo.entity.base.enums.RaffleStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 

@@ -4,7 +4,6 @@ import com.example.demo.base.ApiResponse;
 import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.service.general.DeliveryService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +29,13 @@ public class DeliveryController {
         return ApiResponse.of(_OK, deliveryService.chooseAddress(deliveryId, winnerDTO));
     }
 
+    @GetMapping("{deliveryId}/winner/wait")
+    public ApiResponse<DeliveryResponseDTO.DeliveryDto> WaitShipping(@PathVariable Long deliveryId) {
+        deliveryService.waitShipping(deliveryId);
+
+        return ApiResponse.of(_OK, null);
+    }
+
     @GetMapping("{deliveryId}/owner")
     public ApiResponse<DeliveryResponseDTO.ResultDto> getResult(@PathVariable Long deliveryId) {
 
@@ -45,8 +51,9 @@ public class DeliveryController {
 
     @GetMapping("{deliveryId}/owner/wait")
     public ApiResponse<DeliveryResponseDTO.ResultDto> WaitAddress(@PathVariable Long deliveryId) {
+        deliveryService.waitAddress(deliveryId);
 
-        return ApiResponse.of(_OK, deliveryService.waitAddress(deliveryId));
+        return ApiResponse.of(_OK, null);
     }
 
 }
