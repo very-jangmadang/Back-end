@@ -31,7 +31,7 @@ public class RaffleEndJob implements Job {
     private final EmailService emailService;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CustomException.class)
     public void execute(JobExecutionContext context) {
         Long raffleId = context.getJobDetail().getJobDataMap().getLong("raffleId");
 
