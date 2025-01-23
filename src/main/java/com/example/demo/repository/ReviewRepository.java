@@ -13,7 +13,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findAllByUser(User user);
 
-    Optional<Review> findByUserIdAndId(Long userId, Long reviewId);
+    Optional<Review> findByReviewerIdAndId(Long userId, Long reviewId);
 
     Optional<Review> findByRaffleIdAndReviewerId(Long raffleId, Long reviewerId);
 }

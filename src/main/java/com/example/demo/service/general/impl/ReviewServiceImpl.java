@@ -87,8 +87,12 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(Long reviewId, ReviewDeleteDTO reviewDelete) {
 
         // 리뷰 내역 조회
-        Review review = reviewRepository.findByUserIdAndId(reviewDelete.getUserId(),reviewId)
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.REVIEW_NOT_FOUND));
+
+        // 요청자의 userId와 리뷰 작성자의 reviewerId 비교
+        if (!review.getReviewer().getId().equals(reviewDelete.getReviewerId()))
+            throw new CustomException(ErrorStatus.NO_DELETE_AUTHORITY);
 
         // 삭제
         reviewRepository.deleteById(reviewId);

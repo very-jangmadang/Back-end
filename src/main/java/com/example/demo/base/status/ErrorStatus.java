@@ -52,6 +52,7 @@ public enum ErrorStatus implements BaseErrorCode {
     RAFFLE_USER_MISMATCH(HttpStatus.BAD_REQUEST, "REVIEW_4002","주최자와 래플이 일치하지 않습니다." ),
     NOT_WINNER(HttpStatus.BAD_REQUEST, "REVIEW_4003","당첨자가 아닙니다." ),
     DUPLICATE_REVIEW(HttpStatus.BAD_REQUEST, "REVIEW_4004","이미 리뷰를 작성하였습니다."),
+    NO_DELETE_AUTHORITY(HttpStatus.BAD_REQUEST, "REVIEW_4005","삭제 권한이 없습니다."),
 
     // 9. Dohyun - 문의 관련 에러
     INQUIRY_NOT_FOUND(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "해당 문의를 찾을 수 없습니다."),
