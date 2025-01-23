@@ -8,6 +8,7 @@ import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewDeleteDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.Review;
 import com.example.demo.entity.User;
@@ -78,6 +79,9 @@ public class ReviewServiceImpl implements ReviewService {
 
         reviewRepository.save(review);
 
+        // 평균 평점 업데이트
+        updateAverageScore(user);
+
         return ReviewConverter.ToReviewResponseDTO(review);
 
     }
@@ -97,10 +101,12 @@ public class ReviewServiceImpl implements ReviewService {
         // 삭제
         reviewRepository.deleteById(reviewId);
 
+        updateAverageScore(review.getUser());
+
     }
 
     //리뷰 조회
-    public List<ReviewResponseDTO> getReviewsByUserId(Long userId) {
+    public ReviewWithAverageDTO getReviewsByUserId(Long userId) {
 
         // 사용자 조회
         User user = userRepository.findById(userId)
@@ -109,7 +115,13 @@ public class ReviewServiceImpl implements ReviewService {
         // 사용자의 모든 후기 조회
         List<Review> reviews = reviewRepository.findAllByUser(user);
 
-        return reviews.stream()
+        // 평균 점수 계산
+        double averageScore = reviews.stream()
+                .mapToDouble(Review::getScore)
+                .average()
+                .orElse(0.0);
+
+        List<ReviewResponseDTO> reviewResponseDTO =reviews.stream()
                 .map(review -> new ReviewResponseDTO(
                         review.getId(),               // reviewId
                         review.getUser().getId(),     // userId
@@ -121,6 +133,26 @@ public class ReviewServiceImpl implements ReviewService {
                         review.getCreatedAt()          // timestamp
                 ))
                 .collect(Collectors.toList());
+
+        return new ReviewWithAverageDTO(reviewResponseDTO, averageScore);
     }
+
+    private void updateAverageScore(User user) {
+
+        // 사용자에 대한 모든 리뷰를 가져오기
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+
+        // 평균 평점 계산
+        double averageScore = reviews.stream()
+                .mapToDouble(Review::getScore)
+                .average()
+                .orElse(0.0);
+
+        // 사용자의 평균 평점 업데이트
+        user.setAverageScore(averageScore);
+        userRepository.save(user);
+    }
+
+
 }
 
