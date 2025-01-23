@@ -73,15 +73,19 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5002", "알 수 없는 Job 에러가 발생했습니다."),
     JOB_INTERRUPT(HttpStatus.SERVICE_UNAVAILABLE, "JOB_5031", "Job 인터럽트가 발생했습니다."),
 
+    // 13. Huiju - 당첨자 추첨 관련 에러
     DRAW_EMPTY(HttpStatus.BAD_REQUEST, "DRAW_4001", "응모한 사용자가 없습니다."),
+    DRAW_NO_WINNER_EMAIL(HttpStatus.BAD_REQUEST, "DRAW_4002", "당첨자의 이메일이 존재하지 않습니다."),
     DRAW_FAIL(HttpStatus.BAD_REQUEST, "DRAW_4003", "당첨자가 아닙니다."),
+    DRAW_EMAIL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DRAW_5001", "이메일 전송에 실패하였습니다."),
 
-    // Huiju - 배송 관련 에러
+    // 14. Huiju - 배송 관련 에러
     DELIVERY_NO_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "등록된 주소가 없습니다."),
 
-    // Huiju - 주소 관련 에러
+    // 15. Huiju - 주소 관련 에러
     ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4001", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
 
+  
     ;
   
 
