@@ -41,6 +41,10 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
 
+        if (inquiry.getStatus() == null) {
+            inquiry.setStatus(InquiryStatus.NOT_ANSWERED);
+        }
+
         // 주최자 여부 확인
         boolean isHost = isRaffleHost(inquiry, user);
 
@@ -48,7 +52,7 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
         if (isHost) {
             inquiry.setStatus(InquiryStatus.ANSWERED); // 주최자가 댓글 작성
         } else {
-            if (inquiry.getStatus() == null || inquiry.getStatus() != InquiryStatus.ANSWERED) {
+            if ( inquiry.getStatus() != InquiryStatus.ANSWERED) {
                 inquiry.setStatus(InquiryStatus.NOT_ANSWERED); // 주최자가 댓글 미작성
             }
         }

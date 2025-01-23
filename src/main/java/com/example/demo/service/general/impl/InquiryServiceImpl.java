@@ -12,6 +12,7 @@ import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.entity.Inquiry;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
+import com.example.demo.entity.base.enums.InquiryStatus;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.service.general.InquiryService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,11 @@ public class InquiryServiceImpl implements InquiryService {
 
         // inquiry 객체 생성
         Inquiry inquiry = InquiryConverter.toInquiry(inquiryRequest, user, raffle);
+
+        //NOT_ANSWERED로 초기화
+        if (inquiry.getStatus() == null) {
+            inquiry.setStatus(InquiryStatus.NOT_ANSWERED);
+        }
 
         inquiryRepository.save(inquiry);
 
