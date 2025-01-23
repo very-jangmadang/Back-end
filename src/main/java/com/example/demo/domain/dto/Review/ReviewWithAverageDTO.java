@@ -14,5 +14,6 @@ import java.util.List;
 public class ReviewWithAverageDTO {
     private List<ReviewResponseDTO> reviews;
     private double averageScore;
+    private int reviewCount;
 
 }

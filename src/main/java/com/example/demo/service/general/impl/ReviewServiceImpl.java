@@ -134,7 +134,9 @@ public class ReviewServiceImpl implements ReviewService {
                 ))
                 .collect(Collectors.toList());
 
-        return new ReviewWithAverageDTO(reviewResponseDTO, averageScore);
+        int reviewCount = reviews.size();
+
+        return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
     }
 
     private void updateAverageScore(User user) {
