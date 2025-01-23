@@ -31,4 +31,15 @@ public class MypageResponseDTO {
     public static class ApplyListDto {
         List<RaffleDto> raffleList;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddressDto {
+        private Long addressId;
+        private String addressName;
+        private String addressDetail;
+        private Boolean isDefault;
+    }
 }

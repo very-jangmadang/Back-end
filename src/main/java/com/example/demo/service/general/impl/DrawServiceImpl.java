@@ -2,12 +2,11 @@ package com.example.demo.service.general.impl;
 
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.domain.dto.Draw.DrawRequestDTO;
-import com.example.demo.domain.dto.Draw.DrawResponseDTO;
-import com.example.demo.entity.Address;
+import com.example.demo.domain.dto.DrawResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.RaffleRepository;
@@ -17,8 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.example.demo.domain.converter.DrawConverter.*;
@@ -34,10 +34,32 @@ public class DrawServiceImpl implements DrawService {
     private final AddressRepository addressRepository;
 
     @Override
-    public DrawResponseDTO.DrawDto getDrawRaffle(Long raffleId) {
+    public Map<String, Object> getDrawRaffle(Long raffleId) {
+
+        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
+        User user = userRepository.findById(2L)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+
+        RaffleStatus raffleStatus = raffle.getRaffleStatus();
+
+        if (raffleStatus == RaffleStatus.UNOPENED || raffleStatus == RaffleStatus.ACTIVE)
+            throw new CustomException(ErrorStatus.DRAW_YET);
+
+        Map<String, Object> result = new HashMap<>();
+        if (raffle.getUser().equals(user)) {
+            if (raffleStatus == RaffleStatus.ENDED) {
+                result.put("drawDto", null);
+                result.put("deliveryId", raffle.getDelivery().getId());
+
+                return result;
+            } else {
+                result.put("drawDto", null);
+                result.put("deliveryId", null);
+            }
+        }
 
         List<Apply> applyList = applyRepository.findByRaffle(raffle);
 
@@ -48,7 +70,9 @@ public class DrawServiceImpl implements DrawService {
                 .map(apply -> apply.getUser().getNickname())
                 .collect(Collectors.toList());
 
-        return toDrawDto(raffle, nicknameList);
+        result.put("drawDto", toDrawDto(raffle, nicknameList));
+        result.put("deliveryId", null);
+        return result;
 
     }
 
@@ -62,53 +86,19 @@ public class DrawServiceImpl implements DrawService {
     }
 
     @Override
-    public DrawResponseDTO.DeliveryDto getDelivery(Long raffleId) {
-
-        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-
+    public DrawResponseDTO.RaffleResultDto getResult(Long raffleId) {
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-        User winner = raffle.getWinner();
+        int applyNum = applyRepository.countByRaffle(raffle);
+        int ticket = raffle.getTicketNum();
 
-        if (user != winner)
-            throw new CustomException(ErrorStatus.DRAW_FAIL);
-
-        List<Address> addressList = user.getAddresses();
-
-        if (addressList.isEmpty())
-            throw new CustomException(ErrorStatus.DELIVERY_NO_ADDRESS);
-
-        List<DrawResponseDTO.AddressDto> addressDtos = new ArrayList<>();
-        for (Address address : addressList) {
-            DrawResponseDTO.AddressDto addressDto = toAddressDto(address);
-            addressDtos.add(addressDto);
-        }
-
-        return toDeliveryDto(raffle, user, addressDtos);
+        return toRaffleResultDto(raffle, applyNum * ticket);
     }
 
     @Override
-    @Transactional
-    public DrawResponseDTO.AddressChoiceDto chooseAddress(Long raffleId, DrawRequestDTO drawRequestDTO) {
-        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+    public Long selfDraw(Long raffleId) {
 
-        Raffle raffle = raffleRepository.findById(raffleId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
-
-        Long addressId = drawRequestDTO.getAddressId();
-
-        Address address = addressRepository.findByIdAndUser(addressId, user)
-                .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER));
-
-        raffle.setAddress(address);
-        raffleRepository.save(raffle);
-
-        return toAddressChoiceDto(raffle);
+        return null;
     }
-
 }

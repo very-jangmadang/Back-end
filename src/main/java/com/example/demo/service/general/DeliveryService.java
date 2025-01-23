@@ -1,0 +1,16 @@
+package com.example.demo.service.general;
+
+import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
+import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
+
+public interface DeliveryService {
+    DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId);
+
+    DeliveryResponseDTO.AddressChoiceDto chooseAddress(Long deliveryId, DeliveryRequestDTO.WinnerDTO winnerDTO);
+
+    DeliveryResponseDTO.ResultDto getResult(Long deliveryId);
+
+    DeliveryResponseDTO.ShippingDto addInvoice(Long deliveryId, DeliveryRequestDTO.OwnerDTO ownerDTO);
+
+    DeliveryResponseDTO.ResultDto waitAddress(Long deliveryId);
+}

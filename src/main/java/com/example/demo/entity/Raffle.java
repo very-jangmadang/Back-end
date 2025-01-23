@@ -5,6 +5,7 @@ import com.example.demo.entity.base.enums.RaffleStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,6 @@ public class Raffle extends BaseEntity {
 //
 //    private int apply_count = 0; // 초기값 0
 
-    @Setter
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(15)")
     private RaffleStatus raffleStatus;
@@ -71,10 +71,12 @@ public class Raffle extends BaseEntity {
     @Builder.Default
     List<Image> images = new ArrayList<>();
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal shippingFee;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_id")
+    Delivery delivery;
 
     // 연관관계 편의 메서드
     public void addImage(Image image) {
@@ -86,6 +88,8 @@ public class Raffle extends BaseEntity {
     public void addView() {
         this.view += 1;
     }
+
+    public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
 
 //    // 찜 횟수 증가
 //    public void upLikeCount(){
