@@ -27,29 +27,34 @@ import com.example.demo.repository.InquiryRepository;
 public class InquiryCommentServiceImpl implements InquiryCommentService {
 
     private final UserRepository userRepository;
-    private final RaffleRepository raffleRepository;
+    private final InquiryRepository inquiryRepository;
     private final InquiryCommentRepository commentRepository;
 
     @Transactional
-    public InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest) {
+    public InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest,Long inquiryId) {
 
         // 사용자 조회
         User user = userRepository.findById(commentRequest.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
-        // 주최자 여부 확인
-        Raffle raffle = raffleRepository.findById(commentRequest.getRaffleId())
-                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
 
-        boolean isHost = raffle.getUser().getId().equals(user.getId());
+        // 주최자 여부 확인
+        boolean isHost = isRaffleHost(inquiry, user);
 
         // 댓글 작성
-        InquiryComment comment = InquiryCommentConverter.toComment(commentRequest, user,isHost, raffle);
+        InquiryComment comment = InquiryCommentConverter.toComment(commentRequest, user,isHost);
         commentRepository.save(comment);
 
         InquiryCommentResponseDTO commentResponse = InquiryCommentConverter.toCommentResponseDTO(comment);
 
         return commentResponse;
+    }
+
+    private boolean isRaffleHost(Inquiry inquiry, User user) {
+        Raffle raffle = inquiry.getRaffle();
+        return raffle.getUser().getId().equals(user.getId());
     }
 }
 
