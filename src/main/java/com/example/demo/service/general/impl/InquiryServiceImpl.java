@@ -79,7 +79,8 @@ public class InquiryServiceImpl implements InquiryService {
                         inquiry.getUser().getId(),    // userId
                         inquiry.getRaffle().getId(),  // raffleId
                         inquiry.getTitle(),           // title
-                        inquiry.getContent(),         // content
+                        inquiry.getContent(),          //content
+                        inquiry.getStatus(),          // status
                         inquiry.getCreatedAt()        // timestamp
                 ))
                 .collect(Collectors.toList());

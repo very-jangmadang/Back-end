@@ -11,6 +11,7 @@ import com.example.demo.entity.Inquiry;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import com.example.demo.entity.InquiryComment;
+import com.example.demo.entity.base.enums.InquiryStatus;
 import com.example.demo.repository.InquiryCommentRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
@@ -42,6 +43,16 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
 
         // 주최자 여부 확인
         boolean isHost = isRaffleHost(inquiry, user);
+
+        // 문의 상태 업데이트
+        if (isHost) {
+            inquiry.setStatus(InquiryStatus.ANSWERED); // 주최자가 댓글 작성
+        } else {
+            if (inquiry.getStatus() == null || inquiry.getStatus() != InquiryStatus.ANSWERED) {
+                inquiry.setStatus(InquiryStatus.NOT_ANSWERED); // 주최자가 댓글 미작성
+            }
+        }
+        inquiryRepository.save(inquiry); // 상태 변경 저장
 
         // 댓글 작성
         InquiryComment comment = InquiryCommentConverter.toComment(commentRequest, user,isHost);

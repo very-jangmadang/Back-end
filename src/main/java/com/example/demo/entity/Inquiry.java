@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.base.enums.InquiryStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,10 @@ public class Inquiry extends BaseEntity{
 
     @Column(length = 30)
     private String title;
+
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private InquiryStatus status;
 
     private String content;
 
