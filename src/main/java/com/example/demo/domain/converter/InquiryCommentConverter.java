@@ -10,12 +10,11 @@ import java.time.LocalDateTime;
 
 public class InquiryCommentConverter {
 
-    public static InquiryComment toComment(InquiryCommentRequestDTO CommentRequest, User user, boolean isHost, Raffle raffle) {
+    public static InquiryComment toComment(InquiryCommentRequestDTO CommentRequest, User user, boolean isHost) {
         return InquiryComment.builder()
                 .user(user)
                 .content(CommentRequest.getContent())
                 .isHost(isHost)
-                .raffle(raffle)
                 .build();
     }
 

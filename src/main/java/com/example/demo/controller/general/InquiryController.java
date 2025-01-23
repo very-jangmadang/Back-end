@@ -70,9 +70,9 @@ public class InquiryController {
                 .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
 
 
-        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest);
+        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest,inquiryId);
 
-        return com.example.demo.base.ApiResponse.of(SuccessStatus._OK, commentResponse);
+        return ApiResponse.of(SuccessStatus._OK, commentResponse);
 
     }
 }
