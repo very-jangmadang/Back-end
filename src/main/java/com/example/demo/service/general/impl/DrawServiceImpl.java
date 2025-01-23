@@ -101,11 +101,9 @@ public class DrawServiceImpl implements DrawService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
         Long addressId = drawRequestDTO.getAddressId();
-        Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
 
-        if (address.getUser() != user)
-            throw new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER);
+        Address address = addressRepository.findByIdAndUser(addressId, user)
+                .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER));
 
         raffle.setAddress(address);
         raffleRepository.save(raffle);
