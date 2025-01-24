@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class InquiryServiceImpl implements InquiryService {
 
@@ -57,12 +58,7 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     // 문의 삭제
-    @Transactional
     public void deleteInquiry(Long inquiryId, InquiryDeleteDTO inquiryDelete) {
-
-        // 문의 내역 조회
-        Inquiry inquiry = inquiryRepository.findByUserIdAndId(inquiryDelete.getUserId(), inquiryId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
 
         // 삭제
         inquiryRepository.deleteById(inquiryId);
