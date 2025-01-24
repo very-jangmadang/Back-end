@@ -16,17 +16,9 @@ public class ApplyController {
     private final ApplyService applyService;
 
     @GetMapping("/{raffleId}/apply")
-    public ApiResponse<ApplyResponseDTO.EnterDto> enterRaffle(@PathVariable Long raffleId) {
+    public ApiResponse<ApplyResponseDTO> applyRaffle(@PathVariable Long raffleId) {
 
-        return ApiResponse.of(_OK, applyService.getEnterRaffle(raffleId));
-
-    }
-
-    @PostMapping("/{raffleId}/apply/{userId}")
-    public ApiResponse<ApplyResponseDTO.ApplyDto> applyRaffle(
-            @PathVariable Long raffleId, @PathVariable Long userId) {
-
-        return ApiResponse.of(_OK, applyService.applyRaffle(raffleId, userId));
+        return ApiResponse.of(_OK, applyService.applyRaffle(raffleId));
 
     }
 
