@@ -107,6 +107,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     //리뷰 조회
+    @Transactional(readOnly = true)
     public ReviewWithAverageDTO getReviewsByUserId(Long userId) {
 
         // 사용자 조회
