@@ -76,12 +76,12 @@ public class ReviewServiceImpl implements ReviewService {
             imageUrls = s3UploadService.saveFile(images);  // 이미지 리스트를 saveFile에 전달하여 S3에 저장
         }
 
-        Review review = ReviewConverter.toReview(reviewRequest,raffle,user,reviewer,imageUrls);
+        Review review = ReviewConverter.toReview(reviewRequest, raffle, user, reviewer, imageUrls);
 
         reviewRepository.save(review);
 
         // 평균 평점 업데이트
-        updateAverageScoreAdd(user,review.getScore());
+        updateAverageScore(user, review.getScore(),true);
 
         return ReviewConverter.ToReviewResponseDTO(review);
 
@@ -102,7 +102,7 @@ public class ReviewServiceImpl implements ReviewService {
         // 삭제
         reviewRepository.deleteById(reviewId);
 
-        updateAverageScoreDelete(review.getUser(),review.getScore());
+        updateAverageScore(review.getUser(), review.getScore(),false);
 
     }
 
@@ -126,38 +126,31 @@ public class ReviewServiceImpl implements ReviewService {
         return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
     }
 
-
-    //리뷰 추가될 때 평균점수 계산
-    private void updateAverageScoreAdd(User user, double newScore) {
-
+    private void updateAverageScore(User user, double score, boolean isAdd) {
         int currentReviewCount = user.getReviewCount();
         double currentAverageScore = user.getAverageScore();
 
-        double updatedAverageScore = ((currentAverageScore * currentReviewCount) + newScore) / (currentReviewCount + 1);
-        user.setAverageScore(updatedAverageScore);
-        user.setReviewCount(currentReviewCount + 1);
-
-        // 사용자 저장
-        userRepository.save(user);
-    }
-
-    //리뷰 삭제될 때 평균점수 계산
-    private void updateAverageScoreDelete(User user, double deletedScore) {
-
-        int currentReviewCount = user.getReviewCount();
-
-        if (currentReviewCount > 1) {
-            double currentAverageScore = user.getAverageScore();
-            double updatedAverageScore = ((currentAverageScore * currentReviewCount) - deletedScore) / (currentReviewCount - 1);
+        if (isAdd) {
+            // 리뷰 추가 시
+            double updatedAverageScore = ((currentAverageScore * currentReviewCount) + score) / (currentReviewCount + 1);
             user.setAverageScore(updatedAverageScore);
-            user.setReviewCount(currentReviewCount - 1);
+            user.setReviewCount(currentReviewCount + 1);
         } else {
-            user.setAverageScore(0.0);
-            user.setReviewCount(0);
+            // 리뷰 삭제 시
+            if (currentReviewCount > 1) {
+                double updatedAverageScore = ((currentAverageScore * currentReviewCount) - score) / (currentReviewCount - 1);
+                user.setAverageScore(updatedAverageScore);
+                user.setReviewCount(currentReviewCount - 1);
+            } else {
+                // 리뷰가 더 이상 없을 경우 초기화
+                user.setAverageScore(0.0);
+                user.setReviewCount(0);
+            }
         }
 
         // 사용자 저장
         userRepository.save(user);
     }
+
 }
 
