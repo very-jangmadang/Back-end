@@ -81,7 +81,7 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.save(review);
 
         // 평균 평점 업데이트
-        updateAverageScore(user);
+        updateAverageScoreAdd(user,review.getScore());
 
         return ReviewConverter.ToReviewResponseDTO(review);
 
@@ -102,7 +102,7 @@ public class ReviewServiceImpl implements ReviewService {
         // 삭제
         reviewRepository.deleteById(reviewId);
 
-        updateAverageScore(review.getUser());
+        updateAverageScoreDelete(review.getUser(),review.getScore());
 
     }
 
@@ -126,22 +126,38 @@ public class ReviewServiceImpl implements ReviewService {
         return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
     }
 
-    private void updateAverageScore(User user) {
 
-        // 사용자에 대한 모든 리뷰를 가져오기
-        List<Review> reviews = reviewRepository.findAllByUser(user);
+    //리뷰 추가될 때 평균점수 계산
+    private void updateAverageScoreAdd(User user, double newScore) {
 
-        // 평균 평점 계산
-        double averageScore = reviews.stream()
-                .mapToDouble(Review::getScore)
-                .average()
-                .orElse(0.0);
+        int currentReviewCount = user.getReviewCount();
+        double currentAverageScore = user.getAverageScore();
 
-        // 사용자의 평균 평점 업데이트
-        user.setAverageScore(averageScore);
+        double updatedAverageScore = ((currentAverageScore * currentReviewCount) + newScore) / (currentReviewCount + 1);
+        user.setAverageScore(updatedAverageScore);
+        user.setReviewCount(currentReviewCount + 1);
+
+        // 사용자 저장
         userRepository.save(user);
     }
 
+    //리뷰 삭제될 때 평균점수 계산
+    private void updateAverageScoreDelete(User user, double deletedScore) {
 
+        int currentReviewCount = user.getReviewCount();
+
+        if (currentReviewCount > 1) {
+            double currentAverageScore = user.getAverageScore();
+            double updatedAverageScore = ((currentAverageScore * currentReviewCount) - deletedScore) / (currentReviewCount - 1);
+            user.setAverageScore(updatedAverageScore);
+            user.setReviewCount(currentReviewCount - 1);
+        } else {
+            user.setAverageScore(0.0);
+            user.setReviewCount(0);
+        }
+
+        // 사용자 저장
+        userRepository.save(user);
+    }
 }
 

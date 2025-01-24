@@ -43,6 +43,9 @@ public class User extends BaseEntity{
     @Setter
     private double averageScore;
 
+    @Setter
+    private int reviewCount;
+
 
     private LocalDateTime withdrawTime;
 
