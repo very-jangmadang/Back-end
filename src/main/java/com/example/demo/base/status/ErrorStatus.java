@@ -85,7 +85,10 @@ public enum ErrorStatus implements BaseErrorCode {
     // 15. Huiju - 주소 관련 에러
     ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4001", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
 
-  
+    //16. dohyun- 문의 관련 에러
+    NO_DELETE_AUTHORITY(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "삭제 권한이 없습니다."),
+
+
     ;
   
 

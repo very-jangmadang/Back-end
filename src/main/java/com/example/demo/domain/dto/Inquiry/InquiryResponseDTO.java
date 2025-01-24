@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
         private Long inquiryId;
         private Long userId;
         private Long raffleId;
+        private String nickname;
         private String title;
         private String content;
         private InquiryStatus status;

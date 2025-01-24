@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
-    List<Inquiry> findAllByRaffle(Raffle raffle);
+    List<Inquiry> findByRaffle(Raffle raffle);
 
-    Optional<Inquiry> findByUserIdAndId(Long userId, Long inquiryId);
+    Optional<Inquiry> findByIdAndRaffle(Long inquiryId, Raffle raffle);
 }
 

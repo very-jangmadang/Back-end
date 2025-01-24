@@ -1,5 +1,6 @@
 package com.example.demo.service.general;
 
+import com.example.demo.domain.dto.Inquiry.InquiryAndCommentsResponseDTO;
 import com.example.demo.domain.dto.Inquiry.InquiryDeleteDTO;
 import com.example.demo.domain.dto.Inquiry.InquiryRequestDTO;
 import com.example.demo.domain.dto.Inquiry.InquiryResponseDTO;
@@ -14,6 +15,6 @@ public interface InquiryService {
     void deleteInquiry(Long InquiryId, InquiryDeleteDTO inquiryDelete);
 
     //문의글 조회
-    List<InquiryResponseDTO> getInquiriesByRaffleId(Long raffleId);
+    List<InquiryAndCommentsResponseDTO> getInquiryAndComments(Long raffleId);
 }
 

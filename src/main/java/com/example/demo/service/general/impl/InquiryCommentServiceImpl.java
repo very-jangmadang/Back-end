@@ -38,9 +38,9 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
         User user = userRepository.findById(commentRequest.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
+        // 문의 조회
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
-
 
         // 주최자 여부 확인
         boolean isHost = isRaffleHost(inquiry, user);
@@ -56,7 +56,7 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
         inquiryRepository.save(inquiry); // 상태 변경 저장
 
         // 댓글 작성
-        InquiryComment comment = InquiryCommentConverter.toComment(commentRequest, user,isHost);
+        InquiryComment comment = InquiryCommentConverter.toComment(commentRequest, user,isHost,inquiry);
         commentRepository.save(comment);
 
         InquiryCommentResponseDTO commentResponse = InquiryCommentConverter.toCommentResponseDTO(comment);

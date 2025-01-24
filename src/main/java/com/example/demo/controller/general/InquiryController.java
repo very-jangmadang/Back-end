@@ -51,13 +51,15 @@ public class InquiryController {
         return ApiResponse.of(SuccessStatus._OK, null);
     }
 
-    //문의 목록 조회
-    @GetMapping("/{raffleId}/inquiry")
-    public ApiResponse<List<InquiryResponseDTO>> getInquiriesByRaffleId(@PathVariable Long raffleId) {
+    //문의 목록과 댓글 조회
+    @GetMapping("/raffle/{raffleId}")
+    @Operation(summary = "래플의 문의글과 댓글 조회")
+    public ApiResponse<List<InquiryAndCommentsResponseDTO>> getInquiryAndComments(
+            @PathVariable Long raffleId) {
 
-        List<InquiryResponseDTO> inquiries = inquiryService.getInquiriesByRaffleId(raffleId);
+        List<InquiryAndCommentsResponseDTO> response = inquiryService.getInquiryAndComments(raffleId);
 
-        return ApiResponse.of(SuccessStatus._OK, inquiries);
+        return ApiResponse.of(SuccessStatus._OK, response);
     }
 
     // 문의 댓글 작성
