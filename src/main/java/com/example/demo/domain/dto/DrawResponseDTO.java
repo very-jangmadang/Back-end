@@ -26,6 +26,7 @@ public class DrawResponseDTO {
     public static class WinnerDto {
         private Long raffleId;
         private Long winnerId;
+        private Long deliveryId;
         private String winnerNickname;
     }
 

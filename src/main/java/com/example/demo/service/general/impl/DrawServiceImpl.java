@@ -49,6 +49,9 @@ public class DrawServiceImpl implements DrawService {
         Delivery delivery = toDelivery(raffle);
         deliveryRepository.save(delivery);
 
+        raffle.setDelivery(delivery);
+        raffleRepository.save(raffle);
+
         return delivery;
 
     }

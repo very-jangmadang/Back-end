@@ -90,6 +90,7 @@ public class Raffle extends BaseEntity {
     }
 
     public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
+    public void setDelivery(Delivery delivery) { this.delivery = delivery; }
 
 //    // 찜 횟수 증가
 //    public void upLikeCount(){

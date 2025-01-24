@@ -34,7 +34,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendEmail(Delivery delivery) {
-        User user = delivery.getUser();
+        User user = delivery.getWinner();
         Raffle raffle = delivery.getRaffle();
 
         try {

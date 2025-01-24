@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static com.example.demo.base.status.SuccessStatus.REDILECT_SUCCESS;
+import static com.example.demo.base.status.SuccessStatus.REDIRECT_SUCCESS;
 import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
@@ -26,7 +26,7 @@ public class DrawController {
         String redirectUrl = (String) result.get("redirectUrl");
 
         if (drawDto == null)
-            return ApiResponse.of(REDILECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
+            return ApiResponse.of(REDIRECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
 
         return ApiResponse.of(_OK, drawDto);
 
@@ -49,7 +49,7 @@ public class DrawController {
     public ApiResponse<Map<String, String>> selfDraw(@PathVariable Long raffleId) {
         String redirectUrl = drawService.selfDraw(raffleId);
 
-        return ApiResponse.of(REDILECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
+        return ApiResponse.of(REDIRECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
     }
 
     @GetMapping("/{raffleId}/draw/owner/cancel")

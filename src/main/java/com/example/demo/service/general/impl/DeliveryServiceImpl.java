@@ -177,13 +177,10 @@ public class DeliveryServiceImpl implements DeliveryService {
             throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
         }
 
-        if (now.isAfter(delivery.getAddressDeadline()))
-            throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
-
         if (deliveryStatus == DeliveryStatus.SHIPPED)
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
 
-        delivery.setCourierCompany(ownerDTO.getCourierCompany());
+//        delivery.setCourierCompany(ownerDTO.getCourierCompany());
         delivery.setInvoiceNumber(ownerDTO.getInvoiceNumber());
         delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
         deliveryRepository.save(delivery);

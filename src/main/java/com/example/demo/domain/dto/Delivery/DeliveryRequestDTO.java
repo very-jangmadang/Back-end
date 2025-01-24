@@ -13,7 +13,7 @@ public class DeliveryRequestDTO {
 
     @Getter
     public static class OwnerDTO {
-        private CourierCompany courierCompany;
+//        private CourierCompany courierCompany;
         private String invoiceNumber;
     }
 

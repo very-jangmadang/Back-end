@@ -19,6 +19,7 @@ public class DrawConverter {
         return DrawResponseDTO.WinnerDto.builder()
                 .raffleId(raffle.getId())
                 .winnerId(raffle.getWinner().getId())
+                .deliveryId(raffle.getDelivery().getId())
                 .winnerNickname(raffle.getWinner().getNickname())
                 .build();
     }
