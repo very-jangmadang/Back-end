@@ -43,7 +43,6 @@ public class User extends BaseEntity{
     @Setter
     private double averageScore;
 
-    private double score;
 
     private LocalDateTime withdrawTime;
 

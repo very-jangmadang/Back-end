@@ -39,6 +39,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final S3UploadService s3UploadService;
 
     // 리뷰 작성
+    @Transactional
     public ReviewResponseDTO addReview(ReviewRequestDTO.ReviewUploadDTO reviewRequest) {
 
         // 0. 업로드 작성자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
@@ -115,26 +116,11 @@ public class ReviewServiceImpl implements ReviewService {
         // 사용자의 모든 후기 조회
         List<Review> reviews = reviewRepository.findAllByUser(user);
 
-        // 평균 점수 계산
-        double averageScore = reviews.stream()
-                .mapToDouble(Review::getScore)
-                .average()
-                .orElse(0.0);
-
-        List<ReviewResponseDTO> reviewResponseDTO =reviews.stream()
-                .map(review -> new ReviewResponseDTO(
-                        review.getId(),               // reviewId
-                        review.getUser().getId(),     // userId
-                        review.getRaffle().getId(), // raffleId
-                        review.getReviewer().getId(), //reviewerId
-                        review.getScore(),            // score
-                        review.getText(),             // text
-                        review.getImageUrls(),        // imageUrls
-                        review.getCreatedAt()          // timestamp
-                ))
-                .collect(Collectors.toList());
+        List<ReviewResponseDTO> reviewResponseDTO = ReviewConverter.toReviewResponseDTOList(reviews);
 
         int reviewCount = reviews.size();
+
+        double averageScore = user.getAverageScore();
 
         return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
     }
