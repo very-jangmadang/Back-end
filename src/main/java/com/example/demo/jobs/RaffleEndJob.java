@@ -43,7 +43,7 @@ public class RaffleEndJob implements Job {
         int applyCount = applyRepository.countByRaffle(raffle);
         List<Apply> applyList = applyRepository.findByRaffle(raffle);
 
-        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket()) {
+        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket())
             updateRaffleStatus(raffle, RaffleStatus.UNFULFILLED);
 //            drawService.cancel(raffle, applyList);
 

@@ -5,7 +5,7 @@ import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.MypageConverter;
 import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
-import com.example.demo.domain.dto.MypageResponseDTO;
+import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
 import com.example.demo.entity.Address;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
