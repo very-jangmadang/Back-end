@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 public class DrawResponseDTO {
 
@@ -16,25 +16,18 @@ public class DrawResponseDTO {
     @AllArgsConstructor
     public static class DrawDto {
         private Long raffleId;
-        private List<String> nicknameList;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class WinnerDto {
-        private Long raffleId;
+        private Set<String> nicknameSet;
         private Long winnerId;
-        private Long deliveryId;
         private String winnerNickname;
+        private boolean isWin;
+        private Long deliveryId;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class RaffleResultDto {
+    public static class ResultDto {
         private Long raffleId;
         private int minTicket;
         private int applyTicket;
@@ -47,6 +40,15 @@ public class DrawResponseDTO {
     @AllArgsConstructor
     public static class CancelDto {
         private Long raffleId;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RaffleResult {
+        private String redirectUrl;
+        private DrawDto drawDto;
     }
 
 }

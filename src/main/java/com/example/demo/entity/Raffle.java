@@ -26,7 +26,6 @@ public class Raffle extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "winner_id")
     private User winner;
@@ -74,9 +73,8 @@ public class Raffle extends BaseEntity {
     @Column(precision = 10, scale = 2)
     private BigDecimal shippingFee;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_id")
-    Delivery delivery;
+    @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
+    List<Delivery> delivery;
 
     // 연관관계 편의 메서드
     public void addImage(Image image) {
@@ -90,7 +88,7 @@ public class Raffle extends BaseEntity {
     }
 
     public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
-    public void setDelivery(Delivery delivery) { this.delivery = delivery; }
+    public void setWinner(User winner) { this.winner = winner; }
 
 //    // 찜 횟수 증가
 //    public void upLikeCount(){
