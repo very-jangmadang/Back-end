@@ -36,6 +36,7 @@ public class Address extends BaseEntity {
     @Column(length = 255)
     private String message;  // 배송 메세지
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
