@@ -94,7 +94,8 @@ public class InquiryServiceImpl implements InquiryService {
                             .map(InquiryCommentConverter::toCommentResponseDTO)
                             .collect(Collectors.toList());
 
-                    return new InquiryAndCommentsResponseDTO(inquiry.getId(), inquiry.getContent(), commentDTOs);
+                    return new InquiryAndCommentsResponseDTO(inquiry.getId(),inquiry.getTitle(),inquiry.getUser().getNickname(),
+                            inquiry.getContent(),inquiry.getStatus(), commentDTOs);
                 })
                 .collect(Collectors.toList());
     }
