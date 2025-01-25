@@ -59,7 +59,6 @@ public enum ErrorStatus implements BaseErrorCode {
     // 10. Huiju - 응모 관련 에러
     APPLY_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
     APPLY_UNOPENED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "아직 응모가 시작되지 않은 래플입니다."),
-
     APPLY_FINISHED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 종료된 래플입니다."),
     APPLY_SELF_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4004", "본인이 개최한 래플에는 응모할 수 없습니다."),
     APPLY_ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4005", "이미 응모한 래플입니다."),
@@ -71,19 +70,31 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_EXECUTION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4001", "Job 실행에 실패했습니다."),
     JOB_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5001", "Job 저장에 실패했습니다."),
     JOB_UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5002", "알 수 없는 Job 에러가 발생했습니다."),
-    JOB_INTERRUPT(HttpStatus.SERVICE_UNAVAILABLE, "JOB_5031", "Job 인터럽트가 발생했습니다."),
+//    JOB_INTERRUPT(HttpStatus.SERVICE_UNAVAILABLE, "JOB_5031", "Job 인터럽트가 발생했습니다."),
 
     // 13. Huiju - 당첨자 추첨 관련 에러
     DRAW_EMPTY(HttpStatus.BAD_REQUEST, "DRAW_4001", "응모한 사용자가 없습니다."),
     DRAW_NO_WINNER_EMAIL(HttpStatus.BAD_REQUEST, "DRAW_4002", "당첨자의 이메일이 존재하지 않습니다."),
-    DRAW_FAIL(HttpStatus.BAD_REQUEST, "DRAW_4003", "당첨자가 아닙니다."),
+    DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4003", "해당 래플의 개최자가 아닙니다."),
     DRAW_EMAIL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DRAW_5001", "이메일 전송에 실패하였습니다."),
+    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4004", "아직 마감 기한이 되지 않았습니다."),
 
     // 14. Huiju - 배송 관련 에러
-    DELIVERY_NO_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "등록된 주소가 없습니다."),
+    DELIVERY_FAIL(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "당첨자가 아닙니다."),
+    DELIVERY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DELIVERY_4002", "등록된 배송 정보가 없습니다."),
+    DELIVERY_ADDRESS_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4003", "주소 입력 기한이 만료되었습니다."),
+    DELIVERY_NOT_OWNER(HttpStatus.BAD_REQUEST, "DELIVERY_4004", "해당 래플의 개최자가 아닙니다."),
+    DELIVERY_SHIPPING_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4005", "운송장 입력 기한이 만료되었습니다."),
+    DELIVERY_BEFORE_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4006", "당첨자의 주소가 입력되지 않았습니다."),
+    DELIVERY_ALREADY_SHIPPED(HttpStatus.BAD_REQUEST, "DELIVERY_4007", "이미 운송장을 등록했습니다."),
+    DELIVERY_ALREADY_READY(HttpStatus.BAD_REQUEST, "DELIVERY_4008", "이미 당첨자의 주소가 입력되었습니다."),
+    DELIVERY_ADDRESS_NOT_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4009", "아직 배송지 입력 기한이 만료되지 않았습니다."),
+    DELIVERY_SHIPPING_NOT_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4010", "아직 운송장 입력 기한이 만료되지 않았습니다."),
 
     // 15. Huiju - 주소 관련 에러
-    ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4001", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
+    ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "ADDRESS_4001", "사용자에게 등록된 주소가 없습니다."),
+    ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4002", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
+  
 
     //16. dohyun- 문의 관련 에러
     NO_DELETE_AUTHORITY(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "삭제 권한이 없습니다."),

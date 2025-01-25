@@ -6,6 +6,7 @@ import com.example.demo.entity.base.enums.RaffleStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import com.example.demo.entity.Address;
 
 public class MypageConverter {
 
@@ -31,4 +32,15 @@ public class MypageConverter {
                 .liked(isLiked)
                 .build();
     }
+
+    public static MypageResponseDTO.AddressDto toAddressDto(Address address) {
+        return MypageResponseDTO.AddressDto.builder()
+                .addressId(address.getId())
+                .addressName(address.getAddressName())
+                .recipientName(address.getRecipientName())
+                .addressDetail(address.getAddressDetail())
+                .isDefault(address.isDefault())
+                .build();
+    }
+  
 }
