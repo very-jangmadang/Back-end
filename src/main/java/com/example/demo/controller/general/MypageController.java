@@ -36,9 +36,11 @@ public class MypageController {
     }
 
     @PostMapping("/setting/addresses/add")
-    public void addAddress(
+    public ApiResponse<?> addAddress(
             @RequestBody MypageRequestDTO.AddressAddDto addressAddDto){
 
         mypageService.addAddress(addressAddDto);
+
+        return ApiResponse.of(SuccessStatus._OK, null);
     }
 }
