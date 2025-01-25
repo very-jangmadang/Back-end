@@ -3,12 +3,13 @@ package com.example.demo.controller.general;
 import com.example.demo.base.ApiResponse;
 import com.example.demo.domain.dto.DrawResponseDTO;
 import com.example.demo.service.general.DrawService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
-import static com.example.demo.base.status.SuccessStatus.REDIRECT_SUCCESS;
 import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
@@ -19,40 +20,34 @@ public class DrawController {
     private final DrawService drawService;
 
     @GetMapping("/{raffleId}/draw")
-    public ApiResponse<?> drawRaffle(@PathVariable Long raffleId) {
+    public ApiResponse<?> drawRaffle(@PathVariable Long raffleId, HttpServletResponse response) throws IOException {
 
-        Map<String, Object> result = drawService.getDrawRaffle(raffleId);
-        DrawResponseDTO.DrawDto drawDto = (DrawResponseDTO.DrawDto) result.get("drawDto");
-        String redirectUrl = (String) result.get("redirectUrl");
+        DrawResponseDTO.RaffleResult result = drawService.getDrawRaffle(raffleId);
+        DrawResponseDTO.DrawDto drawDto = result.getDrawDto();
+        String redirectUrl = result.getRedirectUrl();
 
-        if (drawDto == null)
-            return ApiResponse.of(REDIRECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
+        if (drawDto == null){
+            response.sendRedirect(redirectUrl);
+            return null;
+        }
 
         return ApiResponse.of(_OK, drawDto);
-
     }
 
     @GetMapping("/{raffleId}/draw/result")
-    public ApiResponse<DrawResponseDTO.WinnerDto> getWinner(
-            @PathVariable Long raffleId) {
+    public ApiResponse<DrawResponseDTO.ResultDto> getResult(@PathVariable Long raffleId) {
 
-        return ApiResponse.of(_OK, drawService.getWinner(raffleId));
+        return ApiResponse.of(_OK, drawService.getResult(raffleId));
     }
 
-    @GetMapping("/{raffleId}/draw/owner/result")
-    public ApiResponse<DrawResponseDTO.RaffleResultDto> getRaffleResult(@PathVariable Long raffleId) {
+    @PostMapping("/{raffleId}/draw")
+    public void selfDraw(@PathVariable Long raffleId, HttpServletResponse response) throws IOException {
 
-        return ApiResponse.of(_OK, drawService.getRaffleResult(raffleId));
-    }
-
-    @GetMapping("/{raffleId}/draw/owner/draw")
-    public ApiResponse<Map<String, String>> selfDraw(@PathVariable Long raffleId) {
         String redirectUrl = drawService.selfDraw(raffleId);
-
-        return ApiResponse.of(REDIRECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
+        response.sendRedirect(redirectUrl);
     }
 
-    @GetMapping("/{raffleId}/draw/owner/cancel")
+    @GetMapping("/{raffleId}/cancel")
     public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(@PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, drawService.forceCancel(raffleId));
