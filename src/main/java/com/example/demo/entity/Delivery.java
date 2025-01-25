@@ -27,7 +27,7 @@ public class Delivery extends BaseEntity {
     @JoinColumn(name = "winner_id")
     private User winner;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "raffle_id")
     private Raffle raffle;
 

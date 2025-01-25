@@ -1,5 +1,6 @@
 package com.example.demo.domain.converter;
 
+import com.example.demo.base.Constants;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.MypageResponseDTO;
 import com.example.demo.entity.Delivery;
@@ -16,10 +17,9 @@ public class DeliveryConverter {
                 .raffle(raffle)
                 .user(raffle.getUser())
                 .winner(raffle.getWinner())
-                .deliveryStatus(DeliveryStatus.ADDRESS_WAITING)
-                .addressDeadline(raffle.getEndAt().withMinute(0).plusHours(72))
+                .deliveryStatus(DeliveryStatus.WAITING_ADDRESS)
+                .addressDeadline(raffle.getEndAt().plusHours(Constants.ADDRESS_DEADLINE))
                 .build();
-
     }
 
     public static DeliveryResponseDTO.DeliveryDto toDeliveryDto(
