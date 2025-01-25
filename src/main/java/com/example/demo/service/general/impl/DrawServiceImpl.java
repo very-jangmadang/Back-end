@@ -171,6 +171,9 @@ public class DrawServiceImpl implements DrawService {
         if (applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
+        raffle.setRaffleStatus(RaffleStatus.ENDED);
+        raffleRepository.save(raffle);
+
         Delivery delivery = draw(raffle, applyList);
 
         emailService.sendEmail(delivery);
@@ -179,7 +182,6 @@ public class DrawServiceImpl implements DrawService {
     }
 
     @Override
-    @Transactional
     public DrawResponseDTO.CancelDto forceCancel(Long raffleId) {
         User user = getUser();
         Raffle raffle = getRaffle(raffleId);
