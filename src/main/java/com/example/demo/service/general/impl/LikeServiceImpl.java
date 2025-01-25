@@ -70,18 +70,11 @@ public class LikeServiceImpl implements LikeService {
     // 찜 목록 조회
     @Transactional(readOnly = true)
     public List<LikeListResponseDTO> getLikedItems(Long userId) {
-        List<Like> likes = likeRepository.findByUserId(userId);
+        List<Like> likes = likeRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
         return likes.stream()
-                .map(like -> {
-                    Raffle raffle = like.getRaffle();
-                    return new LikeListResponseDTO(
-                            like.getId(),            // likeId
-                            raffle.getId(),          // raffleId
-                            raffle.getName(),        // productName
-                            like.getUser().getId()   // userId
-                    );
-                }).collect(Collectors.toList());
+                .map(LikeConverter::toLikeListResponseDTO) // 변환 메서드 사용
+                .collect(Collectors.toList());
     }
 
     //찜 수 조회
