@@ -15,7 +15,7 @@ public class ApplyController {
 
     private final ApplyService applyService;
 
-    @GetMapping("/{raffleId}/apply")
+    @PostMapping("/{raffleId}/apply")
     public ApiResponse<ApplyResponseDTO> applyRaffle(@PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, applyService.applyRaffle(raffleId));
