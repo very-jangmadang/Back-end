@@ -1,20 +1,20 @@
 version: "3.8"
 
 services:
-  database:
-    image: mysql:8.0
-    container_name: jangmadang-db
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}  # .env 파일에서 DB_PASSWORD 읽기
-      MYSQL_DATABASE: jangmadang
-      MYSQL_USER: jangamadang
-      MYSQL_PASSWORD: ${DB_PASSWORD}  # 동일한 비밀번호 사용
-    volumes:
-      - db-data:/var/lib/mysql
-    networks:
-      - app-network
+#  database:
+#    image: mysql:8.0
+#    container_name: jangmadang-db
+#    ports:
+#      - "3306:3306"
+#    environment:
+#      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}  # .env 파일에서 DB_PASSWORD 읽기
+#      MYSQL_DATABASE: jangmadang
+#      MYSQL_USER: jangamadang
+#      MYSQL_PASSWORD: ${DB_PASSWORD}  # 동일한 비밀번호 사용
+#    volumes:
+#      - db-data:/var/lib/mysql
+#    networks:
+#      - app-network
 
   app:
     build:
