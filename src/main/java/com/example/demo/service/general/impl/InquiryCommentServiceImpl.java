@@ -34,7 +34,7 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
     @Transactional
     public InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest,Long inquiryId) {
 
-        // 사용자 조회
+        // 로그인된 사용자 가져오기
         User user = userRepository.findById(commentRequest.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 

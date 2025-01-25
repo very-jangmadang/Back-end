@@ -23,7 +23,6 @@ import java.util.List;
 public class InquiryController {
 
     private final InquiryService inquiryService;
-    private final InquiryRepository inquiryRepository;
     private final InquiryCommentService inquiryCommentService;
 
     //문의글 작성

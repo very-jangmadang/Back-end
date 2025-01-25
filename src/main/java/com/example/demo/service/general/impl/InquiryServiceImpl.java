@@ -38,6 +38,7 @@ public class InquiryServiceImpl implements InquiryService {
     // 문의 작성
     public InquiryResponseDTO addInquiry(InquiryRequestDTO inquiryRequest) {
 
+        //로그인된 사용자 가져오기
         User user = userRepository.findById(inquiryRequest.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
