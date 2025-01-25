@@ -136,6 +136,7 @@ public class MypageServiceImpl implements MypageService {
             throw new CustomException(ErrorStatus.ADDRESS_FULL);
 
         Address address = toAddress(addressAddDto);
+        address.setUser(user);
 
         if (address.isDefault())
             address.setDefaultAddress();
