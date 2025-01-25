@@ -39,6 +39,7 @@ public class MypageResponseDTO {
     public static class AddressDto {
         private Long addressId;
         private String addressName;
+        private String recipientName;
         private String addressDetail;
         private Boolean isDefault;
     }

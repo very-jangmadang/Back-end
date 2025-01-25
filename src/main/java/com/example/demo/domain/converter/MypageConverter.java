@@ -37,6 +37,7 @@ public class MypageConverter {
         return MypageResponseDTO.AddressDto.builder()
                 .addressId(address.getId())
                 .addressName(address.getAddressName())
+                .recipientName(address.getRecipientName())
                 .addressDetail(address.getAddressDetail())
                 .isDefault(address.isDefault())
                 .build();
