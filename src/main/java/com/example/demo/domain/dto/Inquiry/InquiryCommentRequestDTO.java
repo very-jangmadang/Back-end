@@ -6,5 +6,5 @@ import lombok.Getter;
 public class InquiryCommentRequestDTO {
     private Long userId;
     private String content;
-    private Long raffleId;
+
 }

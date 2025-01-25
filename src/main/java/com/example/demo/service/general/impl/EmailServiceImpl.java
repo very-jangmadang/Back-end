@@ -54,6 +54,7 @@ public class EmailServiceImpl implements EmailService {
             Context context = new Context();
             context.setVariable("userName", user.getNickname());
             context.setVariable("raffleName", raffle.getName());
+          
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             context.setVariable("deliveryInfoEnd", delivery.getAddressDeadline());
             context.setVariable("fromEmail", fromEmail);

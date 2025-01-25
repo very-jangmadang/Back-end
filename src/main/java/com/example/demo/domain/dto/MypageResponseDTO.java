@@ -43,4 +43,5 @@ public class MypageResponseDTO {
         private String addressDetail;
         private Boolean isDefault;
     }
+  
 }

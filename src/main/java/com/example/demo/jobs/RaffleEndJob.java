@@ -47,9 +47,6 @@ public class RaffleEndJob implements Job {
             updateRaffleStatus(raffle, RaffleStatus.UNFULFILLED);
 //            drawService.cancel(raffle, applyList);
 
-            return;
-        }
-
         updateRaffleStatus(raffle, RaffleStatus.ENDED);
 
         if (applyList == null || applyList.isEmpty())
