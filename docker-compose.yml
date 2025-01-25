@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: jangmadang-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}  # .env 파일에서 DB_PASSWORD 읽기
+      MYSQL_DATABASE: jangmadang
+      MYSQL_USER: jangamadang
+      MYSQL_PASSWORD: ${DB_PASSWORD}  # 동일한 비밀번호 사용
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ajwoong/jangmadang:latest
+    container_name: jangmadang-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://jangmadang.c104y882yujo.ap-northeast-2.rds.amazonaws.com/jangmadang
+      SPRING_DATASOURCE_USERNAME: my_user
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_BUCKET: ${AWS_BUCKET}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
