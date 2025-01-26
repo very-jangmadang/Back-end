@@ -29,10 +29,12 @@ public class DeliveryConverter {
         return DeliveryResponseDTO.DeliveryDto.builder()
                 .raffleId(delivery.getRaffle().getId())
                 .winnerId(delivery.getWinner().getId())
-                .addressDeadline(delivery.getAddressDeadline())
-                .shippingFee(delivery.getRaffle().getShippingFee())
                 .deliveryStatus(delivery.getDeliveryStatus())
+                .addressDeadline(delivery.getAddressDeadline())
+                .shippingDeadline(delivery.getShippingDeadline())
+                .shippingFee(delivery.getRaffle().getShippingFee())
                 .isShippingExtended(delivery.isShippingExtended())
+                .invoiceNumber(delivery.getInvoiceNumber())
                 .address(addressDto)
                 .build();
     }
