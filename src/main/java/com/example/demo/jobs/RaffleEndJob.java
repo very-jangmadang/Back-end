@@ -57,4 +57,3 @@ public class RaffleEndJob implements Job {
             emailService.sendEmail(delivery);
         }
     }
-}

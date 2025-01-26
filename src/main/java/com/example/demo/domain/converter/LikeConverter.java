@@ -42,7 +42,7 @@ public class LikeConverter {
         return LikeListResponseDTO.builder()
                 .likeId(like.getId())             // likeId
                 .raffleId(like.getRaffle().getId())         // raffleId
-                //.raffleStatus(like.getRaffle().getRaffleStatus().toString()) // raffleStatus
+                .raffleStatus(like.getRaffle().getRaffleStatus().toString()) // raffleStatus
                 .ticketNum(like.getRaffle().getTicketNum())    // ticketNum
                 .imageUrl(like.getRaffle().getImageUrl())       // imageUrl
                 .timeUntilEnd(timeUntilEnd)           // timeUntilEnd (남은 시간)
