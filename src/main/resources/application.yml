@@ -6,8 +6,8 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/jmarket
-    username: root
+    url: jdbc:mysql://jangmadang.c104y882yujo.ap-northeast-2.rds.amazonaws.com/jangmadang
+    username: jangmadang
     password: ${DB_PASSWORD}
 
   servlet:

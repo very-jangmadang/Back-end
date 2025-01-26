@@ -1,39 +1,69 @@
-name: CI/CD without Docker Compose
+name: CI/CD with docker
 
 on:
   push:
     branches:
       - main
       - develop
-      - feat/55
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Repository Checkout
+
+      # 방금 push 받은 main, develop, feat/55로 브랜치 checkout
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Build Docker Image
+      # build에 필요한 .env file 생성
+      - name: Generate .env file
+        run: |
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" > .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "SPRING_MAIL_PASSWORD=${{ secrets.SPRING_MAIL_PASSWORD }}" >> .env
+          echo "SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }}" >> .env
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
+          echo "AWS_BUKET=${{ secrets.AWS_BUKET }}" >> .env
+
+      # gradle build 준비
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' # OpenJDK distribution
+          java-version: '17'
+
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # jar 파일을 빌드
+      - name: Build JAR file with Gradle
+        run: |
+          export $(cat .env | xargs)
+          
+          ./gradlew clean build
+
+      # 해당 jar 파일로 도커 이미지 생성
       - name: Build Docker image
         run: |
           docker build --platform linux/amd64 -t ajwoong/jangmadang:latest .
 
-      # 3. Push Docker Image to Docker Hub
+
+      # 도커 이미지를 도커 허브에 push
       - name: Push Docker image to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker push ajwoong/jangmadang:latest
 
-      # 4. SSH into EC2 and Generate .env File
+
+      # ec2에 접속하여 env 파일 생성 및 도커 허브에서 이미지 pull
       - name: Generate .env file on EC2
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
+          key: ${{ secrets.EC2_ACCESS_KEY }}
           port: 22
           script: |
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > ~/.env
@@ -42,8 +72,9 @@ jobs:
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}" >> ~/.env
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.env
             echo "AWS_BUKET=${{ secrets.AWS_BUKET }}" >> ~/.env
+          debug: true
 
-      # 5. SSH into EC2 and Deploy
+      # pull 받은 도커 이미지로 컨테이너 실행
       - name: Deploy on EC2
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -53,15 +84,15 @@ jobs:
           port: 22
           script: |
             # Stop the old container (if exists)
-            docker stop jangmadang-app || true
-            docker rm jangmadang-app || true
+            sudo docker stop jangmadang-app || true
+            sudo docker rm jangmadang-app || true
 
             # Pull the latest Docker image
-            docker pull ajwoong/jangmadang:latest
+            sudo docker pull ajwoong/jangmadang:latest
 
             # Run the new container
-            docker run -d \
+            sudo docker run -d \
               --name jangmadang-app \
               -p 8080:8080 \
-              --env-file ~/Back-end/.env \
+              --env-file ~/.env \
               ajwoong/jangmadang:latest
