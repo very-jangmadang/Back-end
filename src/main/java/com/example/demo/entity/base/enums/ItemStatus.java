@@ -1,5 +1,5 @@
 package com.example.demo.entity.base.enums;
 
-public enum Status {
+public enum ItemStatus {
     UNOPENED ,NEW, HIGH, MID, LOW
 }

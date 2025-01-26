@@ -2,6 +2,8 @@ package com.example.demo.controller.general;
 
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.status.SuccessStatus;
+import com.example.demo.domain.dto.Like.LikeCountResponseDTO;
 import com.example.demo.service.general.LikeService;
 import com.example.demo.domain.dto.Like.LikeListResponseDTO;
 import com.example.demo.domain.dto.Like.LikeRequestDTO;
@@ -25,7 +27,7 @@ import java.util.List;
             @RequestBody LikeRequestDTO likeRequest) {
 
         LikeResponseDTO likeResponse = likeService.addLike(raffleId, likeRequest);
-        return new ApiResponse<>(true, "COMMON200", "성공입니다.", likeResponse);
+        return ApiResponse.of(SuccessStatus._OK, likeResponse);
     }
 
     //찜 삭제
@@ -38,7 +40,7 @@ import java.util.List;
 
         likeService.deleteLike(raffleId, userId);
 
-        return new ApiResponse<>(true, "COMMON200", "찜이 삭제되었습니다.", null);
+        return ApiResponse.of(SuccessStatus._OK,null);
     }
 
     //찜 목록 조회
@@ -47,8 +49,19 @@ import java.util.List;
 
         List<LikeListResponseDTO> likeResponseList = likeService.getLikedItems(userId);
 
-        return new ApiResponse<>(true, "COMMON200", "성공입니다.", likeResponseList);
+        return ApiResponse.of(SuccessStatus._OK, likeResponseList);
     }
+
+    // 찜 갯수 조회
+    @GetMapping("{raffleId}/likeCount")
+    public ApiResponse<LikeCountResponseDTO> getLikeCount(@PathVariable Long raffleId) {
+        Long likeCount = likeService.getLikeCount(raffleId);
+        LikeCountResponseDTO likeCountResponse = new LikeCountResponseDTO(raffleId, likeCount);
+
+        return ApiResponse.of(SuccessStatus._OK, likeCountResponse);
+    }
+
+
 
 }
 

@@ -28,8 +28,16 @@ public enum SuccessStatus implements BaseCode {
     ADMIN_GET_ALL_USER(HttpStatus.OK, "ADMIN_2003", "모든 사용자를 조회하였습니다."),
 
     // 4. HyungJin - 래플 관련 성공
-    RAFFLE_UPLOAD_SUCCESS(HttpStatus.OK, "Raffle_2001", "래플 업로드에 성공하셨습니다."),
-    RAFFLE_FETCH_SUCCESS(HttpStatus.OK, "Raffle_2002", "래플 조회에 성공하셨습니다.")
+    RAFFLE_UPLOAD_SUCCESS(HttpStatus.OK, "RAFFLE_2001", "래플 업로드에 성공하였습니다."),
+    RAFFLE_FETCH_SUCCESS(HttpStatus.OK, "RAFFLE_2002", "래플 조회에 성공하였습니다."),
+
+
+    // 5. HyungJin - 사진 관련 성공
+    IMAGE_UPLOAD_SUCCESS(HttpStatus.OK, "IMAGE_2001", "사진 업로드에 성공하였습니다."),
+
+    // 6. Huiju - 리다이렉트 관련 성공
+    REDIRECT_SUCCESS(HttpStatus.FOUND, "REDIRECT_3021", "개최자를 리다이렉트하는 데에 성공하였습니다."),
+
     ;
 
 
