@@ -182,6 +182,7 @@ public class DrawServiceImpl implements DrawService {
     }
 
     @Override
+    @Transactional
     public DrawResponseDTO.CancelDto forceCancel(Long raffleId) {
         User user = getUser();
         Raffle raffle = getRaffle(raffleId);
