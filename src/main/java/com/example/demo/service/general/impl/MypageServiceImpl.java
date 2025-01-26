@@ -136,7 +136,7 @@ public class MypageServiceImpl implements MypageService {
             throw new CustomException(ErrorStatus.ADDRESS_FULL);
 
         Address address = toAddress(addressAddDto);
-        address.setUser(user);
+        user.addAddress(address);
 
         if (address.isDefault() || user.getAddresses().isEmpty())
             address.setDefaultAddress();
@@ -151,5 +151,4 @@ public class MypageServiceImpl implements MypageService {
 
         addressRepository.save(address);
     }
-
 }
