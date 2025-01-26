@@ -152,6 +152,9 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
         }
 
+        if (delivery.isShippingExtended())
+            throw new CustomException(ErrorStatus.DELIVERY_ALREADY_EXTEND);
+
         delivery.extendShippingDeadline();
         deliveryRepository.save(delivery);
 
