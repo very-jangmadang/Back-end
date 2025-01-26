@@ -1,16 +1,26 @@
 package com.example.demo.service.general;
 
-import com.example.demo.domain.dto.Draw.DrawRequestDTO;
-import com.example.demo.domain.dto.Draw.DrawResponseDTO;
+import com.example.demo.domain.dto.DrawResponseDTO;
+import com.example.demo.entity.Apply;
+import com.example.demo.entity.Delivery;
+import com.example.demo.entity.Raffle;
+
+import java.util.List;
+import java.util.Map;
 
 public interface DrawService {
 
-    DrawResponseDTO.DrawDto getDrawRaffle(Long raffleId);
+    Delivery draw(Raffle raffle, List<Apply> applyList);
+
+    void cancel(Raffle raffle, List<Apply> applyList);
+
+    Map<String, Object> getDrawRaffle(Long raffleId);
 
     DrawResponseDTO.WinnerDto getWinner(Long raffleId);
 
-    DrawResponseDTO.DeliveryDto getDelivery(Long raffleId);
+    DrawResponseDTO.RaffleResultDto getRaffleResult(Long raffleId);
 
-    DrawResponseDTO.AddressChoiceDto chooseAddress(Long raffleId, DrawRequestDTO drawRequestDTO);
+    String selfDraw(Long raffleId);
 
+    DrawResponseDTO.CancelDto forceCancel(Long raffleId);
 }

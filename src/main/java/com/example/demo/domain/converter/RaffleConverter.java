@@ -26,8 +26,8 @@ public class RaffleConverter {
                 .description(request.getDescription())
                 .ticketNum(request.getTicketNum())
                 .minTicket(request.getMinTicket())
-                .startAt(request.getStartAt())
-                .endAt(request.getEndAt())
+                .startAt(request.getStartAt().withSecond(0).withNano(0))
+                .endAt(request.getEndAt().withSecond(0).withNano(0))
                 .raffleStatus(RaffleStatus.UNOPENED)
                 .build();
     }
