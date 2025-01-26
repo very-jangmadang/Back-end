@@ -57,7 +57,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (!user.equals(delivery.getWinner()))
             throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
 
-
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         if (deliveryStatus == DeliveryStatus.WAITING_ADDRESS
                 || deliveryStatus == DeliveryStatus.WAITING_PAYMENT)

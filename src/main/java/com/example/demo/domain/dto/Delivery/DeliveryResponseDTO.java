@@ -20,10 +20,12 @@ public class DeliveryResponseDTO {
     public static class DeliveryDto {
         private Long raffleId;
         private Long winnerId;
-        private LocalDateTime addressDeadline;
-        private BigDecimal shippingFee;
         private DeliveryStatus deliveryStatus;
+        private LocalDateTime addressDeadline;
+        private LocalDateTime shippingDeadline;
+        private BigDecimal shippingFee;
         private boolean isShippingExtended;
+        private String invoiceNumber;
         private MypageResponseDTO.AddressDto address;
     }
 
