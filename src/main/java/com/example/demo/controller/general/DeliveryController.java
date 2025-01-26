@@ -22,18 +22,22 @@ public class DeliveryController {
         return ApiResponse.of(_OK, deliveryService.getDelivery(deliveryId));
     }
 
-    @PostMapping("{deliveryId}/winner")
-    public ApiResponse<DeliveryResponseDTO.AddressChoiceDto> chooseAddress(
-            @PathVariable Long deliveryId, @RequestBody DeliveryRequestDTO.WinnerDTO winnerDTO) {
+    @PostMapping("/{deliveryId}/winner")
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> setAddress(@PathVariable Long deliveryId) {
 
-        return ApiResponse.of(_OK, deliveryService.chooseAddress(deliveryId, winnerDTO));
+        return ApiResponse.of(_OK, deliveryService.setAddress(deliveryId));
     }
 
-    @GetMapping("{deliveryId}/winner/wait")
-    public ApiResponse<DeliveryResponseDTO.DeliveryDto> WaitShipping(@PathVariable Long deliveryId) {
-        deliveryService.waitShipping(deliveryId);
+    @PostMapping("/{deliveryId}/winner/complete")
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> complete(@PathVariable Long deliveryId) {
 
-        return ApiResponse.of(_OK, null);
+        return ApiResponse.of(_OK, deliveryService.complete(deliveryId));
+    }
+
+    @PostMapping("{deliveryId}/winner/wait")
+    public ApiResponse<DeliveryResponseDTO.WaitDto> WaitShipping(@PathVariable Long deliveryId) {
+
+        return ApiResponse.of(_OK, deliveryService.waitShipping(deliveryId));
     }
 
     @GetMapping("{deliveryId}/owner")

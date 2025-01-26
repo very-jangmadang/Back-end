@@ -40,6 +40,7 @@ public class MypageConverter {
                 .addressName(address.getAddressName())
                 .recipientName(address.getRecipientName())
                 .addressDetail(address.getAddressDetail())
+                .phoneNumber(address.getPhoneNumber())
                 .isDefault(address.isDefault())
                 .build();
     }

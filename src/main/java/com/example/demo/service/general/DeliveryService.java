@@ -6,9 +6,11 @@ import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 public interface DeliveryService {
     DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId);
 
-    DeliveryResponseDTO.AddressChoiceDto chooseAddress(Long deliveryId, DeliveryRequestDTO.WinnerDTO winnerDTO);
+    DeliveryResponseDTO.ResponseDto setAddress(Long deliveryId);
 
-    void waitShipping(Long deliveryId);
+    DeliveryResponseDTO.ResponseDto complete(Long deliveryId);
+
+    DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId);
 
     DeliveryResponseDTO.ResultDto getResult(Long deliveryId);
 

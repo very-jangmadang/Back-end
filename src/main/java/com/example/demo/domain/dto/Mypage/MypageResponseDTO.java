@@ -41,6 +41,7 @@ public class MypageResponseDTO {
         private String addressName;
         private String recipientName;
         private String addressDetail;
+        private String phoneNumber;
         private Boolean isDefault;
     }
 

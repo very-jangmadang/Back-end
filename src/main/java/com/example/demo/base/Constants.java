@@ -7,6 +7,12 @@ public class Constants {
     // 배송지 입력 기한 (시간 단위)
     public static final int ADDRESS_DEADLINE = 72;
 
+    // 운송장 입력 기한 (시간 단위)
+    public static final int SHIPPING_DEADLINE = 96;
+
+    // 배송지/운송장 입력 기한 연장 (시간 단위)
+    public static final int WAIT = 24;
+
     // 추첨 완료된 래플 개최자 리디렉션 url
     public static final String DELIVERY_OWNER_URL = "/api/permit/delivery/%d/owner";
 

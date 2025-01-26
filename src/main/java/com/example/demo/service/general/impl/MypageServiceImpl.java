@@ -138,7 +138,7 @@ public class MypageServiceImpl implements MypageService {
         Address address = toAddress(addressAddDto);
         address.setUser(user);
 
-        if (address.isDefault())
+        if (address.isDefault() || user.getAddresses().isEmpty())
             address.setDefaultAddress();
 
         String message = addressAddDto.getMessage();
