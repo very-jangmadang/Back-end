@@ -6,6 +6,6 @@ public interface HomeService {
 
     HomeResponseDTO getHome();
 
-    HomeResponseDTO getHomeCategories(Long categoryId);
+    HomeResponseDTO getHomeCategories(String categoryName);
 
 }

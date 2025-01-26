@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     Optional<Raffle> findById(Long id);
-    List<Raffle> findByCategoryId(Long categoryId);
+    List<Raffle> findByCategoryName(String categoryName);
 
     // 찜 횟수
     @Query("SELECT COUNT(l) FROM Like l WHERE l.raffle.id = :raffleId")

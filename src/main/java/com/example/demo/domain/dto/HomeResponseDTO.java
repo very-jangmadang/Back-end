@@ -17,6 +17,7 @@ public class HomeResponseDTO {
 
     private List<RaffleDTO> approaching;
     private List<RaffleDTO> myLikeRaffles;
+    private List<RaffleDTO> myFollowRaffles;
     private List<RaffleDTO> raffles;
 
     @Getter

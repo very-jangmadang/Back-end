@@ -6,10 +6,7 @@ import com.example.demo.domain.dto.HomeResponseDTO;
 import com.example.demo.service.general.HomeService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -27,9 +24,9 @@ public class HomeController {
     }
 
     @Operation(summary = "카테고리별 래플 조회")
-    @GetMapping("/{categoryId}")
-    public ApiResponse<HomeResponseDTO> homeCategories(@PathVariable Long categoryId){
-        HomeResponseDTO result = homeService.getHomeCategories(categoryId);
+    @GetMapping("/categories")
+    public ApiResponse<HomeResponseDTO> homeCategories(@RequestParam("categoryName") String categoryName){
+        HomeResponseDTO result = homeService.getHomeCategories(categoryName);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
