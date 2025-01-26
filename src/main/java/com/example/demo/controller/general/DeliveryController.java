@@ -53,11 +53,10 @@ public class DeliveryController {
         return ApiResponse.of(_OK, deliveryService.addInvoice(deliveryId, deliveryRequestDTO));
     }
 
-    @GetMapping("{deliveryId}/owner/wait")
-    public ApiResponse<DeliveryResponseDTO.ResultDto> WaitAddress(@PathVariable Long deliveryId) {
-        deliveryService.waitAddress(deliveryId);
+    @PostMapping("{deliveryId}/owner/wait")
+    public ApiResponse<DeliveryResponseDTO.WaitDto> WaitAddress(@PathVariable Long deliveryId) {
 
-        return ApiResponse.of(_OK, null);
+        return ApiResponse.of(_OK, deliveryService.waitAddress(deliveryId));
     }
 
 }

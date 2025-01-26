@@ -82,6 +82,10 @@ public class Raffle extends BaseEntity {
         image.setRaffle(this);
     }
 
+    public void addDelivery(Delivery delivery) {
+        this.delivery.add(delivery);
+    }
+
     // 조회수 증가
     public void addView() {
         this.view += 1;

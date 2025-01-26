@@ -16,5 +16,5 @@ public interface DeliveryService {
 
     DeliveryResponseDTO.ResponseDto addInvoice(Long deliveryId, DeliveryRequestDTO deliveryRequestDTO);
 
-    void waitAddress(Long deliveryId);
+    DeliveryResponseDTO.WaitDto waitAddress(Long deliveryId);
 }

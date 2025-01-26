@@ -1,15 +1,11 @@
 package com.example.demo.entity;
 
 import com.example.demo.base.Constants;
-import com.example.demo.base.code.exception.CustomException;
-import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.entity.base.enums.CourierCompany;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -56,11 +52,17 @@ public class Delivery extends BaseEntity {
     public void setAddress(Address address) { this.address = address; }
     public void setDeliveryStatus(DeliveryStatus deliveryStatus) { this.deliveryStatus = deliveryStatus; }
     public void setInvoiceNumber(String invoiceNumber) { this.invoiceNumber = invoiceNumber; }
-    public void setShippingDeadline(LocalDateTime shippingDeadline) { this.shippingDeadline = shippingDeadline; }
 
     public void setAddressDeadline() {
-        this.addressDeadline = this.getCreatedAt()
+        this.addressDeadline = LocalDateTime.now()
                 .plusHours(Constants.ADDRESS_DEADLINE)
+                .withSecond(0)
+                .withNano(0);
+    }
+
+    public void setShippingDeadline() {
+        this.shippingDeadline = LocalDateTime.now()
+                .plusHours(Constants.SHIPPING_DEADLINE)
                 .withSecond(0)
                 .withNano(0);
     }
