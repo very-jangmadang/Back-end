@@ -84,14 +84,14 @@ jobs:
           port: 22
           script: |
             # Stop the old container (if exists)
-            docker stop jangmadang-app || true
-            docker rm jangmadang-app || true
+            sudo docker stop jangmadang-app || true
+            sudo docker rm jangmadang-app || true
 
             # Pull the latest Docker image
-            docker pull ajwoong/jangmadang:latest
+            sudo docker pull ajwoong/jangmadang:latest
 
             # Run the new container
-            docker run -d \
+            sudo docker run -d \
               --name jangmadang-app \
               -p 8080:8080 \
               --env-file ~/.env \
