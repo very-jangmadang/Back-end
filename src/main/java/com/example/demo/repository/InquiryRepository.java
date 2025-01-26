@@ -12,6 +12,5 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
     List<Inquiry> findByRaffle(Raffle raffle);
 
-    Optional<Inquiry> findByIdAndRaffle(Long inquiryId, Raffle raffle);
 }
 

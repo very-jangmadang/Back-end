@@ -9,7 +9,7 @@ public class LikeListResponseDTO {
 
     private Long likeId;
     private Long raffleId;
-    private String raffleStatus;
+    //private String raffleStatus;
     private int ticketNum;
     private String imageUrl;
     private Long timeUntilEnd;

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -19,5 +20,6 @@ public class InquiryAndCommentsResponseDTO {
     private String nickname;
     private String inquiryContent;
     private InquiryStatus status;
+    private LocalDateTime timestamp;
     private List<InquiryCommentResponseDTO> comments;
 }
