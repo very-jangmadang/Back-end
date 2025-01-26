@@ -171,9 +171,6 @@ public class DrawServiceImpl implements DrawService {
         if (applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
-        raffle.setRaffleStatus(RaffleStatus.ENDED);
-        raffleRepository.save(raffle);
-
         Delivery delivery = draw(raffle, applyList);
 
         emailService.sendEmail(delivery);
