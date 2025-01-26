@@ -34,7 +34,7 @@ public class DrawController {
         return ApiResponse.of(_OK, drawDto);
     }
 
-    @GetMapping("/{raffleId}/draw/result")
+    @GetMapping("/{raffleId}/result")
     public ApiResponse<DrawResponseDTO.ResultDto> getResult(@PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, drawService.getResult(raffleId));
