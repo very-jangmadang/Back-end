@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
     // 특정 사용자가 찜한 raffleId 목록 조회
-    List<Like> findByUserId(Long userId);
+    List<Like> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     Optional<Like> findByUserIdAndRaffleId(Long userId, Long raffleId);
 
