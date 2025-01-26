@@ -14,23 +14,12 @@ public class LikeListResponseDTO {
     private String imageUrl;
     private Long timeUntilEnd;
     private String raffleName;
-    private Long userId;
+    private int applyCount;
 
 
     // Getter 메서드
-    public Long getLikeId() {
-        return likeId;
-    }
-
     public Long getRaffleId() {
         return raffleId;
     }
 
-    public String getRaffleName() {
-        return raffleName;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
 }
