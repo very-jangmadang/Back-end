@@ -36,15 +36,6 @@ public class LikeServiceImpl implements LikeService {
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
 
-    @Autowired
-    public LikeServiceImpl(LikeRepository likeRepository, ApplyRepository applyRepository, RaffleRepository raffleRepository,UserRepository userRepository) {
-        this.likeRepository = likeRepository;
-        this.applyRepository = applyRepository;
-        this.raffleRepository = raffleRepository;
-        this.userRepository = userRepository;
-    }
-
-
     // 찜하기
     public LikeResponseDTO addLike(Long raffleId, LikeRequestDTO likeRequest) {
 
