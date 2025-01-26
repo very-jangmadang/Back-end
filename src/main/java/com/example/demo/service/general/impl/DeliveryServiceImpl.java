@@ -28,7 +28,6 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
     private final UserRepository userRepository;
-    private final AddressRepository addressRepository;
     private final ApplyRepository applyRepository;
 
     private User getUser() {
