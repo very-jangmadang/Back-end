@@ -1,8 +1,8 @@
 package com.example.demo.service.general.impl;
 
+import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.domain.converter.MypageConverter;
 import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
@@ -21,9 +21,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.example.demo.domain.converter.DeliveryConverter.*;
+import static com.example.demo.domain.converter.MypageConverter.toAddressDto;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DeliveryServiceImpl implements DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
@@ -48,86 +50,124 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    @Transactional(rollbackFor = CustomException.class)
     public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
 
         if (!user.equals(delivery.getWinner()))
-            throw new CustomException(ErrorStatus.DELIVERY_FAIL);
+            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
 
-        LocalDateTime now = LocalDateTime.now();
-        if (delivery.getDeliveryStatus() == DeliveryStatus.WAITING_ADDRESS
-                && now.isAfter(delivery.getAddressDeadline())) {
-            updateDeliveryStatus(delivery, DeliveryStatus.ADDRESS_EXPIRED);
-            throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
-        }
-
-        List<Address> addressList = user.getAddresses();
-
-        if (addressList.isEmpty())
-            throw new CustomException(ErrorStatus.ADDRESS_NOT_FOUND);
-
-        List<MypageResponseDTO.AddressDto> addressDtos = addressList.stream()
-                .map(MypageConverter::toAddressDto)
-                .toList();
-
-        return toDeliveryDto(delivery, addressDtos);
-    }
-
-    @Override
-    @Transactional(rollbackFor = CustomException.class)
-    public DeliveryResponseDTO.AddressChoiceDto chooseAddress(
-            Long deliveryId, DeliveryRequestDTO.WinnerDTO winnerDTO) {
-        User user = getUser();
-        Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getWinner()))
-            throw new CustomException(ErrorStatus.DELIVERY_FAIL);
-
-        Long addressId = winnerDTO.getAddressId();
-
-        Address address = addressRepository.findByIdAndUser(addressId, user)
-                .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER));
-
-        LocalDateTime now = LocalDateTime.now();
-        if (delivery.getDeliveryStatus() == DeliveryStatus.WAITING_ADDRESS
-                && now.isAfter(delivery.getAddressDeadline())) {
-            updateDeliveryStatus(delivery, DeliveryStatus.ADDRESS_EXPIRED);
-            throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
-        }
-
-        LocalDateTime deadline = LocalDateTime.now().withSecond(0).withNano(0).plusHours(96);
-
-        delivery.setAddress(address);
-        delivery.setDeliveryStatus(DeliveryStatus.READY);
-        delivery.setShippingDeadline(deadline);
-        deliveryRepository.save(delivery);
-
-        return toAddressChoiceDto(delivery);
-    }
-
-    @Override
-    @Transactional(rollbackFor = CustomException.class)
-    public void waitShipping(Long deliveryId) {
-        User user = getUser();
-        Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getWinner()))
-            throw new CustomException(ErrorStatus.DELIVERY_FAIL);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+        if (deliveryStatus == DeliveryStatus.WAITING_ADDRESS
+                || deliveryStatus == DeliveryStatus.WAITING_PAYMENT)
+            return toDeliveryDto(delivery, null);
 
-        if (deliveryStatus == DeliveryStatus.SHIPPED)
-            throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
+        MypageResponseDTO.AddressDto addressDto = toAddressDto(delivery.getAddress());
+        return toDeliveryDto(delivery, addressDto);
+    }
 
-        if (deliveryStatus == DeliveryStatus.READY)
-            throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_NOT_EXPIRED);
+    @Override
+    @Transactional
+    public DeliveryResponseDTO.ResponseDto setAddress(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
 
-        LocalDateTime deadline = delivery.getShippingDeadline().plusHours(24);
-        delivery.setShippingDeadline(deadline);
+        if (!user.equals(delivery.getWinner()))
+            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
+
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+        switch (deliveryStatus){
+            case CANCELLED:
+                throw new CustomException(ErrorStatus.DELIVERY_FAIL);
+            case ADDRESS_EXPIRED:
+                throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
+        }
+
+        if (deliveryStatus != DeliveryStatus.WAITING_ADDRESS
+                && deliveryStatus != DeliveryStatus.WAITING_PAYMENT)
+            throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
+
+        List<Address> addressList = user.getAddresses();
+        if (addressList.isEmpty())
+            throw new CustomException(ErrorStatus.ADDRESS_EMPTY);
+
+        Address defaultAddress = addressList.stream()
+                .filter(Address::isDefault)
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NO_DEFAULT_ADDRESS));
+
+        delivery.setAddress(defaultAddress);
+        delivery.setDeliveryStatus(DeliveryStatus.WAITING_PAYMENT);
         deliveryRepository.save(delivery);
 
+        return DeliveryResponseDTO.ResponseDto.builder()
+                .deliveryId(deliveryId)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public DeliveryResponseDTO.ResponseDto complete(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
+
+        if (!user.equals(delivery.getWinner()))
+            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
+
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+        switch (deliveryStatus){
+            case CANCELLED:
+                throw new CustomException(ErrorStatus.DELIVERY_FAIL);
+            case ADDRESS_EXPIRED:
+                throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
+            case WAITING_ADDRESS:
+                throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
+        }
+
+        if (deliveryStatus != DeliveryStatus.WAITING_PAYMENT)
+            throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
+
+        delivery.setDeliveryStatus(DeliveryStatus.READY);
+        delivery.setShippingDeadline(LocalDateTime.now()
+                .plusHours(Constants.SHIPPING_DEADLINE)
+                .withSecond(0)
+                .withNano(0));
+        deliveryRepository.save(delivery);
+
+        return DeliveryResponseDTO.ResponseDto.builder()
+                .deliveryId(deliveryId)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
+
+        if (!user.equals(delivery.getWinner()))
+            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
+
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+        switch (deliveryStatus) {
+            case WAITING_ADDRESS:
+            case WAITING_PAYMENT:
+                throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
+            case ADDRESS_EXPIRED:
+                throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
+            case READY:
+                throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_NOT_EXPIRED);
+            case SHIPPED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
+            case CANCELLED:
+                throw new CustomException(ErrorStatus.DELIVERY_FAIL);
+        }
+
+        delivery.extendShippingDeadline();
+        deliveryRepository.save(delivery);
+
+        return toWaitDto(delivery);
     }
 
     @Override
@@ -206,7 +246,7 @@ public class DeliveryServiceImpl implements DeliveryService {
             throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_NOT_EXPIRED);
 
         LocalDateTime deadline = delivery.getAddressDeadline().plusHours(24);
-        delivery.setAddressDeadline(deadline);
+        delivery.extendAddressDeadline();
         deliveryRepository.save(delivery);
 
     }

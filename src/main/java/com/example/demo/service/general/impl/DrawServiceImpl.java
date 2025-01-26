@@ -43,6 +43,7 @@ public class DrawServiceImpl implements DrawService {
 
         User winner = applyList.get(randomIndex).getUser();
         raffle.setWinner(winner);
+        raffle.setRaffleStatus(RaffleStatus.ENDED);
         raffleRepository.save(raffle);
 
         Delivery delivery = toDelivery(raffle);
@@ -169,9 +170,6 @@ public class DrawServiceImpl implements DrawService {
 
         if (applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
-
-        raffle.setRaffleStatus(RaffleStatus.ENDED);
-        raffleRepository.save(raffle);
 
         Delivery delivery = draw(raffle, applyList);
 
