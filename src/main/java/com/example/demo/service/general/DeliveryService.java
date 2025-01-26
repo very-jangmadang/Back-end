@@ -14,7 +14,7 @@ public interface DeliveryService {
 
     DeliveryResponseDTO.ResultDto getResult(Long deliveryId);
 
-    DeliveryResponseDTO.ShippingDto addInvoice(Long deliveryId, DeliveryRequestDTO.OwnerDTO ownerDTO);
+    DeliveryResponseDTO.ResponseDto addInvoice(Long deliveryId, DeliveryRequestDTO deliveryRequestDTO);
 
     void waitAddress(Long deliveryId);
 }

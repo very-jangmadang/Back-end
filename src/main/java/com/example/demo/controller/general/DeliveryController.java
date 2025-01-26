@@ -47,10 +47,10 @@ public class DeliveryController {
     }
 
     @PostMapping("{deliveryId}/owner")
-    public ApiResponse<DeliveryResponseDTO.ShippingDto> addInvoice(
-            @PathVariable Long deliveryId, @RequestBody DeliveryRequestDTO.OwnerDTO ownerDTO) {
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> addInvoice(
+            @PathVariable Long deliveryId, @RequestBody DeliveryRequestDTO deliveryRequestDTO) {
 
-        return ApiResponse.of(_OK, deliveryService.addInvoice(deliveryId, ownerDTO));
+        return ApiResponse.of(_OK, deliveryService.addInvoice(deliveryId, deliveryRequestDTO));
     }
 
     @GetMapping("{deliveryId}/owner/wait")

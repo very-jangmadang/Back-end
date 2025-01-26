@@ -178,25 +178,23 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (!user.equals(delivery.getUser()))
             throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
 
-        LocalDateTime now = LocalDateTime.now();
-        if (delivery.getDeliveryStatus() == DeliveryStatus.READY
-                && now.isAfter(delivery.getShippingDeadline())) {
-            updateDeliveryStatus(delivery, DeliveryStatus.SHIPPING_EXPIRED);
-            throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
-        }
-
         Raffle raffle = delivery.getRaffle();
         int applyNum = applyRepository.countByRaffle(raffle);
         int ticket = raffle.getTicketNum();
 
-        return toResultDto(delivery, applyNum * ticket);
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+        if (deliveryStatus != DeliveryStatus.READY
+                && deliveryStatus != DeliveryStatus.SHIPPED)
+            return toResultDto(delivery, applyNum * ticket, null);
 
+        MypageResponseDTO.AddressDto addressDto = toAddressDto(delivery.getAddress());
+        return toResultDto(delivery, applyNum * ticket, addressDto);
     }
 
     @Override
     @Transactional(rollbackFor = CustomException.class)
-    public DeliveryResponseDTO.ShippingDto addInvoice(
-            Long deliveryId, DeliveryRequestDTO.OwnerDTO ownerDTO) {
+    public DeliveryResponseDTO.ResponseDto addInvoice(
+            Long deliveryId, DeliveryRequestDTO deliveryRequestDTO) {
 
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
@@ -219,12 +217,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (deliveryStatus == DeliveryStatus.SHIPPED)
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
 
-//        delivery.setCourierCompany(ownerDTO.getCourierCompany());
-        delivery.setInvoiceNumber(ownerDTO.getInvoiceNumber());
+        delivery.setInvoiceNumber(deliveryRequestDTO.getInvoiceNumber());
         delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
         deliveryRepository.save(delivery);
 
-        return toShippingDto(delivery);
+        return DeliveryResponseDTO.ResponseDto.builder()
+                .deliveryId(deliveryId)
+                .build();
     }
 
     @Override

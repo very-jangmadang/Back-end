@@ -1,12 +1,15 @@
 package com.example.demo.entity;
 
 import com.example.demo.base.Constants;
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.entity.base.enums.CourierCompany;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -46,17 +49,12 @@ public class Delivery extends BaseEntity {
 
     private String invoiceNumber;       // 운송장 번호
 
-    @Enumerated (EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(20)")
-    private CourierCompany courierCompany;      // 택배사
-
     private boolean isAddressExtended;      // 배송지 입력 기한 연장 여부
 
     private boolean isShippingExtended;     // 운송장 입력 기한 연장 여부
 
     public void setAddress(Address address) { this.address = address; }
     public void setDeliveryStatus(DeliveryStatus deliveryStatus) { this.deliveryStatus = deliveryStatus; }
-    public void setCourierCompany(CourierCompany courierCompany) { this.courierCompany = courierCompany; }
     public void setInvoiceNumber(String invoiceNumber) { this.invoiceNumber = invoiceNumber; }
     public void setShippingDeadline(LocalDateTime shippingDeadline) { this.shippingDeadline = shippingDeadline; }
 
