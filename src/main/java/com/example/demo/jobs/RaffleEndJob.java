@@ -47,13 +47,13 @@ public class RaffleEndJob implements Job {
             updateRaffleStatus(raffle, RaffleStatus.UNFULFILLED);
 //            drawService.cancel(raffle, applyList);
 
-            updateRaffleStatus(raffle, RaffleStatus.ENDED);
+        updateRaffleStatus(raffle, RaffleStatus.ENDED);
 
-            if (applyList == null || applyList.isEmpty())
-                throw new CustomException(ErrorStatus.DRAW_EMPTY);
+        if (applyList == null || applyList.isEmpty())
+            throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
-            Delivery delivery = drawService.draw(raffle, applyList);
+        Delivery delivery = drawService.draw(raffle, applyList);
 
-            emailService.sendEmail(delivery);
-        }
+        emailService.sendEmail(delivery);
     }
+}
