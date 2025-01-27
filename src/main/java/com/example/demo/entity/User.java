@@ -37,7 +37,7 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> addresses;
 
-    private double score;
+    private double score = 0;
 
     private LocalDateTime withdrawTime;
 
