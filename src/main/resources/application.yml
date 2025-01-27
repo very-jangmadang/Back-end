@@ -100,3 +100,11 @@ cloud:
       auto: false
     stack:
       auto: false
+
+kakao:
+  pay:
+    cid: "TC0ONETIME"
+    secretKey: "DEV81DCBE19C923CC8AD7F7EA65CF8165A2D6A7A"
+    approvalUrl: "http://localhost:8080/payment/approve"
+    cancelUrl: "http://localhost:8080/payment/cancel"
+    failUrl: "http://localhost:8080/payment/fail"

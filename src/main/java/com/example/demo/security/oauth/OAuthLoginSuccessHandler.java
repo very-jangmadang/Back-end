@@ -25,12 +25,10 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-
         // 1. 인가 코드 추출
         // 2. 카카오에 토큰 요청
         // 3. 카카오에서 토큰 받아오기
         // 4. 카카오에 사용자 정보 요청
-
 
         // 5. 사용자 정보 받아오기
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
@@ -43,48 +41,32 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
         // 기존 회원이 아닌경우
         if (!userService.isExistUser(email)) {
+            //String redirectUrl = "/nickname";
             // DB에 유저 등록
             userService.createUser(email);
-
-            // 리다이렉트 URL 설정
-            String redirectUrl = "/nickname";
-
-            // 엑세스 토큰 생성
-            Long userId = userService.findIdByEmail(email);
-            String accessToken = jwtUtil.createAccessToken(userId, email);
-
-            // 클라이언트에게 전달
-            response.addCookie(createCookie(accessToken));
-
-            response.setStatus(HttpServletResponse.SC_FOUND); // 302 상태 코드
-            response.setHeader("Location", redirectUrl);
         }
-        else {
 
-            String redirectUrl = "/home";
+        // 엑세스 토큰 생성
+        Long userId = userService.findIdByEmail(email);
+        String accessToken = jwtUtil.createAccessToken(userId, email);
+        // 쿠키로 전달하기
+        response.addCookie(createCookie(accessToken));
 
-            // 엑세스 토큰 생성
-            Long userId = userService.findIdByEmail(email);
-            String accessToken = jwtUtil.createAccessToken(userId, email);
-
-            // 클라이언트에게 전달
-            response.setHeader("Authorization", "Bearer " + accessToken);
-            response.addCookie(createCookie(accessToken));
-
-            // 성공 후 리다이렉트
-            response.setContentType("application/json");
-            response.getWriter().write("{\"redirectUrl\":\"/home\", \"accessToken\":\"" + accessToken + "\"}");
-        }
+//        // 1. 헤더로 전달
+//        response.setHeader("Authorization", "Bearer " + accessToken);
+//        // 2. 쿠키로 전달
+//        response.addCookie(createCookie(accessToken));
+//        // 3. JSON 전달
+//        response.setContentType("application/json");
+//        response.getWriter().write("{\"redirectUrl\":\"/home\", \"accessToken\":\"" + accessToken + "\"}");
     }
 
     private Cookie createCookie(String value) {
-
         Cookie cookie = new Cookie("Authorization", value);
         cookie.setMaxAge(60*60*60*60);
-//        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-
+//        cookie.setSecure(true); // HTTPS 필수
         return cookie;
     }
 }

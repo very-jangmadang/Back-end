@@ -1,7 +1,6 @@
 package com.example.demo.service.general.impl;
 
 import com.example.demo.domain.converter.UserConverter;
-import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.UserService;

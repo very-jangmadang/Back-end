@@ -2,6 +2,7 @@ package com.example.demo.service.handler;
 
 import java.util.Random;
 
+// 랜덤 닉네임 생성
 public class NicknameGenerator {
 
     private static final String[] ADJECTIVES = {
