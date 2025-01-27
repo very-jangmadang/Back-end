@@ -18,6 +18,7 @@ public class Image extends BaseEntity {
     @JoinColumn(name = "raffle_id")
     private Raffle raffle;
 
+
     private String ImageUrl;
 
     @Column(name = "image_order")
@@ -27,4 +28,6 @@ public class Image extends BaseEntity {
     public void setRaffle(Raffle raffle) {
         this.raffle = raffle;
     }
+
+
 }

@@ -1,10 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +17,7 @@ public class User extends BaseEntity{
     @Column(name = "user_id")
     private Long id;
 
-    @Column(length = 20)
+    @Column(length = 255)
     private String email;
 
     @Column(length = 20)
@@ -37,7 +34,8 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String role;
 
-    private String address;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> addresses;
 
     private double score = 0;
 
@@ -45,5 +43,7 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes;
+
+    public void setTicket_num(int ticket_num) { this.ticket_num = ticket_num; }
 
 }

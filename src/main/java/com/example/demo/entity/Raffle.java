@@ -1,9 +1,11 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.base.enums.Status;
+import com.example.demo.entity.base.enums.ItemStatus;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class Raffle extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "winner_id")
     private User winner;
@@ -37,9 +40,11 @@ public class Raffle extends BaseEntity {
 
     private String description;
 
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
-    private Status status;
+    private ItemStatus itemStatus;
 
     private LocalDateTime startAt;
 
@@ -55,12 +60,23 @@ public class Raffle extends BaseEntity {
 //
 //    private int apply_count = 0; // 초기값 0
 
+    @Enumerated (EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(15)")
+    private RaffleStatus raffleStatus;
+
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
 
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     @Builder.Default // 이슈
     List<Image> images = new ArrayList<>();
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal shippingFee;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_id")
+    Delivery delivery;
 
     // 연관관계 편의 메서드
     public void addImage(Image image) {
@@ -72,6 +88,9 @@ public class Raffle extends BaseEntity {
     public void addView() {
         this.view += 1;
     }
+
+    public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
+    public void setDelivery(Delivery delivery) { this.delivery = delivery; }
 
 //    // 찜 횟수 증가
 //    public void upLikeCount(){
