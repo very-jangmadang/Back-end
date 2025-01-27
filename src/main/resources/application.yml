@@ -17,6 +17,9 @@ spring:
       max-request-size: 10MB
       enabled: true
 
+    session:
+      timeout: 5m # 세션 만료 시간 (소셜 로그인 -> 닉네임 입력) (5분)
+
   web:
     encoding:
       charset: UTF-8
@@ -36,24 +39,25 @@ spring:
         use_sql_comments: true
     security:
       enable-csrf: false
+
   jwt:
-    secret: "hadgfsfsfsfsssfsfssfsfsfsffasadad1234567890"
+    secret: "hadgfsfsfsfsssfsfssfsfsfsffasadad123456asdfsadf7890zsadfjksadfksdafsafdawfjasfaasfhasdfhsadajfhaslfha"
     expiration:
       access-token: 3600
       refresh-token: 604800
+
   security:
     oauth2:
       client:
         kakao-path-uri: "/authorization/oauth2/code/kakao"
         registration:
           kakao:
-            client-id: 28aafe4adf59867d844dce294b455c6c
-            client-secret: JuOWB45mg985VegMqx7bmthrXNEb9l6O
+            client-id: af7f76095596a2c3c083f5a6d5b055f8
+            client-secret: hN8Rie4aeelLrG3q9jgUm07gVsjdvVR8
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/authorization/oauth2/code/kakao
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             scope:
               - account_email
-              - profile_nickname
             client-name: Kakao
             client-authentication-method: client_secret_post
         provider:

@@ -39,7 +39,7 @@ public class User extends BaseEntity{
 
     private String address;
 
-    private double score;
+    private double score = 0;
 
     private LocalDateTime withdrawTime;
 
