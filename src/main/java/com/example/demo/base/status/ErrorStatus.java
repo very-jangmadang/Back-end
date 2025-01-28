@@ -100,7 +100,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
 
     //16. dohyun- 문의 관련 에러
-    NO_DELETE_AUTHORITY(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "삭제 권한이 없습니다."),
+    CANNOT_DELTETE(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "삭제 권한이 없습니다."),
     ;
   
 
