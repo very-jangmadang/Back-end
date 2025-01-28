@@ -1,7 +1,6 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Home.HomeRaffleListDTO;
 import com.example.demo.domain.dto.Home.HomeResponseDTO;
