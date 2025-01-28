@@ -34,10 +34,16 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String role;
 
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> addresses;
 
-    private double score = 0;
+    @Column(nullable = false)
+    @Setter
+    private double averageScore;
+
+    @Setter
+    private int reviewCount;
 
     private LocalDateTime withdrawTime;
 
