@@ -22,13 +22,13 @@ public class HomeController {
     @GetMapping("")
     public ApiResponse<HomeResponseDTO> home(Authentication authentication){
 
-        // 로그인 한 회원인 경우
+        // 로그인 안한 회원인 경우
         if (authentication == null || !authentication.isAuthenticated()) {
             HomeResponseDTO result = homeService.getHome();
             return ApiResponse.of(SuccessStatus._OK, result);
         }
 
-        // 로그인 안한 회원인 경우
+        // 로그인 한 회원인 경우
         else{
             Long userId = Long.parseLong(authentication.getName());
             HomeResponseDTO result =  homeService.getHomeLogin(userId);
@@ -41,13 +41,13 @@ public class HomeController {
     @GetMapping("/categories")
     public ApiResponse<HomeRaffleListDTO> homeCategories(@RequestParam("categoryName") String categoryName, Authentication authentication){
 
-        // 로그인 한 회원인 경우
+        // 로그인 안한 회원인 경우
         if (authentication == null || !authentication.isAuthenticated()) {
             HomeRaffleListDTO result = homeService.getHomeCategories(categoryName);
             return ApiResponse.of(SuccessStatus._OK, result);
         }
 
-        // 로그인 안한 회원인 경우
+        // 로그인 한 회원인 경우
         else{
             Long userId = Long.parseLong(authentication.getName());
             HomeRaffleListDTO result =  homeService.getHomeCategoriesLogin(categoryName, userId);
@@ -60,13 +60,13 @@ public class HomeController {
     @GetMapping("/approaching")
     public ApiResponse<HomeRaffleListDTO> homeApproaching(Authentication authentication){
 
-        // 로그인 한 회원인 경우
+        // 로그인 안한 회원인 경우
         if (authentication == null || !authentication.isAuthenticated()) {
             HomeRaffleListDTO result = homeService.getHomeApproaching();
             return ApiResponse.of(SuccessStatus._OK, result);
         }
 
-        // 로그인 안 한 회원인 경우
+        // 로그인 한 회원인 경우
         else{
             Long userId = Long.parseLong(authentication.getName());
             HomeRaffleListDTO result =  homeService.getHomeApproachingLogin(userId);
