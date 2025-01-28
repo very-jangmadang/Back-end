@@ -14,6 +14,8 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMON_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_500", "서버 에러가 발생했습니다. 관리자에게 문의하세요."),
     COMMON_BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_4001", "잘못된 요청입니다."),
     COMMON_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON_4002", "인증이 필요합니다."),
+    COMMON_WRONG_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON_4003", "잘못된 파라미터 값 입니다."),
+
 
     // 1. Yoon - 유저 관련 에러
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER_4001", "해당 유저를 찾을 수 없습니다."),
@@ -94,12 +96,10 @@ public enum ErrorStatus implements BaseErrorCode {
     // 15. Huiju - 주소 관련 에러
     ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "ADDRESS_4001", "사용자에게 등록된 주소가 없습니다."),
     ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4002", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
-  
+
 
     //16. dohyun- 문의 관련 에러
     NO_DELETE_AUTHORITY(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "삭제 권한이 없습니다."),
-
-
     ;
   
 

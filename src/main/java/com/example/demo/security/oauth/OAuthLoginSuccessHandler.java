@@ -1,26 +1,72 @@
 package com.example.demo.security.oauth;
 
-import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.security.jwt.JWTUtil;
+import com.example.demo.service.general.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    private final UserService userService;
+    private final JWTUtil jwtUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        String code = request.getParameter("code");
-        String state = request.getParameter("state");
-        if (code == null || state == null) {
-            throw new CustomException(ErrorStatus.OAUTH_PROCESSING_FAILED);
+        // 1. 인가 코드 추출
+        // 2. 카카오에 토큰 요청
+        // 3. 카카오에서 토큰 받아오기
+        // 4. 카카오에 사용자 정보 요청
+
+        // 5. 사용자 정보 받아오기
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        log.info("로그인 성공! 사용자 정보: {}", oAuth2User.getAttributes());
+
+        // 6. 사용자 정보 확인
+        Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
+        String email = kakaoAccount.get("email").toString();
+        log.info("{}", kakaoAccount.get("email"));
+
+        // 기존 회원이 아닌경우
+        if (!userService.isExistUser(email)) {
+            //String redirectUrl = "/nickname";
+            // DB에 유저 등록
+            userService.createUser(email);
         }
+
+        // 엑세스 토큰 생성
+        Long userId = userService.findIdByEmail(email);
+        String accessToken = jwtUtil.createAccessToken(userId, email);
+        // 쿠키로 전달하기
+        response.addCookie(createCookie(accessToken));
+
+//        // 1. 헤더로 전달
+//        response.setHeader("Authorization", "Bearer " + accessToken);
+//        // 2. 쿠키로 전달
+//        response.addCookie(createCookie(accessToken));
+//        // 3. JSON 전달
+//        response.setContentType("application/json");
+//        response.getWriter().write("{\"redirectUrl\":\"/home\", \"accessToken\":\"" + accessToken + "\"}");
+    }
+
+    private Cookie createCookie(String value) {
+        Cookie cookie = new Cookie("Authorization", value);
+        cookie.setMaxAge(60*60*60*60);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+//        cookie.setSecure(true); // HTTPS 필수
+        return cookie;
     }
 }

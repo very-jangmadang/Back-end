@@ -39,6 +39,7 @@ public class RaffleConverter {
     }
 
     public static RaffleResponseDTO.RaffleDetailDTO toDetailDTO(Raffle raffle, int likeCount, int applyCount, int followCount, int reviewCount) {
+
         return RaffleResponseDTO.RaffleDetailDTO.builder()
                 .imageUrls(raffle.getImages().stream().map(Image::getImageUrl).toList()) // 이미지 url 리스트 (추후 쿼리 개선)
                 .name(raffle.getName()) // 상품명
@@ -50,7 +51,7 @@ public class RaffleConverter {
                 .view(raffle.getView()) // 조회 수
                 .likeCount(likeCount) // 찜 수
                 .applyCount(applyCount) // 응모 수
-                .minTicket(raffle.getMinTicket()) // 최소 티켓 수
+                .minUser(Math.round((float)raffle.getMinTicket() / raffle.getTicketNum())) // 판매자 희망 최소 참여자 수
                 .nickname(raffle.getUser().getNickname()) // 판매자 닉네임
                 .followCount(followCount) // 팔로우 수
                 .reviewCount(reviewCount) // 리뷰 수
