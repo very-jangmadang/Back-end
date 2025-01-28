@@ -1,14 +1,14 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.domain.dto.Draw.DrawRequestDTO;
-import com.example.demo.domain.dto.Draw.DrawResponseDTO;
-import com.example.demo.domain.dto.Like.LikeRequestDTO;
-import com.example.demo.domain.dto.Like.LikeResponseDTO;
+import com.example.demo.domain.dto.DrawResponseDTO;
 import com.example.demo.service.general.DrawService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+import static com.example.demo.base.status.SuccessStatus.REDIRECT_SUCCESS;
 import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
@@ -19,9 +19,16 @@ public class DrawController {
     private final DrawService drawService;
 
     @GetMapping("/{raffleId}/draw")
-    public ApiResponse<DrawResponseDTO.DrawDto> drawRaffle(@PathVariable Long raffleId) {
+    public ApiResponse<?> drawRaffle(@PathVariable Long raffleId) {
 
-        return ApiResponse.of(_OK, drawService.getDrawRaffle(raffleId));
+        Map<String, Object> result = drawService.getDrawRaffle(raffleId);
+        DrawResponseDTO.DrawDto drawDto = (DrawResponseDTO.DrawDto) result.get("drawDto");
+        String redirectUrl = (String) result.get("redirectUrl");
+
+        if (drawDto == null)
+            return ApiResponse.of(REDIRECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
+
+        return ApiResponse.of(_OK, drawDto);
 
     }
 
@@ -32,17 +39,23 @@ public class DrawController {
         return ApiResponse.of(_OK, drawService.getWinner(raffleId));
     }
 
-    @GetMapping("/{raffleId}/draw/delivery")
-    public ApiResponse<DrawResponseDTO.DeliveryDto> drawDelivery(@PathVariable Long raffleId) {
+    @GetMapping("/{raffleId}/draw/owner/result")
+    public ApiResponse<DrawResponseDTO.RaffleResultDto> getRaffleResult(@PathVariable Long raffleId) {
 
-        return ApiResponse.of(_OK, drawService.getDelivery(raffleId));
+        return ApiResponse.of(_OK, drawService.getRaffleResult(raffleId));
     }
 
-    @PostMapping("{raffleId}/draw/delivery")
-    public ApiResponse<DrawResponseDTO.AddressChoiceDto> chooseAddress(
-            @PathVariable Long raffleId, @RequestBody DrawRequestDTO drawRequestDTO) {
+    @GetMapping("/{raffleId}/draw/owner/draw")
+    public ApiResponse<Map<String, String>> selfDraw(@PathVariable Long raffleId) {
+        String redirectUrl = drawService.selfDraw(raffleId);
 
-        return ApiResponse.of(_OK, drawService.chooseAddress(raffleId, drawRequestDTO));
+        return ApiResponse.of(REDIRECT_SUCCESS, Map.of("redirectUrl", redirectUrl));
+    }
+
+    @GetMapping("/{raffleId}/draw/owner/cancel")
+    public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(@PathVariable Long raffleId) {
+
+        return ApiResponse.of(_OK, drawService.forceCancel(raffleId));
     }
 
 }

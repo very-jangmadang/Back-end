@@ -2,7 +2,7 @@ package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
 import com.example.demo.base.status.SuccessStatus;
-import com.example.demo.domain.dto.HomeResponseDTO;
+import com.example.demo.domain.dto.Home.HomeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

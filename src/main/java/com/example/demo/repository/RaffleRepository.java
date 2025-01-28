@@ -4,10 +4,12 @@ import com.example.demo.entity.Raffle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     Optional<Raffle> findById(Long id);
+    List<Raffle> findByCategoryName(String categoryName);
 
     // 찜 횟수
     @Query("SELECT COUNT(l) FROM Like l WHERE l.raffle.id = :raffleId")

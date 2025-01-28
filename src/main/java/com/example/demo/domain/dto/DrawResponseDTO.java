@@ -1,10 +1,11 @@
-package com.example.demo.domain.dto.Draw;
+package com.example.demo.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class DrawResponseDTO {
@@ -25,6 +26,7 @@ public class DrawResponseDTO {
     public static class WinnerDto {
         private Long raffleId;
         private Long winnerId;
+        private Long deliveryId;
         private String winnerNickname;
     }
 
@@ -32,30 +34,19 @@ public class DrawResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DeliveryDto {
+    public static class RaffleResultDto {
         private Long raffleId;
-        private Long winnerId;
-        private List<AddressDto> addressList;
+        private int minTicket;
+        private int applyTicket;
+        private BigDecimal totalAmount;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AddressDto {
-        private Long addressId;
-        private String addressName;
-        private String addressDetail;
-        private Boolean isDefault;
+    public static class CancelDto {
+        private Long raffleId;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AddressChoiceDto {
-        private Long raffleId;
-        private Long winnerId;
-        private Long addressId;
-    }
 }

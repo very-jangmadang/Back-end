@@ -3,21 +3,20 @@ package com.example.demo.jobs;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.entity.Apply;
+import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.RaffleRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.general.DrawService;
+import com.example.demo.service.general.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -25,10 +24,16 @@ public class RaffleEndJob implements Job {
 
     private final RaffleRepository raffleRepository;
     private final ApplyRepository applyRepository;
-    private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final DrawService drawService;
+
+    private void updateRaffleStatus(Raffle raffle, RaffleStatus status) {
+        raffle.setRaffleStatus(status);
+        raffleRepository.save(raffle);
+    }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CustomException.class)
     public void execute(JobExecutionContext context) {
         Long raffleId = context.getJobDetail().getJobDataMap().getLong("raffleId");
 
@@ -36,28 +41,19 @@ public class RaffleEndJob implements Job {
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
         int applyCount = applyRepository.countByRaffle(raffle);
+        List<Apply> applyList = applyRepository.findByRaffle(raffle);
 
-        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket()) {
-            raffle.setRaffleStatus(RaffleStatus.UNFULFILLED);
-            raffleRepository.save(raffle);
+        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket())
+            updateRaffleStatus(raffle, RaffleStatus.UNFULFILLED);
+//            drawService.cancel(raffle, applyList);
 
-            // 티켓 반환
-            List<Apply> applyList = applyRepository.findByRaffle(raffle);
-            int refundTicket = raffle.getTicketNum();
+        updateRaffleStatus(raffle, RaffleStatus.ENDED);
 
-            List<Long> userIds = applyList.stream()
-                    .map(apply -> apply.getUser().getId())
-                    .collect(Collectors.toList());
+        if (applyList == null || applyList.isEmpty())
+            throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
-            if (!userIds.isEmpty()) {
-                userRepository.batchUpdateTicketNum(refundTicket, userIds);
-            }
+        Delivery delivery = drawService.draw(raffle, applyList);
 
-        } else {
-            raffle.setRaffleStatus(RaffleStatus.ENDED);
-            raffleRepository.save(raffle);
-
-            // TODO: 당첨자 추첨 로직 추가
-        }
+        emailService.sendEmail(delivery);
     }
 }
