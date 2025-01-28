@@ -3,9 +3,11 @@ package com.example.demo.security.jwt;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,6 +16,7 @@ import java.io.IOException;
 
 @WebFilter("/*")
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -28,15 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        //여기서 토큰 검증
-
-        // 1. Authorization 헤더에서 토큰 추출
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = null;
-
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-        }
+        // 1. 쿠키에서 토큰 가져오기
+        String token = extractTokenFromCookies(request);
 
         // 2. 토큰 검증
         if (token != null) {
@@ -46,8 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (isValid) {
                 // 토큰에서 인증정보 생성
                 Authentication authentication = jwtUtil.getAuthentication(token);
-
+                log.info("Setting Authentication: {}", authentication);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("Current Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
 
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 에러
@@ -73,5 +70,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestURI.equals("/login") ||
                 requestURI.equals("/home") ||
                 requestURI.equals("/nickname");
+    }
+
+    private String extractTokenFromCookies(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("Authorization".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }
