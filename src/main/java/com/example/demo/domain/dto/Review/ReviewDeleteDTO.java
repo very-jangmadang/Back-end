@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ReviewDeleteDTO {
-    private Long userId;  //사용자 ID
+    private Long reviewerId;  //사용자 ID
 }
