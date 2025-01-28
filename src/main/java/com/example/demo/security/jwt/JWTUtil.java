@@ -24,15 +24,16 @@ public class JWTUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parser()
+                .setAllowedClockSkewSeconds(60) // 클라 - 서버 60초 시간차이 허용
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
 
         String userId = claims.get("id", String.class);
+        String email = claims.get("email", String.class);
         List<String> roles = claims.get("roles", List.class);
 
         // 권한 변환
@@ -45,58 +46,15 @@ public class JWTUtil {
         return new UsernamePasswordAuthenticationToken(userId, null, authorities);
     }
 
-    public String getUserId(String token) {
-        try {
-            // 토큰에서 클레임 추출
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey) // 비밀키 설정
-                    .build()
-                    .parseClaimsJws(token) // 토큰 파싱
-                    .getBody(); // 클레임 반환
-
-            return claims.get("id", String.class);
-        } catch (JwtException e) {
-            log.error("Failed to extract id from token: {}", e.getMessage());
-            return null; // 예외 발생 시 null 반환
-        }
-    }
-
-    public String getUserEmail(String token) {
-        try {
-            // 토큰에서 클레임 추출
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey) // 비밀키 설정
-                    .build()
-                    .parseClaimsJws(token) // 토큰 파싱
-                    .getBody(); // 클레임 반환
-
-            // 클레임에서 email 필드 추출
-            return claims.get("email", String.class);
-        } catch (JwtException e) {
-            log.error("Failed to extract email from token: {}", e.getMessage());
-            return null; // 예외 발생 시 null 반환
-        }
-    }
-
     public String createAccessToken(Long id, String email) {
         // 토큰 생성
         return Jwts.builder()
-                .claim("id", id)
+                .claim("id", id.toString())
                 .claim("email", email)
-                .claim("roles", "USER")
+                .claim("roles", List.of("USER"))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 10 * 60 * 1000)) // 만료시간 10분
+                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 만료시간 60분
                 .signWith(secretKey)
-                .compact();
-    }
-
-    public String createTemToken(String email) {
-        // 토큰 생성
-        return Jwts.builder()
-                .claim("email", email)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 5 * 60 * 1000)) // 만료시간 5분
-                .signWith(secretKey) // 최신 버전에서 Keys.hmacShaKeyFor 키 사용
                 .compact();
     }
 

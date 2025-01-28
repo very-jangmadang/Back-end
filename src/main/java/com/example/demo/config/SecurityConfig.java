@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -40,7 +39,7 @@ public class SecurityConfig {
                     authorize
                             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                             .requestMatchers("/api/permit/**", "/login/**", "/nickname/**", "/home/**").permitAll()
-                            .requestMatchers("/favicon.ico", "/static/**").permitAll() // 인증 없이 허용
+                            .requestMatchers("/favicon.ico", "/static/**", "/api/member/**").permitAll() // 인증 없이 허용
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(oauth -> {
