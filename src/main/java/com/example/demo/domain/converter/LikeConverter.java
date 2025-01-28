@@ -1,7 +1,6 @@
 package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.Like.LikeListResponseDTO;
-import com.example.demo.domain.dto.Like.LikeRequestDTO;
 import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
