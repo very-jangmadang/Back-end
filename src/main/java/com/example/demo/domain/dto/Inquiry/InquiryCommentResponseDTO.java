@@ -17,6 +17,7 @@ public class InquiryCommentResponseDTO {
     private Long userId;
     private Long raffleId;
     private String nickname;
+    private String title;
     private String content;
     private boolean isHost;
     private LocalDateTime timestamp;

@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class InquiryCommentRequestDTO {
     private Long userId;
+    private String title;
     private String content;
 
 }

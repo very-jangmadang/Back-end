@@ -27,6 +27,7 @@ public class InquiryCommentConverter {
                 .userId(comment.getUser().getId())
                 .raffleId(comment.getInquiry().getRaffle().getId())
                 .nickname(comment.getUser().getNickname())
+                .title(comment.getTitle())
                 .content(comment.getContent())
                 .isHost(comment.isHost())
                 .timestamp(LocalDateTime.now())

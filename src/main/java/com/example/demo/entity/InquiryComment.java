@@ -22,6 +22,8 @@ public class InquiryComment extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    private String title;
+
     private String content;
 
     private boolean isHost;
