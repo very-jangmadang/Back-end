@@ -78,17 +78,29 @@ public class HomeController {
     @Operation(summary = "팔로우한 상점의 래플 더보기")
     @GetMapping("/following")
     public ApiResponse<HomeRaffleListDTO> homeFollowingRaffles(Authentication authentication){
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
-        }
-
         Long userId = Long.parseLong(authentication.getName());
         HomeRaffleListDTO result = homeService.getHomeFollowingRaffles(userId);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
+    @Operation(summary = "래플 둘러보기")
+    @GetMapping("/more")
+    public ApiResponse<HomeRaffleListDTO> homeMoreRaffles(Authentication authentication){
 
+        // 로그인 안한 회원인 경우
+        if (authentication == null || !authentication.isAuthenticated()) {
+            HomeRaffleListDTO result = homeService.getHomeMoreRaffles();
+            return ApiResponse.of(SuccessStatus._OK, result);
+        }
+
+        // 로그인 한 회원인 경우
+        else{
+            Long userId = Long.parseLong(authentication.getName());
+            HomeRaffleListDTO result =  homeService.getHomeMoreRafflesLogin(userId);
+            return ApiResponse.of(SuccessStatus._OK, result);
+        }
+
+    }
 
 
 }

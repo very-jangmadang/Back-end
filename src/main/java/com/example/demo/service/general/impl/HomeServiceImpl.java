@@ -188,6 +188,31 @@ public class HomeServiceImpl implements HomeService {
                 .build();
     }
 
+    @Override
+    public HomeRaffleListDTO getHomeMoreRaffles() {
+        List<Raffle> raffles = raffleRepository.findAll();
+        List<Raffle> rafflesSortedByApplyList = sortRafflesByApply(raffles);
+        List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApplyList, null);
+
+        return HomeRaffleListDTO.builder()
+                .raffles(rafflesSortedByApplyListDTO)
+                .build();
+    }
+
+    @Override
+    public HomeRaffleListDTO getHomeMoreRafflesLogin(Long userId) {
+        List<Raffle> raffles = raffleRepository.findAll();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        List<Raffle> rafflesSortedByApplyList = sortRafflesByApply(raffles);
+        List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApplyList, user);
+
+        return HomeRaffleListDTO.builder()
+                .raffles(rafflesSortedByApplyListDTO)
+                .build();
+    }
+
 
     /**
      * 사용하는 메소드 분리

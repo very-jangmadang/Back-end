@@ -18,4 +18,8 @@ public interface HomeService {
     HomeRaffleListDTO getHomeApproachingLogin(Long userId);
 
     HomeRaffleListDTO getHomeFollowingRaffles(Long userId);
+
+    HomeRaffleListDTO getHomeMoreRaffles();
+
+    HomeRaffleListDTO getHomeMoreRafflesLogin(Long userId);
 }
