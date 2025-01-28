@@ -3,12 +3,17 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.MypageConverter;
+import com.example.demo.domain.converter.ReviewConverter;
 import com.example.demo.domain.dto.MypageResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Raffle;
+import com.example.demo.entity.Review;
 import com.example.demo.entity.User;
 import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.LikeRepository;
+import com.example.demo.repository.ReviewRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.MypageService;
 import com.example.demo.service.general.S3UploadService;
@@ -31,6 +36,7 @@ public class MypageServiceImpl implements MypageService {
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
     private final LikeRepository likeRepository;
+    private final ReviewRepository reviewRepository;
     private final S3UploadService s3UploadService;
 
     @Override
@@ -71,8 +77,6 @@ public class MypageServiceImpl implements MypageService {
                 .build();
 
     }
-
-
     @Transactional
     // 프로필 이미지 업데이트
     public String updateProfileImage(Long userId, MultipartFile profile) {
@@ -93,4 +97,26 @@ public class MypageServiceImpl implements MypageService {
         return imageUrl;
     }
 
+    //리뷰 조회
+    public ReviewWithAverageDTO getReviewsByUserId(Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        // 사용자의 모든 후기 조회
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+
+        List<ReviewResponseDTO> reviewResponseDTO = ReviewConverter.toReviewResponseDTOList(reviews);
+
+        int reviewCount = reviews.size();
+
+        double averageScore = user.getAverageScore();
+
+        return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
+    }
+
+
 }
+
+

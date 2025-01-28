@@ -3,8 +3,8 @@ package com.example.demo.controller.general;
 import com.example.demo.base.ApiResponse;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.MypageResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
 import com.example.demo.service.general.MypageService;
-import com.example.demo.service.general.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MypageController {
 
-    private final S3UploadService s3UploadService;
     private final MypageService mypageService;
 
     @GetMapping("/applies")
@@ -33,4 +32,14 @@ public class MypageController {
 
         return ApiResponse.of(SuccessStatus._OK, profileImageUrl);
     }
+
+    //내 리뷰 조회
+    @GetMapping("/{userId}/review")
+    public ApiResponse<ReviewWithAverageDTO> getReviewsByUserId(@PathVariable Long userId) {
+
+        ReviewWithAverageDTO reviews = mypageService.getReviewsByUserId(userId);
+
+        return ApiResponse.of(SuccessStatus._OK, reviews);
+    }
+
 }

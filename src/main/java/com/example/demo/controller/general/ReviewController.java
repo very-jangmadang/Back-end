@@ -54,13 +54,5 @@ public class ReviewController {
         return ApiResponse.of(SuccessStatus._OK, null);
     }
 
-    //리뷰 목록 조회
-    @GetMapping("/{userId}/review")
-    public ApiResponse<ReviewWithAverageDTO> getReviewsByUserId(@PathVariable Long userId) {
-
-        ReviewWithAverageDTO reviews = reviewService.getReviewsByUserId(userId);
-
-        return ApiResponse.of(SuccessStatus._OK, reviews);
-    }
 }
 
