@@ -56,6 +56,12 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user")
     private List<Raffle> raffles;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     public void setTicket_num(int ticket_num) { this.ticket_num = ticket_num; }
 
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 }
