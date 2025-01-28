@@ -3,6 +3,7 @@ package com.example.demo.controller.general;
 import com.example.demo.base.ApiResponse;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Home.HomeCategoryResponseDTO;
+import com.example.demo.domain.dto.Home.HomeRaffleListDTO;
 import com.example.demo.domain.dto.Home.HomeResponseDTO;
 import com.example.demo.service.general.HomeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,13 +51,13 @@ public class HomeController {
 
     @Operation(summary = "카테고리별 래플 조회")
     @GetMapping("/categories")
-    public ApiResponse<HomeCategoryResponseDTO> homeCategories(@RequestParam("categoryName") String categoryName){
+    public ApiResponse<HomeRaffleListDTO> homeCategories(@RequestParam("categoryName") String categoryName){
 
         // TODO: 로그인 한 회원인지 찾는 로직, 이후에 수정 예정.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
-            HomeCategoryResponseDTO result = homeService.getHomeCategories(categoryName);
+            HomeRaffleListDTO result = homeService.getHomeCategories(categoryName);
             return ApiResponse.of(SuccessStatus._OK, result);
         }
 
@@ -68,10 +69,17 @@ public class HomeController {
             if (kakaoAccount != null && kakaoAccount.containsKey("email")) {
                 email = (String) kakaoAccount.get("email");
             }
-            HomeCategoryResponseDTO result =  homeService.getHomeCategoriesLogin(categoryName, email);
+            HomeRaffleListDTO result =  homeService.getHomeCategoriesLogin(categoryName, email);
             return ApiResponse.of(SuccessStatus._OK, result);
         }
 
     }
+
+    @Operation(summary = "마감임박 상품 더보기")
+    @GetMapping("/approaching")
+    public ApiResponse<HomeRaffleListDTO> homeApproaching(){
+        return ApiResponse.of(SuccessStatus._OK, null);
+    }
+
 
 }

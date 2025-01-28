@@ -1,6 +1,8 @@
 package com.example.demo.service.general;
 
+import com.example.demo.domain.dto.Home.HomeApproachingResponseDTO;
 import com.example.demo.domain.dto.Home.HomeCategoryResponseDTO;
+import com.example.demo.domain.dto.Home.HomeRaffleListDTO;
 import com.example.demo.domain.dto.Home.HomeResponseDTO;
 
 public interface HomeService {
@@ -9,7 +11,9 @@ public interface HomeService {
 
     HomeResponseDTO getHomeLogin(String email);
 
-    HomeCategoryResponseDTO getHomeCategories(String categoryName);
+    HomeRaffleListDTO getHomeCategories(String categoryName);
 
-    HomeCategoryResponseDTO getHomeCategoriesLogin(String categoryName, String email);
+    HomeRaffleListDTO getHomeCategoriesLogin(String categoryName, String email);
+
+    HomeRaffleListDTO getHomeApproaching();
 }

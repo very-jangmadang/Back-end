@@ -3,9 +3,7 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.HomeConverter;
-import com.example.demo.domain.dto.Home.HomeCategoryResponseDTO;
-import com.example.demo.domain.dto.Home.HomeRaffleDTO;
-import com.example.demo.domain.dto.Home.HomeResponseDTO;
+import com.example.demo.domain.dto.Home.*;
 import com.example.demo.entity.*;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.LikeRepository;
@@ -38,7 +36,7 @@ public class HomeServiceImpl implements HomeService {
 
         List<Raffle> raffles = raffleRepository.findAll();
 
-        // 마감임박인 래플 5개 조회 (로그인 했을 시, 본인이 찜한 여부까지 같이 전달)
+        // 마감임박인 래플 5개 조회 (로그인 안 했을 시)
         LocalDateTime now = LocalDateTime.now();
 
         List<Raffle> rafflesSortedByEndAt = raffles.stream()
@@ -54,7 +52,7 @@ public class HomeServiceImpl implements HomeService {
             rafflesSortedByEndAtDTO.add(raffleDTO);
         }
 
-        // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 했을 시 찜 여부도 같이 전달)
+        // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 안 했을 시)
         List<Raffle> rafflesSortedByApplyList = sortRafflesByApply(raffles, now);
 
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = new ArrayList<>();
@@ -147,7 +145,7 @@ public class HomeServiceImpl implements HomeService {
 
 
     @Override
-    public HomeCategoryResponseDTO getHomeCategories(String categoryName) {
+    public HomeRaffleListDTO getHomeCategories(String categoryName) {
 
         Category category = categoryRepository.findByName(categoryName)
                 .orElseThrow(() -> new CustomException(ErrorStatus.COMMON_WRONG_PARAMETER));
@@ -164,13 +162,13 @@ public class HomeServiceImpl implements HomeService {
             result.add(homeRaffleDTO);
         }
 
-        return HomeCategoryResponseDTO.builder()
+        return HomeRaffleListDTO.builder()
                 .raffles(result).build();
 
     }
 
     @Override
-    public HomeCategoryResponseDTO getHomeCategoriesLogin(String categoryName, String email) {
+    public HomeRaffleListDTO getHomeCategoriesLogin(String categoryName, String email) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
@@ -191,8 +189,34 @@ public class HomeServiceImpl implements HomeService {
             result.add(homeRaffleDTO);
         }
 
-        return HomeCategoryResponseDTO.builder()
+        return HomeRaffleListDTO.builder()
                 .raffles(result).build();
+    }
+
+    @Override
+    public HomeRaffleListDTO getHomeApproaching() {
+
+        List<Raffle> raffles = raffleRepository.findAll();
+
+        // 마감임박인 래플 더보기 조회
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Raffle> rafflesSortedByEndAt = raffles.stream()
+                .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
+                .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
+                .toList();
+
+        List<HomeRaffleDTO> rafflesSortedByEndAtDTO = new ArrayList<>();
+
+        for (Raffle raffle : rafflesSortedByEndAt) {
+            HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, false);
+            rafflesSortedByEndAtDTO.add(raffleDTO);
+        }
+
+        return HomeRaffleListDTO.builder()
+                .raffles(rafflesSortedByEndAtDTO)
+                .build();
+
     }
 
 
