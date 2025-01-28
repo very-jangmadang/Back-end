@@ -7,7 +7,7 @@ import net.minidev.json.annotate.JsonIgnore;
 @Getter
 public class InquiryRequestDTO {
 
-    @NotNull
+    @NotNull(message = "User ID must not be null")
     private Long userId;
     @NotNull(message = "Raffle ID must not be null")
     private Long raffleId;

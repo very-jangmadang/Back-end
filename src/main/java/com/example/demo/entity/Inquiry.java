@@ -4,6 +4,8 @@ import com.example.demo.entity.base.enums.InquiryStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -25,6 +27,9 @@ public class Inquiry extends BaseEntity{
 
     @Column(length = 30)
     private String title;
+
+    @OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InquiryComment> inquiryComments;
 
     @Enumerated(EnumType.STRING)
     @Setter
