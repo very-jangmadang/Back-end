@@ -165,6 +165,29 @@ public class HomeServiceImpl implements HomeService {
 
     }
 
+    @Override
+    public HomeRaffleListDTO getHomeFollowingRaffles(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        List<Follow> followings = user.getFollowings();
+        List<Raffle> followingAllRaffles = new ArrayList<>();
+
+
+        for (Follow following : followings) {
+            List<Raffle> followingRaffles = following.getUser().getRaffles();
+            followingAllRaffles.addAll(followingRaffles);
+        }
+
+        List<Raffle> myFollowRaffles = sortRafflesByEndAt(followingAllRaffles, 5);
+        List<HomeRaffleDTO> myFollowingRafflesDTO = convertToHomeRaffleDTOList(myFollowRaffles, user);
+
+        return HomeRaffleListDTO.builder()
+                .raffles(myFollowingRafflesDTO)
+                .build();
+    }
+
 
     /**
      * 사용하는 메소드 분리

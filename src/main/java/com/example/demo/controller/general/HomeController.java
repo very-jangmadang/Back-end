@@ -1,6 +1,7 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Home.HomeRaffleListDTO;
 import com.example.demo.domain.dto.Home.HomeResponseDTO;
@@ -73,6 +74,21 @@ public class HomeController {
             return ApiResponse.of(SuccessStatus._OK, result);
         }
     }
+
+    @Operation(summary = "팔로우한 상점의 래플 더보기")
+    @GetMapping("/following")
+    public ApiResponse<HomeRaffleListDTO> homeFollowingRaffles(Authentication authentication){
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        HomeRaffleListDTO result = homeService.getHomeFollowingRaffles(userId);
+        return ApiResponse.of(SuccessStatus._OK, result);
+    }
+
+
 
 
 }
