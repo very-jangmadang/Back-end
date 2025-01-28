@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.apache.coyote.http11.Constants.a;
+
 @RestController
 @RequestMapping("api/permit/inquiry")
 @RequiredArgsConstructor
@@ -33,9 +35,9 @@ public class InquiryController {
     @Operation(summary = "문의글 작성")
     @PostMapping("/")
     public ApiResponse<InquiryResponseDTO> addInquiry(
-            @RequestBody InquiryRequestDTO inquiryRequest) {
+            @RequestBody InquiryRequestDTO inquiryRequest, Authentication authentication) {
 
-        InquiryResponseDTO inquiryResponse = inquiryService.addInquiry(inquiryRequest);
+        InquiryResponseDTO inquiryResponse = inquiryService.addInquiry(inquiryRequest,authentication);
 
         return ApiResponse.of(SuccessStatus._OK, inquiryResponse);
 
@@ -47,9 +49,9 @@ public class InquiryController {
     @DeleteMapping("/{inquiryId}")
     public ApiResponse<InquiryResponseDTO> deleteInquiry(
             @PathVariable Long inquiryId,
-            @RequestBody InquiryDeleteDTO inquiryDelete) {
+            Authentication authentication) {
 
-        inquiryService.deleteInquiry(inquiryId,inquiryDelete);
+        inquiryService.deleteInquiry(inquiryId,authentication);
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }
@@ -69,10 +71,11 @@ public class InquiryController {
     @PostMapping("/{inquiryId}/comment")
     public ApiResponse<InquiryCommentResponseDTO> addComment(
             @PathVariable Long inquiryId,
-            @RequestBody InquiryCommentRequestDTO commentRequest) {
+            @RequestBody InquiryCommentRequestDTO commentRequest,
+            Authentication authentication) {
 
 
-        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest,inquiryId);
+        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest,inquiryId,authentication);
 
         return ApiResponse.of(SuccessStatus._OK, commentResponse);
 

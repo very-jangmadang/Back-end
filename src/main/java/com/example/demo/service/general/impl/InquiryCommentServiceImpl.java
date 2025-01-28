@@ -18,6 +18,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.InquiryCommentService;
 import com.example.demo.service.general.LikeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.repository.InquiryRepository;
@@ -32,10 +33,15 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
     private final InquiryCommentRepository commentRepository;
 
     @Transactional
-    public InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest,Long inquiryId) {
+    public InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest, Long inquiryId, Authentication authentication) {
+
+        String username=null;
+        if (authentication != null && authentication.isAuthenticated())
+            username = authentication.getName();
+
 
         // 로그인된 사용자 가져오기
-        User user = userRepository.findById(commentRequest.getUserId())
+        User user = userRepository.findById(Long.parseLong(username))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         // 문의 조회
