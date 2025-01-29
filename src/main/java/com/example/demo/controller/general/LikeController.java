@@ -21,18 +21,18 @@ import java.util.List;
     private final LikeService likeService;
 
     //찜하기
-    @PostMapping("{raffleId}/like")
+    @PostMapping("/like")
     public ApiResponse<LikeResponseDTO> addLike(
-            @PathVariable Long raffleId, Authentication authentication) {
+             Long raffleId, Authentication authentication) {
 
         LikeResponseDTO likeResponse = likeService.addLike(raffleId,authentication);
         return ApiResponse.of(SuccessStatus._OK, likeResponse);
     }
 
     //찜 삭제
-    @DeleteMapping("{raffleId}/like")
+    @DeleteMapping("/like")
     public ApiResponse<String> deleteLike(
-            @PathVariable Long raffleId,Authentication authentication) {
+            Long raffleId,Authentication authentication) {
 
         likeService.deleteLike(raffleId, authentication);
         return ApiResponse.of(SuccessStatus._OK, null);
