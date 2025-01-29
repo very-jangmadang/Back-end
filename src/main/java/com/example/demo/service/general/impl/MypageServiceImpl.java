@@ -18,6 +18,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.MypageService;
 import com.example.demo.service.general.S3UploadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,10 +80,11 @@ public class MypageServiceImpl implements MypageService {
     }
     @Transactional
     // 프로필 이미지 업데이트
-    public String updateProfileImage(Long userId, MultipartFile profile) {
+    public String updateProfileImage(Authentication authentication, MultipartFile profile) {
 
+        String username = authentication.getName();
         // 사용자 조회
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(Long.parseLong(username))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         // 이미지 업로드 후 URL 얻기
@@ -97,11 +99,12 @@ public class MypageServiceImpl implements MypageService {
         return imageUrl;
     }
 
-    //리뷰 조회
-    public ReviewWithAverageDTO getReviewsByUserId(Long userId) {
+    //내 리뷰 조회
+    public ReviewWithAverageDTO getMyReviewsByUserId(Authentication authentication) {
 
+        String username = authentication.getName();
         // 사용자 조회
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(Long.parseLong(username))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         // 사용자의 모든 후기 조회

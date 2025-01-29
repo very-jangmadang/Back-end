@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ReviewConverter {
 
-    public static Review toReview(ReviewRequestDTO.ReviewUploadDTO Reviewrequest, Raffle raffle,User user,User reviewer, List<String> imageUrls) {
+    public static Review toReview(ReviewRequestDTO.ReviewUploadDTO Reviewrequest, User user,Raffle raffle,User reviewer, List<String> imageUrls) {
 
         return Review.builder()
                 .raffle(raffle)

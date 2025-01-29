@@ -7,6 +7,7 @@ import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
 import com.example.demo.service.general.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,19 +26,19 @@ public class MypageController {
     }
 
     @PatchMapping(value="/profile-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<String> uploadProfileImage(Long userId, @RequestPart MultipartFile profile) {
+    public ApiResponse<String> uploadProfileImage(Authentication authentication, @RequestPart MultipartFile profile) {
 
         // 프로필 이미지 업데이트
-        String profileImageUrl = mypageService.updateProfileImage(userId, profile);
+        String profileImageUrl = mypageService.updateProfileImage(authentication, profile);
 
         return ApiResponse.of(SuccessStatus._OK, profileImageUrl);
     }
 
     //내 리뷰 조회
-    @GetMapping("/{userId}/review")
-    public ApiResponse<ReviewWithAverageDTO> getReviewsByUserId(@PathVariable Long userId) {
+    @GetMapping("/review")
+    public ApiResponse<ReviewWithAverageDTO> getMyReviewsByUserId(Authentication authentication) {
 
-        ReviewWithAverageDTO reviews = mypageService.getReviewsByUserId(userId);
+        ReviewWithAverageDTO reviews = mypageService.getMyReviewsByUserId(authentication);
 
         return ApiResponse.of(SuccessStatus._OK, reviews);
     }

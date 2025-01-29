@@ -3,7 +3,6 @@ package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
 import com.example.demo.base.status.SuccessStatus;
-import com.example.demo.domain.dto.Review.ReviewDeleteDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
@@ -14,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Mod10Check;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,9 +34,9 @@ public class ReviewController {
     @Operation(summary = "리뷰 작성")
     @PostMapping(value="/",consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ReviewResponseDTO> addReview(
-            @ModelAttribute @Valid ReviewRequestDTO.ReviewUploadDTO reviewRequest) {
+            @ModelAttribute @Valid ReviewRequestDTO.ReviewUploadDTO reviewRequest,Authentication authentication) {
 
-        ReviewResponseDTO reviewResponse = reviewService.addReview(reviewRequest);
+        ReviewResponseDTO reviewResponse = reviewService.addReview(reviewRequest,authentication);
 
         return ApiResponse.of(SuccessStatus._OK, reviewResponse);
 
@@ -47,11 +47,20 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public ApiResponse<ReviewResponseDTO> deleteReview(
             @PathVariable Long reviewId,
-            @RequestBody ReviewDeleteDTO reviewDelete) {
+            Authentication authentication) {
 
-        reviewService.deleteReview(reviewId,reviewDelete);
+        reviewService.deleteReview(reviewId,authentication);
 
         return ApiResponse.of(SuccessStatus._OK, null);
+    }
+
+    //상대 리뷰 조회
+    @GetMapping("/{userId}/review")
+    public ApiResponse<ReviewWithAverageDTO> getReviewsByUserId(@PathVariable Long userId) {
+
+        ReviewWithAverageDTO reviews = reviewService.getReviewsByUserId(userId);
+
+        return ApiResponse.of(SuccessStatus._OK, reviews);
     }
 
 }
