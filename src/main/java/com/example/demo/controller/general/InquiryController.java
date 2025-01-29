@@ -33,7 +33,7 @@ public class InquiryController {
 
     //문의글 작성
     @Operation(summary = "문의글 작성")
-    @PostMapping("/")
+    @PostMapping("")
     public ApiResponse<InquiryResponseDTO> addInquiry(
             @RequestBody InquiryRequestDTO inquiryRequest, Authentication authentication) {
 
@@ -46,14 +46,14 @@ public class InquiryController {
 
     //문의글 삭제
     @Operation(summary = "문의글 삭제")
-    @DeleteMapping("/{inquiryId}")
-    public ApiResponse<InquiryResponseDTO> deleteInquiry(
-            @PathVariable Long inquiryId,
+    @DeleteMapping("")
+    public ApiResponse<Void> deleteInquiry(
+            @RequestParam  Long inquiryId,
             Authentication authentication) {
 
         inquiryService.deleteInquiry(inquiryId,authentication);
 
-        return ApiResponse.of(SuccessStatus._OK, null);
+        return ApiResponse.of(SuccessStatus._OK,null);
     }
 
     //문의 목록과 댓글 조회
