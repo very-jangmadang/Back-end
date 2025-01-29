@@ -22,4 +22,6 @@ public interface HomeService {
     HomeRaffleListDTO getHomeMoreRaffles();
 
     HomeRaffleListDTO getHomeMoreRafflesLogin(Long userId);
+
+    HomeRaffleListDTO getHomeLikeRaffles(Long userId);
 }

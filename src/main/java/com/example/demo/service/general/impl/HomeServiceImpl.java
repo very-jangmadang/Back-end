@@ -213,6 +213,29 @@ public class HomeServiceImpl implements HomeService {
                 .build();
     }
 
+    @Override
+    public HomeRaffleListDTO getHomeLikeRaffles(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        List<Like> sortedLikes = user.getLikes().stream()
+                .sorted(Comparator.comparing(Like::getCreatedAt).reversed())
+                .toList();
+
+        List<HomeRaffleDTO> myLikeRafflesDTO = new ArrayList<>();
+
+        for (Like sortedLike : sortedLikes) {
+            Raffle raffle = sortedLike.getRaffle();
+            HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, true);
+            myLikeRafflesDTO.add(raffleDTO);
+        }
+
+        return HomeRaffleListDTO.builder()
+                .raffles(myLikeRafflesDTO)
+                .build();
+    }
+
 
     /**
      * 사용하는 메소드 분리
