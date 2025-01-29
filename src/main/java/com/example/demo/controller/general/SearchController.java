@@ -17,7 +17,7 @@ public class SearchController {
     private final SearchService searchService;
 
     @Operation(summary = "검색")
-    @GetMapping("")
+    @GetMapping("/raffles")
     public ApiResponse<HomeRaffleListDTO> searchRaffles(@RequestParam String keyword, Authentication authentication){
         Long userId = null;
 
