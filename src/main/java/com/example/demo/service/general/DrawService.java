@@ -14,11 +14,9 @@ public interface DrawService {
 
     void cancel(Raffle raffle, List<Apply> applyList);
 
-    Map<String, Object> getDrawRaffle(Long raffleId);
+    DrawResponseDTO.RaffleResult getDrawRaffle(Long raffleId);
 
-    DrawResponseDTO.WinnerDto getWinner(Long raffleId);
-
-    DrawResponseDTO.RaffleResultDto getRaffleResult(Long raffleId);
+    DrawResponseDTO.ResultDto getResult(Long raffleId);
 
     String selfDraw(Long raffleId);
 

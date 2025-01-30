@@ -33,15 +33,10 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
     private final InquiryCommentRepository commentRepository;
 
     @Transactional
-    public InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest, Long inquiryId, Authentication authentication) {
-
-        String username=null;
-        if (authentication != null && authentication.isAuthenticated())
-            username = authentication.getName();
-
+    public InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest, Long inquiryId, Long userId) {
 
         // 로그인된 사용자 가져오기
-        User user = userRepository.findById(Long.parseLong(username))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         // 문의 조회

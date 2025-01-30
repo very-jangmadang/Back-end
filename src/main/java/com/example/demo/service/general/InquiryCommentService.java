@@ -9,6 +9,6 @@ import org.springframework.security.core.Authentication;
 public interface InquiryCommentService {
 
     //문의 댓글 작성
-    InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest, Long inquiryId, Authentication authentication);
+    InquiryCommentResponseDTO addComment(InquiryCommentRequestDTO commentRequest, Long inquiryId, Long userId);
 
 }

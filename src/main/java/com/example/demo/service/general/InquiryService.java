@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface InquiryService {
     // 문의글 작성
-    InquiryResponseDTO addInquiry(InquiryRequestDTO inquiryRequest, Authentication authentication);
+    InquiryResponseDTO addInquiry(InquiryRequestDTO inquiryRequest, Long userId);
 
     // 문의글 삭제
-    void deleteInquiry(Long InquiryId, Authentication authentication);
+    void deleteInquiry(Long InquiryId, Long userId);
 
     //문의글 조회
     List<InquiryAndCommentsResponseDTO> getInquiryAndComments(Long raffleId);

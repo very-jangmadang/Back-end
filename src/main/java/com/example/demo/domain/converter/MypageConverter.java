@@ -1,6 +1,7 @@
 package com.example.demo.domain.converter;
 
-import com.example.demo.domain.dto.MypageResponseDTO;
+import com.example.demo.domain.dto.Mypage.MypageRequestDTO;
+import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.RaffleStatus;
 
@@ -39,7 +40,18 @@ public class MypageConverter {
                 .addressName(address.getAddressName())
                 .recipientName(address.getRecipientName())
                 .addressDetail(address.getAddressDetail())
+                .phoneNumber(address.getPhoneNumber())
                 .isDefault(address.isDefault())
+                .build();
+    }
+
+    public static Address toAddress(MypageRequestDTO.AddressAddDto addressAddDto) {
+        return Address.builder()
+                .addressName(addressAddDto.getAddressName())
+                .recipientName(addressAddDto.getRecipientName())
+                .addressDetail(addressAddDto.getAddressDetail())
+                .phoneNumber(addressAddDto.getPhoneNumber())
+                .isDefault(addressAddDto.getIsDefault())
                 .build();
     }
   

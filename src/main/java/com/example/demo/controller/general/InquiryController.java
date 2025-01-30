@@ -37,7 +37,12 @@ public class InquiryController {
     public ApiResponse<InquiryResponseDTO> addInquiry(
             @RequestBody InquiryRequestDTO inquiryRequest, Authentication authentication) {
 
-        InquiryResponseDTO inquiryResponse = inquiryService.addInquiry(inquiryRequest,authentication);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        InquiryResponseDTO inquiryResponse = inquiryService.addInquiry(inquiryRequest,userId);
 
         return ApiResponse.of(SuccessStatus._OK, inquiryResponse);
 
@@ -51,7 +56,12 @@ public class InquiryController {
             @RequestParam  Long inquiryId,
             Authentication authentication) {
 
-        inquiryService.deleteInquiry(inquiryId,authentication);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        inquiryService.deleteInquiry(inquiryId,userId);
 
         return ApiResponse.of(SuccessStatus._OK,null);
     }
@@ -74,8 +84,13 @@ public class InquiryController {
             @RequestBody InquiryCommentRequestDTO commentRequest,
             Authentication authentication) {
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
 
-        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest,inquiryId,authentication);
+        Long userId = Long.parseLong(authentication.getName());
+
+        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest,inquiryId,userId);
 
         return ApiResponse.of(SuccessStatus._OK, commentResponse);
 

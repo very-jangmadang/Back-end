@@ -37,14 +37,10 @@ public class InquiryServiceImpl implements InquiryService {
     private final InquiryCommentRepository inquiryCommentRepository;
 
     // 문의 작성
-    public InquiryResponseDTO addInquiry(InquiryRequestDTO inquiryRequest,Authentication authentication) {
-
-        String username = null;
-        if (authentication != null && authentication.isAuthenticated())
-            username = authentication.getName();
+    public InquiryResponseDTO addInquiry(InquiryRequestDTO inquiryRequest,Long userId) {
 
         //로그인된 사용자 가져오기
-        User user = userRepository.findById(Long.parseLong(username))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         Raffle raffle = raffleRepository.findById(inquiryRequest.getRaffleId())
@@ -66,14 +62,14 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     // 문의 삭제
-    public void deleteInquiry(Long inquiryId, Authentication authentication) {
+    public void deleteInquiry(Long inquiryId, Long userId) {
 
         // 문의 내역 조회
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.INQUIRY_NOT_FOUND));
 
         // 문의 작성자와 삭제 요청자의 사용자 ID 비교
-        if (!inquiry.getUser().getId().equals(authentication.getName())) {
+        if (!inquiry.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorStatus.NO_DELETE_AUTHORITY); // 삭제 권한이 없는 경우
         }
         // 삭제

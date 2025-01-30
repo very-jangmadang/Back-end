@@ -1,6 +1,6 @@
 package com.example.demo.domain.dto.Delivery;
 
-import com.example.demo.domain.dto.MypageResponseDTO;
+import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,20 +20,32 @@ public class DeliveryResponseDTO {
     public static class DeliveryDto {
         private Long raffleId;
         private Long winnerId;
-        private LocalDateTime deadline;
+        private DeliveryStatus deliveryStatus;
+        private LocalDateTime addressDeadline;
+        private LocalDateTime shippingDeadline;
         private BigDecimal shippingFee;
-        private List<MypageResponseDTO.AddressDto> addressList;
+        private boolean isShippingExtended;
+        private String invoiceNumber;
+        private MypageResponseDTO.AddressDto address;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AddressChoiceDto {
+    public static class ResponseDto {
         private Long deliveryId;
-        private Long raffleId;
-        private Long winnerId;
-        private Long addressId;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WaitDto {
+        private Long deliveryId;
+        private LocalDateTime addressDeadline;
+        private LocalDateTime shippingDeadline;
+        private DeliveryStatus deliveryStatus;
     }
 
     @Getter
@@ -47,11 +59,10 @@ public class DeliveryResponseDTO {
         private int minTicket;
         private int applyTicket;
         private BigDecimal finalAmount;
-        private DeliveryStatus status;
-        private String recipientName;
-        private String addressDetail;
-        private String phoneNumber;
-        private LocalDateTime deadline;
+        private DeliveryStatus deliveryStatus;
+        private LocalDateTime shippingDeadline;
+        private boolean isAddressExtended;
+        private MypageResponseDTO.AddressDto address;
     }
 
     @Getter
