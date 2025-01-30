@@ -19,20 +19,19 @@ public class SwaggerConfig {
                 .title("JMarketYard Back-End API")
                 .description("장마당 백엔드 API 명세서")
                 .version("1.0.0");
-        String jwtSchemeName = "JWT_TOKEN";
+        String cookieSchemeName = "Authorization";
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList(jwtSchemeName);
+                .addList(cookieSchemeName);
         Components components = new Components()
-                .addSecuritySchemes(jwtSchemeName,
+                .addSecuritySchemes(cookieSchemeName,
                         new SecurityScheme()
-                                .name(jwtSchemeName)
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT"));
+                                .name(cookieSchemeName)
+                                .type(SecurityScheme.Type.APIKEY));
+
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
                 .info(apiInfo)
-                .addSecurityItem(securityRequirement)
+//                .addSecurityItem(securityRequirement)
                 .components(components);
     }
 }
