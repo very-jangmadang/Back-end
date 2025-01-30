@@ -23,10 +23,20 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String nickname;
 
+    @Builder.Default
     private int ticket_num = 0;
 
     //TODO: 후순위 기능인 rank
     // private Rank rank;
+
+    @Column(nullable = false)
+    @Setter
+    @Builder.Default
+    private double averageScore = 0;
+
+    @Setter
+    @Builder.Default
+    private int reviewCount = 0;
 
     @Column(length = 20)
     private String provider;
@@ -37,6 +47,7 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> addresses;
 
+    @Builder.Default
     private double score = 0;
 
     private LocalDateTime withdrawTime;
