@@ -61,6 +61,11 @@ public class User extends BaseEntity{
         address.setUser(this);
     }
 
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setUser(this);
+    }
+
     public void setTicket_num(int ticket_num) { this.ticket_num = ticket_num; }
 
 }

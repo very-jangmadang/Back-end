@@ -138,7 +138,7 @@ public class MypageServiceImpl implements MypageService {
         Address address = toAddress(addressAddDto);
         user.addAddress(address);
 
-        if (address.isDefault())
+        if (address.isDefault() || user.getAddresses().size() == 1)
             address.setDefaultAddress();
 
         String message = addressAddDto.getMessage();
@@ -151,4 +151,5 @@ public class MypageServiceImpl implements MypageService {
 
         addressRepository.save(address);
     }
+  
 }

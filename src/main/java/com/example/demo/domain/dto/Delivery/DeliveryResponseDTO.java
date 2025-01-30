@@ -20,20 +20,32 @@ public class DeliveryResponseDTO {
     public static class DeliveryDto {
         private Long raffleId;
         private Long winnerId;
-        private LocalDateTime deadline;
+        private DeliveryStatus deliveryStatus;
+        private LocalDateTime addressDeadline;
+        private LocalDateTime shippingDeadline;
         private BigDecimal shippingFee;
-        private List<MypageResponseDTO.AddressDto> addressList;
+        private boolean isShippingExtended;
+        private String invoiceNumber;
+        private MypageResponseDTO.AddressDto address;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AddressChoiceDto {
+    public static class ResponseDto {
         private Long deliveryId;
-        private Long raffleId;
-        private Long winnerId;
-        private Long addressId;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WaitDto {
+        private Long deliveryId;
+        private LocalDateTime addressDeadline;
+        private LocalDateTime shippingDeadline;
+        private DeliveryStatus deliveryStatus;
     }
 
     @Getter
