@@ -21,30 +21,23 @@ import static com.example.demo.domain.converter.ApplyConverter.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ApplyServiceImpl implements ApplyService {
 
     private final RaffleRepository raffleRepository;
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
 
+    public ApplyResponseDTO applyRaffle(Long raffleId) {
 
-    public ApplyResponseDTO.EnterDto getEnterRaffle(Long raffleId) {
-        Raffle raffle = raffleRepository.findById(raffleId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
+        User user = userRepository.findById(2L)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        int userTicket = user.getTicket_num();
 
-        return toEnterDto(raffle);
-    }
-
-    @Transactional
-    public ApplyResponseDTO.ApplyDto applyRaffle(Long raffleId, Long userId) {
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
         int raffleTicket = raffle.getTicketNum();
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-        int userTicket = user.getTicket_num();
 
         if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED)
             throw new CustomException(ErrorStatus.APPLY_UNOPENED_RAFFLE);

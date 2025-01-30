@@ -26,4 +26,15 @@ public class SearchHistory extends BaseEntity{
 
     private LocalDateTime searchedAt;
 
+    /**
+     * 연관관계 편의 메소드
+     */
+
+    // 검색기록을 최신화
+    public void updateSearchHistory(){
+        this.searchCount += 1;
+        this.searchedAt = LocalDateTime.now();
+    }
+
+
 }

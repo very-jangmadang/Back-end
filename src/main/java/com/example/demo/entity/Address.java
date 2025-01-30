@@ -32,11 +32,25 @@ public class Address extends BaseEntity {
 
     private boolean isDefault;  // 기본 배송지 여부
 
+    @Setter
     @Column(length = 255)
     private String message;  // 배송 메세지
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void setDefaultAddress() {
+        this.user.getAddresses().forEach(addr -> {
+            if (addr != this)
+                addr.isDefault = false;
+        });
+
+        this.isDefault = true;
+    }
+
+    public void setUser(User user) { this.user = user; }
+    public void setMessage(String message) { this.message = message; }
 
 }
