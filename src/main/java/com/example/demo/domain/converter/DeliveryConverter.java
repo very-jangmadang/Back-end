@@ -17,7 +17,6 @@ public class DeliveryConverter {
                 .user(raffle.getUser())
                 .winner(raffle.getWinner())
                 .deliveryStatus(DeliveryStatus.WAITING_ADDRESS)
-                .addressDeadline(raffle.getEndAt().plusHours(Constants.ADDRESS_DEADLINE))
                 .isAddressExtended(false)
                 .isShippingExtended(false)
                 .build();
@@ -48,28 +47,20 @@ public class DeliveryConverter {
                 .build();
     }
 
-    public static DeliveryResponseDTO.ResultDto toResultDto(Delivery delivery, int applyTicket) {
+    public static DeliveryResponseDTO.ResultDto toResultDto(
+            Delivery delivery, int applyTicket, MypageResponseDTO.AddressDto addressDto) {
         return DeliveryResponseDTO.ResultDto.builder()
                 .raffleId(delivery.getRaffle().getId())
                 .winnerId(delivery.getWinner().getId())
                 .deliveryId(delivery.getId())
                 .minTicket(delivery.getRaffle().getMinTicket())
                 .applyTicket(applyTicket)
-                .finalAmount(BigDecimal.valueOf(applyTicket).multiply(new BigDecimal("0.93")))
-                .status(delivery.getDeliveryStatus())
-                .recipientName(delivery.getAddress().getRecipientName())
-                .addressDetail(delivery.getAddress().getAddressDetail())
-                .phoneNumber((delivery.getAddress().getPhoneNumber()))
-                .deadline(delivery.getShippingDeadline())
+                .finalAmount(BigDecimal.valueOf(applyTicket).multiply(new BigDecimal("93")))
+                .deliveryStatus(delivery.getDeliveryStatus())
+                .shippingDeadline(delivery.getShippingDeadline())
+                .isAddressExtended(delivery.isAddressExtended())
+                .address(addressDto)
                 .build();
     }
 
-    public static DeliveryResponseDTO.ShippingDto toShippingDto(Delivery delivery) {
-        return DeliveryResponseDTO.ShippingDto.builder()
-                .deliveryId(delivery.getId())
-                .raffleId(delivery.getRaffle().getId())
-                .winnerId(delivery.getWinner().getId())
-                .addressId(delivery.getAddress().getId())
-                .build();
-    }
 }

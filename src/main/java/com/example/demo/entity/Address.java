@@ -50,4 +50,7 @@ public class Address extends BaseEntity {
         this.isDefault = true;
     }
 
+    public void setUser(User user) { this.user = user; }
+    public void setMessage(String message) { this.message = message; }
+
 }

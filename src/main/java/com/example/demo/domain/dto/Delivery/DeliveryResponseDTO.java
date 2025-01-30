@@ -59,11 +59,10 @@ public class DeliveryResponseDTO {
         private int minTicket;
         private int applyTicket;
         private BigDecimal finalAmount;
-        private DeliveryStatus status;
-        private String recipientName;
-        private String addressDetail;
-        private String phoneNumber;
-        private LocalDateTime deadline;
+        private DeliveryStatus deliveryStatus;
+        private LocalDateTime shippingDeadline;
+        private boolean isAddressExtended;
+        private MypageResponseDTO.AddressDto address;
     }
 
     @Getter

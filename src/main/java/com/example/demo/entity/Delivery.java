@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import com.example.demo.base.Constants;
-import com.example.demo.entity.base.enums.CourierCompany;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,23 +45,24 @@ public class Delivery extends BaseEntity {
 
     private String invoiceNumber;       // 운송장 번호
 
-    @Enumerated (EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(20)")
-    private CourierCompany courierCompany;      // 택배사
-
     private boolean isAddressExtended;      // 배송지 입력 기한 연장 여부
 
     private boolean isShippingExtended;     // 운송장 입력 기한 연장 여부
 
     public void setAddress(Address address) { this.address = address; }
     public void setDeliveryStatus(DeliveryStatus deliveryStatus) { this.deliveryStatus = deliveryStatus; }
-    public void setCourierCompany(CourierCompany courierCompany) { this.courierCompany = courierCompany; }
     public void setInvoiceNumber(String invoiceNumber) { this.invoiceNumber = invoiceNumber; }
-    public void setShippingDeadline(LocalDateTime shippingDeadline) { this.shippingDeadline = shippingDeadline; }
 
     public void setAddressDeadline() {
-        this.addressDeadline = this.getCreatedAt()
+        this.addressDeadline = LocalDateTime.now()
                 .plusHours(Constants.ADDRESS_DEADLINE)
+                .withSecond(0)
+                .withNano(0);
+    }
+
+    public void setShippingDeadline() {
+        this.shippingDeadline = LocalDateTime.now()
+                .plusHours(Constants.SHIPPING_DEADLINE)
                 .withSecond(0)
                 .withNano(0);
     }
