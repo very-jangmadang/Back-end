@@ -68,4 +68,34 @@ public class EmailServiceImpl implements EmailService {
             throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
         }
     }
+
+    @Override
+    public void sendOwnerCancelEmail(Delivery delivery) {
+        User user = delivery.getUser();
+        Raffle raffle = delivery.getRaffle();
+
+        try {
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(user.getEmail());
+            helper.setFrom(fromEmail);
+
+            String subject = "[장마당] " + raffle.getName() + " 당첨 취소 및 래플 종료 안내";
+            helper.setSubject(subject);
+
+            Context context = new Context();
+            context.setVariable("userName", user.getNickname());
+            context.setVariable("fromEmail", fromEmail);
+
+            String body = templateEngine.process("OwnerCancelEmail.html", context);
+            helper.setText(body, true);
+
+            mailSender.send(helper.getMimeMessage());
+
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
+        }
+    }
 }

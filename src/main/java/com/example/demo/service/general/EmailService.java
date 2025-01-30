@@ -7,4 +7,6 @@ import com.example.demo.entity.User;
 public interface EmailService {
 
     public void sendEmail(Delivery delivery);
+
+    void sendOwnerCancelEmail(Delivery delivery);
 }
