@@ -29,7 +29,6 @@ public class HomeServiceImpl implements HomeService {
     private final RaffleRepository raffleRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final LikeRepository likeRepository;
 
     @Override
     public HomeResponseDTO getHome() {
@@ -123,7 +122,7 @@ public class HomeServiceImpl implements HomeService {
         Category category = categoryRepository.findByName(categoryName)
                 .orElseThrow(() -> new CustomException(ErrorStatus.COMMON_WRONG_PARAMETER));
 
-        List<Raffle> raffles = raffleRepository.findByCategoryName(categoryName);
+        List<Raffle> raffles = raffleRepository.findByCategoryName(category.getName());
 
         // 카테고리별 조회 + 응모자순으로 래플 조회 (응모 안마감된것 우선)
         List<Raffle> rafflesSortedByApplyList = sortRafflesByApply(raffles);
@@ -278,7 +277,10 @@ public class HomeServiceImpl implements HomeService {
 
             // 로그인한 경우에만 likeStatus 조회
             if (user != null) {
-                likeStatus = likeRepository.findByUserIdAndRaffleId(user.getId(), raffle.getId()).isPresent();
+                List<Long> likedRaffleIds = user.getLikes().stream()
+                        .map(like -> like.getRaffle().getId())
+                        .toList();
+                likeStatus = likedRaffleIds.contains(raffle.getId());
             }
 
             HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, likeStatus);
