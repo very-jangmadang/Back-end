@@ -14,7 +14,16 @@ import org.springframework.stereotype.Component;
 public class OAuthLoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
+
+        String code = request.getParameter("code");
+        String state = request.getParameter("state");
+        if (code == null || state == null) {
+            throw new CustomException(ErrorStatus.OAUTH_PROCESSING_FAILED);
+        }
+
         log.error("LOGIN FAILED: {}", exception.getMessage());
         throw new CustomException(ErrorStatus.OAUTH_LOGIN_FAILED);
+
+
     }
 }

@@ -1,4 +1,4 @@
-package com.example.demo.domain.dto;
+package com.example.demo.domain.dto.Mypage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,6 +42,14 @@ public class MypageResponseDTO {
         private String recipientName;
         private String addressDetail;
         private Boolean isDefault;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddressListDto {
+        List<AddressDto> addressList;
     }
   
 }

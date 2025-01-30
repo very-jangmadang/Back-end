@@ -1,6 +1,6 @@
 package com.example.demo.domain.dto.Delivery;
 
-import com.example.demo.domain.dto.MypageResponseDTO;
+import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
