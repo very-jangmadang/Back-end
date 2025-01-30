@@ -31,7 +31,7 @@ public class RaffleResponseDTO {
         private LocalDateTime startAt;
         private LocalDateTime endAt;
         private String description;
-        private int minTicket;
+        private int minUser;
         private int view;
         private int likeCount;
         private int applyCount;

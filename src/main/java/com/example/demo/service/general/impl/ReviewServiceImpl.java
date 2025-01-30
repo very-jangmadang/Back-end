@@ -8,6 +8,7 @@ import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewDeleteDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.Review;
 import com.example.demo.entity.User;
@@ -38,6 +39,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final S3UploadService s3UploadService;
 
     // 리뷰 작성
+    @Transactional
     public ReviewResponseDTO addReview(ReviewRequestDTO.ReviewUploadDTO reviewRequest) {
 
         // 0. 업로드 작성자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
@@ -74,9 +76,12 @@ public class ReviewServiceImpl implements ReviewService {
             imageUrls = s3UploadService.saveFile(images);  // 이미지 리스트를 saveFile에 전달하여 S3에 저장
         }
 
-        Review review = ReviewConverter.toReview(reviewRequest,raffle,user,reviewer,imageUrls);
+        Review review = ReviewConverter.toReview(reviewRequest, raffle, user, reviewer, imageUrls);
 
         reviewRepository.save(review);
+
+        // 평균 평점 업데이트
+        updateAverageScore(user, review.getScore(),true);
 
         return ReviewConverter.ToReviewResponseDTO(review);
 
@@ -90,13 +95,20 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.REVIEW_NOT_FOUND));
 
+        // 요청자의 userId와 리뷰 작성자의 reviewerId 비교
+        if (!review.getReviewer().getId().equals(reviewDelete.getReviewerId()))
+            throw new CustomException(ErrorStatus.NO_DELETE_AUTHORITY);
+
         // 삭제
         reviewRepository.deleteById(reviewId);
+
+        updateAverageScore(review.getUser(), review.getScore(),false);
 
     }
 
     //리뷰 조회
-    public List<ReviewResponseDTO> getReviewsByUserId(Long userId) {
+    @Transactional(readOnly = true)
+    public ReviewWithAverageDTO getReviewsByUserId(Long userId) {
 
         // 사용자 조회
         User user = userRepository.findById(userId)
@@ -105,18 +117,40 @@ public class ReviewServiceImpl implements ReviewService {
         // 사용자의 모든 후기 조회
         List<Review> reviews = reviewRepository.findAllByUser(user);
 
-        return reviews.stream()
-                .map(review -> new ReviewResponseDTO(
-                        review.getId(),               // reviewId
-                        review.getUser().getId(),     // userId
-                        review.getRaffle().getId(), // raffleId
-                        review.getReviewer().getId(), //reviewerId
-                        review.getScore(),            // score
-                        review.getText(),             // text
-                        review.getImageUrls(),        // imageUrls
-                        review.getCreatedAt()          // timestamp
-                ))
-                .collect(Collectors.toList());
+        List<ReviewResponseDTO> reviewResponseDTO = ReviewConverter.toReviewResponseDTOList(reviews);
+
+        int reviewCount = reviews.size();
+
+        double averageScore = user.getAverageScore();
+
+        return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
     }
+
+    private void updateAverageScore(User user, double score, boolean isAdd) {
+        int currentReviewCount = user.getReviewCount();
+        double currentAverageScore = user.getAverageScore();
+
+        if (isAdd) {
+            // 리뷰 추가 시
+            double updatedAverageScore = ((currentAverageScore * currentReviewCount) + score) / (currentReviewCount + 1);
+            user.setAverageScore(updatedAverageScore);
+            user.setReviewCount(currentReviewCount + 1);
+        } else {
+            // 리뷰 삭제 시
+            if (currentReviewCount > 1) {
+                double updatedAverageScore = ((currentAverageScore * currentReviewCount) - score) / (currentReviewCount - 1);
+                user.setAverageScore(updatedAverageScore);
+                user.setReviewCount(currentReviewCount - 1);
+            } else {
+                // 리뷰가 더 이상 없을 경우 초기화
+                user.setAverageScore(0.0);
+                user.setReviewCount(0);
+            }
+        }
+
+        // 사용자 저장
+        userRepository.save(user);
+    }
+
 }
 

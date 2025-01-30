@@ -16,8 +16,6 @@ import java.util.List;
 public class ImageServiceImpl implements ImageService {
 
     public List<Image> saveImages(List<String> imageUrls) {
-
-        // 이미지 엔티티로 변환
-        return ImageConverter.toImage(imageUrls);
+        return ImageConverter.toImage(imageUrls); // 이미지 엔티티로 변환
     }
 }
