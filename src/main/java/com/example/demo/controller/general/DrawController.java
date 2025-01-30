@@ -5,6 +5,7 @@ import com.example.demo.domain.dto.DrawResponseDTO;
 import com.example.demo.service.general.DrawService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -20,9 +21,10 @@ public class DrawController {
     private final DrawService drawService;
 
     @GetMapping("/{raffleId}/draw")
-    public ApiResponse<?> drawRaffle(@PathVariable Long raffleId, HttpServletResponse response) throws IOException {
+    public ApiResponse<?> drawRaffle(
+            @PathVariable Long raffleId, Authentication authentication, HttpServletResponse response) throws IOException {
 
-        DrawResponseDTO.RaffleResult result = drawService.getDrawRaffle(raffleId);
+        DrawResponseDTO.RaffleResult result = drawService.getDrawRaffle(raffleId, authentication);
         DrawResponseDTO.DrawDto drawDto = result.getDrawDto();
         String redirectUrl = result.getRedirectUrl();
 
@@ -35,22 +37,33 @@ public class DrawController {
     }
 
     @GetMapping("/{raffleId}/result")
-    public ApiResponse<DrawResponseDTO.ResultDto> getResult(@PathVariable Long raffleId) {
+    public ApiResponse<DrawResponseDTO.ResultDto> getResult(
+            @PathVariable Long raffleId, Authentication authentication) {
 
-        return ApiResponse.of(_OK, drawService.getResult(raffleId));
+        return ApiResponse.of(_OK, drawService.getResult(raffleId, authentication));
     }
 
     @PostMapping("/{raffleId}/draw")
-    public void selfDraw(@PathVariable Long raffleId, HttpServletResponse response) throws IOException {
+    public void selfDraw(
+            @PathVariable Long raffleId, Authentication authentication, HttpServletResponse response) throws IOException {
 
-        String redirectUrl = drawService.selfDraw(raffleId);
+        String redirectUrl = drawService.selfDraw(raffleId, authentication);
         response.sendRedirect(redirectUrl);
     }
 
     @GetMapping("/{raffleId}/cancel")
-    public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(@PathVariable Long raffleId) {
+    public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(
+            @PathVariable Long raffleId, Authentication authentication) {
 
-        return ApiResponse.of(_OK, drawService.forceCancel(raffleId));
+        return ApiResponse.of(_OK, drawService.forceCancel(raffleId, authentication));
+    }
+
+    @PostMapping("{raffleId}/redraw")
+    public void redraw(
+            @PathVariable Long raffleId, Authentication authentication, HttpServletResponse response) throws IOException {
+
+        String redirectUrl = drawService.redraw(raffleId, authentication);
+        response.sendRedirect(redirectUrl);
     }
 
 }

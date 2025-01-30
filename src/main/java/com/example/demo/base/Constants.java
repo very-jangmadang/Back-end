@@ -20,6 +20,9 @@ public class Constants {
     // 미추첨된 래플 개최자 리디렉션 url
     public static final String RAFFLE_OWNER_URL = "/api/permit/raffles/%d/result";
 
+    // 당첨자 배송 정보 확인 url
+    public static final String DELIVERY_WINNER_URL = "/api/permit/delivery/%d/winner";
+
     // 최대 조회 닉네임 개수
     public static final int MAX_NICKNAMES = 50;
 

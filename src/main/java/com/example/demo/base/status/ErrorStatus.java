@@ -111,6 +111,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // 16. Huiju - 강제 종료 관련 에러
     CANCEL_FAIL(HttpStatus.BAD_REQUEST, "CANCEL_4001", "종료 가능한 래플이 아닙니다."),
 
+    // 17. Huiju - 재추첨 관련 에러
+    REDRAW_AGAIN(HttpStatus.BAD_REQUEST, "REDRAW_4001", "한번 이상 재추첨할 수 없습니다."),
+
   
     ;
 
