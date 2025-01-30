@@ -7,14 +7,25 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class SearchResponseDTO {
 
-    private List<String> recentSearch;
-    private List<String> popularSearch;
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RecentPopularSearchDTO{
+        private List<String> recentSearch;
+        private List<String> popularSearch;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DeleteRecentSearchDTO{
+        private String deletedKeyword;
+    }
 
 
 }

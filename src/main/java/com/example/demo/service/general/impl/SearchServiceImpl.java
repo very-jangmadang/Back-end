@@ -71,25 +71,42 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public SearchResponseDTO getRecentPopularSearch(Long userId) {
+    public SearchResponseDTO.RecentPopularSearchDTO getRecentPopularSearch(Long userId) {
 
         List<String> popularSearchResult = new ArrayList<>();
         List<String> recentSearchResult = new ArrayList<>();
 
-        List<SearchHistory> popularSearch = searchHistoryRepository.findTop10ByUserIdOrderBySearchCountDesc(userId);
+        List<SearchHistory> popularSearch = searchHistoryRepository.findTop10UniqueOrderBySearchCountDesc();
         for (SearchHistory searchHistory : popularSearch) {
             popularSearchResult.add(searchHistory.getKeyword());
         }
-        List<SearchHistory> recentSearch = searchHistoryRepository.findTop10ByUserIdOrderBySearchedAtDesc(userId);
-        for (SearchHistory searchHistory : recentSearch) {
-            recentSearchResult.add(searchHistory.getKeyword());
+
+        // 로그인 한 회원인 경우, 최근 검색어도 표시
+        if(userId != null) {
+            List<SearchHistory> recentSearch = searchHistoryRepository.findTop10ByUserIdOrderBySearchedAtDesc(userId);
+            for (SearchHistory searchHistory : recentSearch) {
+                recentSearchResult.add(searchHistory.getKeyword());
+            }
         }
 
-        return SearchResponseDTO.builder()
+        return SearchResponseDTO.RecentPopularSearchDTO.builder()
                 .popularSearch(popularSearchResult)
                 .recentSearch(recentSearchResult)
                 .build();
 
+    }
+
+    @Override
+    @Transactional
+    public SearchResponseDTO.DeleteRecentSearchDTO deleteRecentSearch(String keyword, Long userId) {
+        SearchHistory searchHistory = searchHistoryRepository.findByKeywordAndUserId(keyword, userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.SEARCH_HISTORY_NOT_FOUND));
+        searchHistoryRepository.delete(searchHistory);
+
+        return SearchResponseDTO.DeleteRecentSearchDTO
+                .builder()
+                .deletedKeyword(keyword)
+                .build();
     }
 
 
