@@ -49,12 +49,17 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes;
-
+  
     @OneToMany(mappedBy = "follower")
     private List<Follow> followings;
 
     @OneToMany(mappedBy = "user")
     private List<Raffle> raffles;
+  
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setUser(this);
+    }
 
     public void setTicket_num(int ticket_num) { this.ticket_num = ticket_num; }
 
