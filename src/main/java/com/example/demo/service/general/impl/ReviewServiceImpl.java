@@ -39,16 +39,14 @@ public class ReviewServiceImpl implements ReviewService {
 
     // 리뷰 작성
     @Transactional
-    public ReviewResponseDTO addReview(ReviewRequestDTO.ReviewUploadDTO reviewRequest,Authentication authentication) {
-
-        String username = authentication.getName();
+    public ReviewResponseDTO addReview(ReviewRequestDTO.ReviewUploadDTO reviewRequest,Long userId) {
 
         // 0. 업로드 작성자 정보 가져오기
         Raffle raffle = raffleRepository.findById(reviewRequest.getRaffleId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
 
-        User reviewer = userRepository.findById(Long.parseLong(username))
+        User reviewer = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         User user = raffle.getUser();
@@ -84,14 +82,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     // 리뷰 삭제
     @Transactional
-    public void deleteReview(Long reviewId, Authentication authentication) {
-
+    public void deleteReview(Long reviewId, Long userId){
         // 리뷰 내역 조회
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.REVIEW_NOT_FOUND));
 
         // 요청자의 userId와 리뷰 작성자의 reviewerId 비교
-        if (!review.getReviewer().getId().equals(authentication.getName()))
+        if (!review.getReviewer().getId().equals(userId))
             throw new CustomException(ErrorStatus.NO_DELETE_AUTHORITY);
 
         // 삭제

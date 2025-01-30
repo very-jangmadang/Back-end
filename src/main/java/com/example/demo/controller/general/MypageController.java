@@ -1,6 +1,7 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Mypage.MypageRequestDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
@@ -29,8 +30,12 @@ public class MypageController {
     @PatchMapping(value="/profile-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> uploadProfileImage(Authentication authentication, @RequestPart MultipartFile profile) {
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
         // 프로필 이미지 업데이트
-        String profileImageUrl = mypageService.updateProfileImage(authentication, profile);
+        Long userId = Long.parseLong(authentication.getName());
+        String profileImageUrl = mypageService.updateProfileImage(userId, profile);
 
         return ApiResponse.of(SuccessStatus._OK, profileImageUrl);
     }
@@ -39,7 +44,12 @@ public class MypageController {
     @GetMapping("/review")
     public ApiResponse<ReviewWithAverageDTO> getMyReviewsByUserId(Authentication authentication) {
 
-        ReviewWithAverageDTO reviews = mypageService.getMyReviewsByUserId(authentication);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        ReviewWithAverageDTO reviews = mypageService.getMyReviewsByUserId(userId);
 
         return ApiResponse.of(SuccessStatus._OK, reviews);
     }

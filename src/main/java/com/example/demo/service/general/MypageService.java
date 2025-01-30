@@ -12,10 +12,10 @@ public interface MypageService {
 
     MypageResponseDTO.ApplyListDto getApplies();
 
-    String updateProfileImage(Authentication authentication, MultipartFile file);
+    String updateProfileImage(Long userId, MultipartFile file);
 
     //내 리뷰 조회
-    ReviewWithAverageDTO getMyReviewsByUserId(Authentication authentication);
+    ReviewWithAverageDTO getMyReviewsByUserId(Long userId);
 
     MypageResponseDTO.AddressListDto getAddresses();
 

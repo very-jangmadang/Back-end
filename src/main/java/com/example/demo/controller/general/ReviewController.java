@@ -2,6 +2,7 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
@@ -36,7 +37,12 @@ public class ReviewController {
     public ApiResponse<ReviewResponseDTO> addReview(
             @ModelAttribute @Valid ReviewRequestDTO.ReviewUploadDTO reviewRequest,Authentication authentication) {
 
-        ReviewResponseDTO reviewResponse = reviewService.addReview(reviewRequest,authentication);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+
+        ReviewResponseDTO reviewResponse = reviewService.addReview(reviewRequest,userId);
 
         return ApiResponse.of(SuccessStatus._OK, reviewResponse);
 
@@ -49,7 +55,12 @@ public class ReviewController {
             Long reviewId,
             Authentication authentication) {
 
-        reviewService.deleteReview(reviewId,authentication);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        reviewService.deleteReview(reviewId,userId);
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }

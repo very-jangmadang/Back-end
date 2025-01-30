@@ -80,11 +80,10 @@ public class MypageServiceImpl implements MypageService {
     }
     @Transactional
     // 프로필 이미지 업데이트
-    public String updateProfileImage(Authentication authentication, MultipartFile profile) {
+    public String updateProfileImage(Long userId, MultipartFile profile) {
 
-        String username = authentication.getName();
         // 사용자 조회
-        User user = userRepository.findById(Long.parseLong(username))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         // 이미지 업로드 후 URL 얻기
@@ -100,11 +99,9 @@ public class MypageServiceImpl implements MypageService {
     }
 
     //내 리뷰 조회
-    public ReviewWithAverageDTO getMyReviewsByUserId(Authentication authentication) {
+    public ReviewWithAverageDTO getMyReviewsByUserId(Long userId) {
 
-        String username = authentication.getName();
-        // 사용자 조회
-        User user = userRepository.findById(Long.parseLong(username))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         // 사용자의 모든 후기 조회

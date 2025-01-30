@@ -11,10 +11,10 @@ import java.util.List;
 public interface ReviewService {
 
     // 리뷰 작성
-    ReviewResponseDTO addReview(ReviewRequestDTO.ReviewUploadDTO reviewRequest,Authentication authentication);
+    ReviewResponseDTO addReview(ReviewRequestDTO.ReviewUploadDTO reviewRequest,Long userId);
 
     // 리뷰 삭제
-    void deleteReview(Long reviewId, Authentication authentication);
+    void deleteReview(Long reviewId, Long userId);
 
     //내 리뷰 조회
     ReviewWithAverageDTO getReviewsByUserId(Long userId);
