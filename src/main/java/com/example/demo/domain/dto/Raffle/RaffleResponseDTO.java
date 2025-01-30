@@ -39,4 +39,15 @@ public class RaffleResponseDTO {
         private int followCount;
         private int reviewCount;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ApplyDTO{
+        private Long userId;
+        private Long raffleId;
+        private String raffleImage;
+        private LocalDateTime endAt;
+    }
 }

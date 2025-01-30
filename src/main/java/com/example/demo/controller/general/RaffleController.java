@@ -9,7 +9,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,6 +40,15 @@ public class RaffleController {
 
         // 2. 성공 응답 + 해당 detailDTO 반환
         return ApiResponse.of(SuccessStatus.RAFFLE_FETCH_SUCCESS, raffleDetailDTO);
+    }
+
+    @Operation(summary = "래플 응모하기")
+    @PostMapping("/{raffleId}/apply")
+    public ApiResponse<RaffleResponseDTO.ApplyDTO> apply(
+            @PathVariable Long raffleId, Authentication authentication) {
+
+        return ApiResponse.of(_OK, raffleService.apply(raffleId, authentication));
+
     }
 }
 
