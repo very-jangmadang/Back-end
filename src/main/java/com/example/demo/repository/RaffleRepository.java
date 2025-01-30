@@ -26,4 +26,7 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     // 리뷰 수
     @Query("SELECT COUNT(r) FROM Review r WHERE r.user.id = :userId")
     int countReviewsByUserId(Long userId);
+
+    // 이름으로 래플 검색
+    List<Raffle> findAllByNameContaining(String keyword);
 }
