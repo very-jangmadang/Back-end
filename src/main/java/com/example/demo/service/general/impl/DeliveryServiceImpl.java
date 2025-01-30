@@ -57,7 +57,7 @@ public class DeliveryServiceImpl implements DeliveryService {
             throw new CustomException(ErrorStatus.DELIVERY_FAIL);
 
         LocalDateTime now = LocalDateTime.now();
-        if (delivery.getDeliveryStatus() == DeliveryStatus.ADDRESS_WAITING
+        if (delivery.getDeliveryStatus() == DeliveryStatus.WAITING_ADDRESS
                 && now.isAfter(delivery.getAddressDeadline())) {
             updateDeliveryStatus(delivery, DeliveryStatus.ADDRESS_EXPIRED);
             throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
@@ -91,7 +91,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER));
 
         LocalDateTime now = LocalDateTime.now();
-        if (delivery.getDeliveryStatus() == DeliveryStatus.ADDRESS_WAITING
+        if (delivery.getDeliveryStatus() == DeliveryStatus.WAITING_ADDRESS
                 && now.isAfter(delivery.getAddressDeadline())) {
             updateDeliveryStatus(delivery, DeliveryStatus.ADDRESS_EXPIRED);
             throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
@@ -167,7 +167,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
 
-        if (deliveryStatus == DeliveryStatus.ADDRESS_WAITING)
+        if (deliveryStatus == DeliveryStatus.WAITING_ADDRESS)
             throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
 
         LocalDateTime now = LocalDateTime.now();
@@ -202,7 +202,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (deliveryStatus == DeliveryStatus.READY)
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
 
-        if (deliveryStatus == DeliveryStatus.ADDRESS_WAITING)
+        if (deliveryStatus == DeliveryStatus.WAITING_ADDRESS)
             throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_NOT_EXPIRED);
 
         LocalDateTime deadline = delivery.getAddressDeadline().plusHours(24);

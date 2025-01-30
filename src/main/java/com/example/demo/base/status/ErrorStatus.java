@@ -80,7 +80,11 @@ public enum ErrorStatus implements BaseErrorCode {
     DRAW_NO_WINNER_EMAIL(HttpStatus.BAD_REQUEST, "DRAW_4002", "당첨자의 이메일이 존재하지 않습니다."),
     DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4003", "해당 래플의 개최자가 아닙니다."),
     DRAW_EMAIL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DRAW_5001", "이메일 전송에 실패하였습니다."),
-    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4004", "아직 마감 기한이 되지 않았습니다."),
+    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4004", "아직 마감되지 않았습니다."),
+    DRAW_NOT_IN(HttpStatus.BAD_REQUEST, "DRAW_4005", "해당 래플의 응모자가 아닙니다."),
+    DRAW_PENDING(HttpStatus.BAD_REQUEST, "DRAW_4006", "아직 추첨이 되지 않았습니다."),
+    DRAW_COMPLETED(HttpStatus.BAD_REQUEST, "DRAW_4007", "이미 추첨이 완료되었습니다."),
+    DRAW_FINISHED(HttpStatus.BAD_REQUEST, "DRAW_4008", "이미 종료된 래플입니다."),
 
     // 14. Huiju - 배송 관련 에러
     DELIVERY_FAIL(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "당첨자가 아닙니다."),
@@ -100,6 +104,10 @@ public enum ErrorStatus implements BaseErrorCode {
     ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4003", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
     ADDRESS_FULL(HttpStatus.BAD_REQUEST, "ADDRESS_4004", "최대 주소 갯수(" + Constants.MAX_ADDRESS_COUNT + "개)를 초과했습니다."),
     ADDRESS_LONG_MESSAGE(HttpStatus.BAD_REQUEST, "ADDRESS_4005", "입력 가능 최대 글자수를 초과하였습니다."),
+  
+    // 16. Huiju - 강제 종료 관련 에러
+    CANCEL_FAIL(HttpStatus.BAD_REQUEST, "CANCEL_4001", "종료 가능한 래플이 아닙니다."),
+
 
   
     ;
