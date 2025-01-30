@@ -2,6 +2,7 @@ package com.example.demo.controller.general;
 
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Like.LikeCountResponseDTO;
 import com.example.demo.service.general.LikeService;
@@ -25,7 +26,13 @@ import java.util.List;
     public ApiResponse<LikeResponseDTO> addLike(
              Long raffleId, Authentication authentication) {
 
-        LikeResponseDTO likeResponse = likeService.addLike(raffleId,authentication);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+
+        LikeResponseDTO likeResponse = likeService.addLike(raffleId,userId);
         return ApiResponse.of(SuccessStatus._OK, likeResponse);
     }
 
@@ -34,7 +41,12 @@ import java.util.List;
     public ApiResponse<String> deleteLike(
             Long raffleId,Authentication authentication) {
 
-        likeService.deleteLike(raffleId, authentication);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        likeService.deleteLike(raffleId, userId);
         return ApiResponse.of(SuccessStatus._OK, null);
     }
 
@@ -42,7 +54,12 @@ import java.util.List;
     @GetMapping("/like")
     public ApiResponse<List<LikeListResponseDTO>> getLikedItems(Authentication authentication) {
 
-        List<LikeListResponseDTO> likeResponseList = likeService.getLikedItems(authentication);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        List<LikeListResponseDTO> likeResponseList = likeService.getLikedItems(userId);
 
         return ApiResponse.of(SuccessStatus._OK, likeResponseList);
     }

@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 public interface LikeService {
 
     // 찜 생성 작성
-    LikeResponseDTO addLike(Long raffleId, Authentication authentication);
+    LikeResponseDTO addLike(Long raffleId, Long uesrId);
 
     // 리뷰 삭제
-    void deleteLike(Long raffleId, Authentication authentication);
+    void deleteLike(Long raffleId, Long userId);
 
     //찜 목록 조회
-    List<LikeListResponseDTO> getLikedItems(Authentication authentication);
+    List<LikeListResponseDTO> getLikedItems(Long userId);
 
     //찜 수 조회
     Long getLikeCount(Long raffleId);

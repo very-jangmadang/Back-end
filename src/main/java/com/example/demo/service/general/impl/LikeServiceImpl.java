@@ -37,15 +37,13 @@ public class LikeServiceImpl implements LikeService {
     private final ApplyRepository applyRepository;
 
     // 찜하기
-    public LikeResponseDTO addLike(Long raffleId, Authentication authentication) {
-
-        String username = authentication.getName();
+    public LikeResponseDTO addLike(Long raffleId, Long userId) {
 
             // Raffle과 User를 ID로 조회
             Raffle raffle = raffleRepository.findById(raffleId)
                     .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-            User user = userRepository.findById(Long.parseLong(username))
+            User user = userRepository.findById(userId)
                     .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
             if (likeRepository.existsByRaffleAndUser(raffle, user)) {
@@ -66,11 +64,9 @@ public class LikeServiceImpl implements LikeService {
         }
 
         // 찜 삭제
-        public void deleteLike (Long raffleId, Authentication authentication){
+        public void deleteLike (Long raffleId, Long userId){
 
-                String username = authentication.getName();
-
-            User user = userRepository.findById(Long.parseLong(username))
+            User user = userRepository.findById(userId)
                     .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
             Like like = likeRepository.findByUserIdAndRaffleId(user.getId(), raffleId)
@@ -79,10 +75,9 @@ public class LikeServiceImpl implements LikeService {
             }
 
             // 찜 목록 조회
-            public List<LikeListResponseDTO> getLikedItems (Authentication authentication){
+            public List<LikeListResponseDTO> getLikedItems (Long userId){
 
-                String username = authentication.getName();
-                User user = userRepository.findById(Long.parseLong(username))
+                User user = userRepository.findById(userId)
                         .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
                 List<Like> likes = likeRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
