@@ -1,5 +1,6 @@
 package com.example.demo.domain.converter;
 
+import com.example.demo.base.Constants;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
 import com.example.demo.entity.Delivery;

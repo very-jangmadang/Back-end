@@ -51,7 +51,7 @@ public class DrawServiceImpl implements DrawService {
 
         raffle.addDelivery(delivery);
         raffleRepository.save(raffle);
-
+      
         return delivery;
     }
 
@@ -173,6 +173,9 @@ public class DrawServiceImpl implements DrawService {
 
         if (applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
+
+        raffle.setRaffleStatus(RaffleStatus.ENDED);
+        raffleRepository.save(raffle);
 
         Delivery delivery = draw(raffle, applyList);
 
