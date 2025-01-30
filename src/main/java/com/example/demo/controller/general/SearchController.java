@@ -48,7 +48,7 @@ public class SearchController {
 
     @Operation(summary = "검색")
     @GetMapping("/raffles")
-    public ApiResponse<HomeRaffleListDTO> searchRaffles(@RequestParam("keyword") String keyword, Authentication authentication){
+    public ApiResponse<SearchResponseDTO.SearchRaffleListDTO> searchRaffles(@RequestParam("keyword") String keyword, Authentication authentication){
 
         // 로그인 안 했을 경우 유저아이디 null로 처리
         Long userId = null;
@@ -58,7 +58,7 @@ public class SearchController {
             userId = Long.parseLong(authentication.getName());
         }
 
-        HomeRaffleListDTO result = searchService.searchRaffles(keyword, userId);
+        SearchResponseDTO.SearchRaffleListDTO result = searchService.searchRaffles(keyword, userId);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 

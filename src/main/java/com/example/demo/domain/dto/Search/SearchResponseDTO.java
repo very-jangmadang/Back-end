@@ -1,5 +1,6 @@
 package com.example.demo.domain.dto.Search;
 
+import com.example.demo.domain.dto.Home.HomeRaffleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +26,14 @@ public class SearchResponseDTO {
     @NoArgsConstructor
     public static class DeleteRecentSearchDTO{
         private String deletedKeyword;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SearchRaffleListDTO{
+        private List<HomeRaffleDTO> searchedRaffles;
     }
 
 

@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     @Transactional
-    public HomeRaffleListDTO searchRaffles(String keyword, Long userId) {
+    public SearchResponseDTO.SearchRaffleListDTO searchRaffles(String keyword, Long userId) {
 
         // 검색 결과에 따른 List 반환
         List<Raffle> raffles = raffleRepository.findAllByNameContaining(keyword);
@@ -65,8 +65,8 @@ public class SearchServiceImpl implements SearchService {
 
         List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(raffles, user);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(result)
+        return SearchResponseDTO.SearchRaffleListDTO.builder()
+                .searchedRaffles(result)
                 .build();
     }
 
