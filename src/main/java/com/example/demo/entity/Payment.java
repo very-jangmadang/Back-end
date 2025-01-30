@@ -1,39 +1,53 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class Payment extends BaseEntity{
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_id")
+@Setter
+@NoArgsConstructor
+public class Payment extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @NotNull
+    @Column(nullable = false)
+    private String userId;
 
-    private LocalDateTime paymentDate;
+    @NotNull
+    @Column(nullable = false)
+    private String orderId;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal paymentAmount;
+    @NotNull
+    @Column(nullable = false)
+    private String itemId;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal fee;
+    @NotNull
+    @Column(nullable = false)
+    private String itemName;
 
-    @Column(length = 50)
-    private String paymentAccountType;
+    @NotNull
+    @Column(nullable = false)
+    private int quantity;
 
-    @Column(length = 50)
-    private String paymentAccountNumber;
+    @NotNull
+    @Column(nullable = false)
+    private int amount;
 
+    @NotNull
+    @Column(nullable = false, unique = true)
+    private String tid;
 
+    @NotNull
+    @Column(nullable = false)
+    private String status;
+
+    private LocalDateTime approvedAt;
 }
