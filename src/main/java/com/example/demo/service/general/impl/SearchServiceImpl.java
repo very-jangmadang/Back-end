@@ -5,6 +5,7 @@ import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.HomeConverter;
 import com.example.demo.domain.dto.Home.HomeRaffleDTO;
 import com.example.demo.domain.dto.Home.HomeRaffleListDTO;
+import com.example.demo.domain.dto.Search.SearchResponseDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.SearchHistory;
 import com.example.demo.entity.User;
@@ -67,6 +68,28 @@ public class SearchServiceImpl implements SearchService {
         return HomeRaffleListDTO.builder()
                 .raffles(result)
                 .build();
+    }
+
+    @Override
+    public SearchResponseDTO getRecentPopularSearch(Long userId) {
+
+        List<String> popularSearchResult = new ArrayList<>();
+        List<String> recentSearchResult = new ArrayList<>();
+
+        List<SearchHistory> popularSearch = searchHistoryRepository.findTop10ByUserIdOrderBySearchCountDesc(userId);
+        for (SearchHistory searchHistory : popularSearch) {
+            popularSearchResult.add(searchHistory.getKeyword());
+        }
+        List<SearchHistory> recentSearch = searchHistoryRepository.findTop10ByUserIdOrderBySearchedAtDesc(userId);
+        for (SearchHistory searchHistory : recentSearch) {
+            recentSearchResult.add(searchHistory.getKeyword());
+        }
+
+        return SearchResponseDTO.builder()
+                .popularSearch(popularSearchResult)
+                .recentSearch(recentSearchResult)
+                .build();
+
     }
 
 
