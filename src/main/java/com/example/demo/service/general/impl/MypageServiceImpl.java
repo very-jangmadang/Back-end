@@ -6,16 +6,12 @@ import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.MypageConverter;
 import com.example.demo.domain.dto.Mypage.MypageRequestDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
-import com.example.demo.entity.Address;
-import com.example.demo.entity.Apply;
-import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
-import com.example.demo.repository.AddressRepository;
-import com.example.demo.repository.ApplyRepository;
-import com.example.demo.repository.LikeRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.entity.*;
+import com.example.demo.entity.base.enums.DeliveryStatus;
+import com.example.demo.repository.*;
 import com.example.demo.service.general.MypageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +31,7 @@ public class MypageServiceImpl implements MypageService {
     private final ApplyRepository applyRepository;
     private final LikeRepository likeRepository;
     private final AddressRepository addressRepository;
+    private final DeliveryRepository deliveryRepository;
 
     @Override
     public MypageResponseDTO.ApplyListDto getApplies() {
@@ -76,12 +73,9 @@ public class MypageServiceImpl implements MypageService {
     }
 
     @Override
-    public MypageResponseDTO.AddressListDto getAddresses() {
+    public MypageResponseDTO.AddressListDto getAddresses(Authentication authentication) {
 
-        // 사용자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-
+        User user = getUser(authentication);
         List<Address> addressList = user.getAddresses();
 
         if (addressList == null || addressList.isEmpty())
@@ -98,15 +92,15 @@ public class MypageServiceImpl implements MypageService {
 
     @Override
     @Transactional
-    public MypageResponseDTO.AddressListDto setDefault(MypageRequestDTO.AddressDto addressDto) {
-        // 사용자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+    public MypageResponseDTO.AddressListDto setDefault(
+            MypageRequestDTO.AddressDto addressDto, Authentication authentication) {
+
+        User user = getUser(authentication);
 
         Address address = addressRepository.findById(addressDto.getAddressId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
 
-        if (!address.getUser().getId().equals(user.getId()))
+        if (!address.getUser().equals(user))
             throw new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER);
 
         List<Address> addressList = user.getAddresses();
@@ -127,10 +121,9 @@ public class MypageServiceImpl implements MypageService {
 
     @Override
     @Transactional
-    public void addAddress(MypageRequestDTO.AddressAddDto addressAddDto) {
-        // 사용자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+    public void addAddress(MypageRequestDTO.AddressAddDto addressAddDto, Authentication authentication) {
+
+        User user = getUser(authentication);
 
         if (user.getAddresses().size() == Constants.MAX_ADDRESS_COUNT)
             throw new CustomException(ErrorStatus.ADDRESS_FULL);
@@ -150,6 +143,34 @@ public class MypageServiceImpl implements MypageService {
         }
 
         addressRepository.save(address);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAddress(MypageRequestDTO.AddressDto addressDto, Authentication authentication) {
+        User user = getUser(authentication);
+
+        Address address = addressRepository.findById(addressDto.getAddressId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
+
+        if (!address.getUser().equals(user))
+            throw new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER);
+
+        if (address.isDefault() || user.getAddresses().size() == 1)
+            throw new CustomException(ErrorStatus.ADDRESS_DEFAULT_LOCKED);
+
+        boolean hasActiveDelivery = deliveryRepository.existsByAddressAndDeliveryStatusIn(
+                address, List.of(DeliveryStatus.READY, DeliveryStatus.SHIPPING_EXPIRED));
+        if (hasActiveDelivery)
+            throw new CustomException(ErrorStatus.ADDRESS_HAS_ACTIVE_DELIVERY);
+
+        addressRepository.delete(address);
+    }
+
+    private User getUser(Authentication authentication) {
+        Long userId = Long.valueOf(authentication.getName());
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
 }

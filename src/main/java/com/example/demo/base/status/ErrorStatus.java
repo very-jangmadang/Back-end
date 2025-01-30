@@ -107,6 +107,8 @@ public enum ErrorStatus implements BaseErrorCode {
     ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4003", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
     ADDRESS_FULL(HttpStatus.BAD_REQUEST, "ADDRESS_4004", "최대 주소 갯수(" + Constants.MAX_ADDRESS_COUNT + "개)를 초과했습니다."),
     ADDRESS_LONG_MESSAGE(HttpStatus.BAD_REQUEST, "ADDRESS_4005", "입력 가능 최대 글자수를 초과하였습니다."),
+    ADDRESS_DEFAULT_LOCKED(HttpStatus.BAD_REQUEST, "ADDRESS_4006", "기본 배송지는 삭제할 수 없습니다."),
+    ADDRESS_HAS_ACTIVE_DELIVERY(HttpStatus.BAD_REQUEST, "ADDRESS_4007", "배송 정보로 등록된 주소는 삭제할 수 없습니다."),
 
     // 16. Huiju - 강제 종료 관련 에러
     CANCEL_FAIL(HttpStatus.BAD_REQUEST, "CANCEL_4001", "종료 가능한 래플이 아닙니다."),
