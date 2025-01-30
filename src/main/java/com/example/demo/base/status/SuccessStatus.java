@@ -35,8 +35,6 @@ public enum SuccessStatus implements BaseCode {
     // 5. HyungJin - 사진 관련 성공
     IMAGE_UPLOAD_SUCCESS(HttpStatus.OK, "IMAGE_2001", "사진 업로드에 성공하였습니다."),
 
-    // 6. Huiju - 리다이렉트 관련 성공
-    REDIRECT_SUCCESS(HttpStatus.FOUND, "REDIRECT_3021", "개최자를 리다이렉트하는 데에 성공하였습니다."),
 
     ;
 
