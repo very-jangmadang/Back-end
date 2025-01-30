@@ -34,15 +34,42 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String role;
 
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> addresses;
 
-    private double score = 0;
+    @Column(nullable = false)
+    @Setter
+    private double averageScore;
+
+    @Setter
+    private int reviewCount;
 
     private LocalDateTime withdrawTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes;
+  
+    @OneToMany(mappedBy = "follower")
+    private List<Follow> followings;
+
+    @OneToMany(mappedBy = "user")
+    private List<Raffle> raffles;
+  
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setUser(this);
+    }
+
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setUser(this);
+    }
+
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setUser(this);
+    }
 
     public void setTicket_num(int ticket_num) { this.ticket_num = ticket_num; }
 

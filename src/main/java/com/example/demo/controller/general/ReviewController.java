@@ -6,6 +6,7 @@ import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Review.ReviewDeleteDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
 import com.example.demo.service.general.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
@@ -55,9 +56,9 @@ public class ReviewController {
 
     //리뷰 목록 조회
     @GetMapping("/{userId}/review")
-    public ApiResponse<List<ReviewResponseDTO>> getReviewsByUserId(@PathVariable Long userId) {
+    public ApiResponse<ReviewWithAverageDTO> getReviewsByUserId(@PathVariable Long userId) {
 
-        List<ReviewResponseDTO> reviews = reviewService.getReviewsByUserId(userId);
+        ReviewWithAverageDTO reviews = reviewService.getReviewsByUserId(userId);
 
         return ApiResponse.of(SuccessStatus._OK, reviews);
     }

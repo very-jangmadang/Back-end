@@ -10,6 +10,7 @@ import com.example.demo.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReviewConverter {
 
@@ -37,6 +38,12 @@ public class ReviewConverter {
                 .imageUrls(review.getImageUrls())
                 .timestamp(LocalDateTime.now())
                 .build();
+    }
+
+    public static List<ReviewResponseDTO> toReviewResponseDTOList(List<Review> reviews) {
+        return reviews.stream()
+                .map(ReviewConverter::ToReviewResponseDTO) // 개별 Review를 DTO로 변환
+                .collect(Collectors.toList());
     }
 }
 
