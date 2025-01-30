@@ -1,13 +1,13 @@
 package com.example.demo.domain.converter;
 
+import com.example.demo.base.Constants;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
-import com.example.demo.domain.dto.MypageResponseDTO;
+import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public class DeliveryConverter {
 
@@ -16,54 +16,51 @@ public class DeliveryConverter {
                 .raffle(raffle)
                 .user(raffle.getUser())
                 .winner(raffle.getWinner())
-                .deliveryStatus(DeliveryStatus.ADDRESS_WAITING)
-                .addressDeadline(raffle.getEndAt().withMinute(0).plusHours(72))
+                .deliveryStatus(DeliveryStatus.WAITING_ADDRESS)
+                .isAddressExtended(false)
+                .isShippingExtended(false)
                 .build();
-
     }
 
     public static DeliveryResponseDTO.DeliveryDto toDeliveryDto(
-            Delivery delivery, List<MypageResponseDTO.AddressDto> addressList) {
+            Delivery delivery, MypageResponseDTO.AddressDto addressDto) {
+
         return DeliveryResponseDTO.DeliveryDto.builder()
                 .raffleId(delivery.getRaffle().getId())
                 .winnerId(delivery.getWinner().getId())
-                .deadline(delivery.getAddressDeadline())
+                .deliveryStatus(delivery.getDeliveryStatus())
+                .addressDeadline(delivery.getAddressDeadline())
+                .shippingDeadline(delivery.getShippingDeadline())
                 .shippingFee(delivery.getRaffle().getShippingFee())
-                .addressList(addressList)
+                .isShippingExtended(delivery.isShippingExtended())
+                .invoiceNumber(delivery.getInvoiceNumber())
+                .address(addressDto)
                 .build();
     }
 
-    public static DeliveryResponseDTO.AddressChoiceDto toAddressChoiceDto(Delivery delivery) {
-        return DeliveryResponseDTO.AddressChoiceDto.builder()
+    public static DeliveryResponseDTO.WaitDto toWaitDto(Delivery delivery) {
+        return DeliveryResponseDTO.WaitDto.builder()
                 .deliveryId(delivery.getId())
-                .raffleId(delivery.getRaffle().getId())
-                .winnerId(delivery.getWinner().getId())
-                .addressId(delivery.getAddress().getId())
+                .addressDeadline(delivery.getAddressDeadline())
+                .shippingDeadline(delivery.getShippingDeadline())
+                .deliveryStatus(delivery.getDeliveryStatus())
                 .build();
     }
 
-    public static DeliveryResponseDTO.ResultDto toResultDto(Delivery delivery, int applyTicket) {
+    public static DeliveryResponseDTO.ResultDto toResultDto(
+            Delivery delivery, int applyTicket, MypageResponseDTO.AddressDto addressDto) {
         return DeliveryResponseDTO.ResultDto.builder()
                 .raffleId(delivery.getRaffle().getId())
                 .winnerId(delivery.getWinner().getId())
                 .deliveryId(delivery.getId())
                 .minTicket(delivery.getRaffle().getMinTicket())
                 .applyTicket(applyTicket)
-                .finalAmount(BigDecimal.valueOf(applyTicket).multiply(new BigDecimal("0.93")))
-                .status(delivery.getDeliveryStatus())
-                .recipientName(delivery.getAddress().getRecipientName())
-                .addressDetail(delivery.getAddress().getAddressDetail())
-                .phoneNumber((delivery.getAddress().getPhoneNumber()))
-                .deadline(delivery.getShippingDeadline())
+                .finalAmount(BigDecimal.valueOf(applyTicket).multiply(new BigDecimal("93")))
+                .deliveryStatus(delivery.getDeliveryStatus())
+                .shippingDeadline(delivery.getShippingDeadline())
+                .isAddressExtended(delivery.isAddressExtended())
+                .address(addressDto)
                 .build();
     }
 
-    public static DeliveryResponseDTO.ShippingDto toShippingDto(Delivery delivery) {
-        return DeliveryResponseDTO.ShippingDto.builder()
-                .deliveryId(delivery.getId())
-                .raffleId(delivery.getRaffle().getId())
-                .winnerId(delivery.getWinner().getId())
-                .addressId(delivery.getAddress().getId())
-                .build();
-    }
 }

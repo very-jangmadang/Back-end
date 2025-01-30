@@ -23,6 +23,7 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String nickname;
 
+    @Builder.Default
     private int ticket_num = 0;
 
     //TODO: 후순위 기능인 rank
@@ -58,6 +59,11 @@ public class User extends BaseEntity{
 
     @Column(name = "profile_image_url")
     private String profileImageUrl;
+
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setUser(this);
+    }
 
     public void setTicket_num(int ticket_num) { this.ticket_num = ticket_num; }
 
