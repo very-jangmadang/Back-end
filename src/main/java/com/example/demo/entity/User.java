@@ -23,6 +23,7 @@ public class User extends BaseEntity{
     @Column(length = 20)
     private String nickname;
 
+    @Builder.Default
     private int ticket_num = 0;
 
     //TODO: 후순위 기능인 rank
@@ -39,23 +40,29 @@ public class User extends BaseEntity{
     private List<Address> addresses;
 
     @Column(nullable = false)
+    @Builder.Default
+    private int score = 0;
+
+    @Column(nullable = false)
     @Setter
-    private double averageScore;
+    @Builder.Default
+    private double averageScore = 0;
 
     @Setter
-    private int reviewCount;
+    @Builder.Default
+    private int reviewCount = 0;
 
     private LocalDateTime withdrawTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes;
-  
+
     @OneToMany(mappedBy = "follower")
     private List<Follow> followings;
 
     @OneToMany(mappedBy = "user")
     private List<Raffle> raffles;
-  
+
     public void addAddress(Address address) {
         addresses.add(address);
         address.setUser(this);
