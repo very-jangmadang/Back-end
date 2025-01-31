@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/permit/raffle")
+@RequestMapping("api/permit/raffles")
     public class LikeController {
 
     private final LikeService likeService;
