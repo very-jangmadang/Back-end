@@ -18,6 +18,8 @@ import com.example.demo.service.general.RaffleService;
 import com.example.demo.service.general.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +42,15 @@ public class RaffleServiceImpl implements RaffleService {
     @Transactional
     public RaffleResponseDTO.UploadResultDTO uploadRaffle(RaffleRequestDTO.UploadDTO request) {
 
-        // 0. 업로드 작성자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        // 0. 작성자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+        log.info("작성자 id {}", userId);
 
+        User user = userRepository.findById(userId).orElseThrow();
         // 1. 요청받은 카테고리 이름으로 Category 엔티티 가져오기
         Category category = categoryRepository.findByName(request.getCategory())
                 .orElseThrow(() -> new CustomException(ErrorStatus.CATEGORY_NOT_FOUND));
