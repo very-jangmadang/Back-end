@@ -53,7 +53,7 @@ public class DrawServiceImpl implements DrawService {
         raffle.addDelivery(delivery);
         raffleRepository.save(raffle);
 
-//        emailService.sendWinnerPrizeEmail(delivery);
+        emailService.sendWinnerPrizeEmail(delivery);
       
         return delivery;
     }
@@ -266,7 +266,7 @@ public class DrawServiceImpl implements DrawService {
                 if (deliveryStatus != DeliveryStatus.ADDRESS_EXPIRED)
                     throw new CustomException(ErrorStatus.CANCEL_FAIL);
 
-//                emailService.sendWinnerCancelEmail(delivery);
+                emailService.sendWinnerCancelEmail(delivery);
 
                 delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
                 deliveryRepository.save(delivery);
