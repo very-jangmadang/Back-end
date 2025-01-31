@@ -11,7 +11,6 @@ import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.repository.*;
 import com.example.demo.service.general.MypageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,9 +72,9 @@ public class MypageServiceImpl implements MypageService {
     }
 
     @Override
-    public MypageResponseDTO.AddressListDto getAddresses(Authentication authentication) {
+    public MypageResponseDTO.AddressListDto getAddresses(Long userId) {
 
-        User user = getUser(authentication);
+        User user = getUser(userId);
         List<Address> addressList = user.getAddresses();
 
         if (addressList == null || addressList.isEmpty())
@@ -93,9 +92,9 @@ public class MypageServiceImpl implements MypageService {
     @Override
     @Transactional
     public MypageResponseDTO.AddressListDto setDefault(
-            MypageRequestDTO.AddressDto addressDto, Authentication authentication) {
+            MypageRequestDTO.AddressDto addressDto, Long userId) {
 
-        User user = getUser(authentication);
+        User user = getUser(userId);
 
         Address address = addressRepository.findById(addressDto.getAddressId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
@@ -121,9 +120,9 @@ public class MypageServiceImpl implements MypageService {
 
     @Override
     @Transactional
-    public void addAddress(MypageRequestDTO.AddressAddDto addressAddDto, Authentication authentication) {
+    public void addAddress(MypageRequestDTO.AddressAddDto addressAddDto, Long userId) {
 
-        User user = getUser(authentication);
+        User user = getUser(userId);
 
         if (user.getAddresses().size() == Constants.MAX_ADDRESS_COUNT)
             throw new CustomException(ErrorStatus.ADDRESS_FULL);
@@ -147,8 +146,8 @@ public class MypageServiceImpl implements MypageService {
 
     @Override
     @Transactional
-    public void deleteAddress(MypageRequestDTO.AddressDto addressDto, Authentication authentication) {
-        User user = getUser(authentication);
+    public void deleteAddress(MypageRequestDTO.AddressDto addressDto, Long userId) {
+        User user = getUser(userId);
 
         Address address = addressRepository.findById(addressDto.getAddressId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
@@ -164,11 +163,11 @@ public class MypageServiceImpl implements MypageService {
         if (hasActiveDelivery)
             throw new CustomException(ErrorStatus.ADDRESS_HAS_ACTIVE_DELIVERY);
 
+        user.getAddresses().remove(address);
         addressRepository.delete(address);
     }
 
-    private User getUser(Authentication authentication) {
-        Long userId = Long.valueOf(authentication.getName());
+    private User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
