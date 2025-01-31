@@ -13,6 +13,8 @@ import com.example.demo.service.general.DeliveryService;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +35,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final EmailService emailService;
 
     @Override
-    public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId, Long userId) {
-        User user = getUser(userId);
+    public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
+        User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateWinner(delivery, user);
 
@@ -49,8 +51,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public DeliveryResponseDTO.ResponseDto setAddress(Long deliveryId, Long userId) {
-        User user = getUser(userId);
+    public DeliveryResponseDTO.ResponseDto setAddress(Long deliveryId) {
+        User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateWinner(delivery, user);
 
@@ -86,8 +88,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public DeliveryResponseDTO.ResponseDto complete(Long deliveryId, Long userId) {
-        User user = getUser(userId);
+    public DeliveryResponseDTO.ResponseDto complete(Long deliveryId) {
+        User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateWinner(delivery, user);
 
@@ -115,8 +117,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId, Long userId) {
-        User user = getUser(userId);
+    public DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId) {
+        User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateWinner(delivery, user);
 
@@ -146,8 +148,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public String cancel(Long deliveryId, Long userId) {
-        User user = getUser(userId);
+    public String cancel(Long deliveryId) {
+        User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateWinner(delivery, user);
 
@@ -179,8 +181,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public DeliveryResponseDTO.ResultDto getResult(Long deliveryId, Long userId) {
-        User user = getUser(userId);
+    public DeliveryResponseDTO.ResultDto getResult(Long deliveryId) {
+        User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateOwner(delivery, user);
 
@@ -200,9 +202,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     @Transactional
     public DeliveryResponseDTO.ResponseDto addInvoice(
-            Long deliveryId, Long userId, DeliveryRequestDTO deliveryRequestDTO) {
+            Long deliveryId, DeliveryRequestDTO deliveryRequestDTO) {
 
-        User user = getUser(userId);
+        User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateOwner(delivery, user);
 
@@ -232,8 +234,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public DeliveryResponseDTO.WaitDto waitAddress(Long deliveryId, Long userId) {
-        User user = getUser(userId);
+    public DeliveryResponseDTO.WaitDto waitAddress(Long deliveryId) {
+        User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateOwner(delivery, user);
 
@@ -262,8 +264,12 @@ public class DeliveryServiceImpl implements DeliveryService {
         return toWaitDto(delivery);
     }
 
-    private User getUser(Long userId) {
-        return userRepository.findById(userId)
+    private User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        return userRepository.findById(Long.parseLong(authentication.getName()))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
