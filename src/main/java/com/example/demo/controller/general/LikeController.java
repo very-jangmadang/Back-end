@@ -24,7 +24,7 @@ import java.util.List;
     //찜하기
     @PostMapping("/like")
     public ApiResponse<LikeResponseDTO> addLike(
-             Long raffleId, Authentication authentication) {
+             @RequestParam Long raffleId, Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
@@ -39,7 +39,7 @@ import java.util.List;
     //찜 삭제
     @DeleteMapping("/like")
     public ApiResponse<String> deleteLike(
-            Long raffleId,Authentication authentication) {
+            @RequestParam Long raffleId,Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
