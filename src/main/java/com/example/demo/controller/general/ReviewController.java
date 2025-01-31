@@ -52,7 +52,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 삭제")
     @DeleteMapping("")
     public ApiResponse<Void> deleteReview(
-            Long reviewId,
+            @RequestParam Long reviewId,
             Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
