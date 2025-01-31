@@ -2,7 +2,7 @@ package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.Payment.PaymentRequest;
 import com.example.demo.domain.dto.Payment.ReadyResponse;
-import com.example.demo.entity.Payment;
+import com.example.demo.entity.Payment.Payment;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,8 +1,8 @@
 package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.Payment.*;
-import com.example.demo.entity.Payment;
-import com.example.demo.entity.UserPayment;
+import com.example.demo.entity.Payment.Payment;
+import com.example.demo.entity.Payment.UserPayment;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

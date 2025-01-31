@@ -1,5 +1,6 @@
-package com.example.demo.entity;
+package com.example.demo.entity.Payment;
 
+import com.example.demo.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
