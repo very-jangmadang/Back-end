@@ -67,7 +67,7 @@ public class InquiryController {
     }
 
     //문의 목록과 댓글 조회
-    @GetMapping("/raffle/{raffleId}")
+    @GetMapping("/raffles/{raffleId}")
     @Operation(summary = "래플의 문의글과 댓글 조회")
     public ApiResponse<List<InquiryAndCommentsResponseDTO>> getInquiryAndComments(
             @PathVariable Long raffleId) {
