@@ -13,13 +13,13 @@ public interface DrawService {
 
     void cancel(Raffle raffle, List<Apply> applyList);
 
-    DrawResponseDTO.RaffleResult getDrawRaffle(Long raffleId, Long userId);
+    DrawResponseDTO.RaffleResult getDrawRaffle(Long raffleId);
 
-    DrawResponseDTO.ResultDto getResult(Long raffleId, Long userId);
+    DrawResponseDTO.ResultDto getResult(Long raffleId);
 
-    String selfDraw(Long raffleId, Long userId);
+    String selfDraw(Long raffleId);
 
-    DrawResponseDTO.CancelDto forceCancel(Long raffleId, Long userId);
+    DrawResponseDTO.CancelDto forceCancel(Long raffleId);
 
-    String redraw(Long raffleId, Long userId);
+    String redraw(Long raffleId);
 }

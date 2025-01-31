@@ -24,12 +24,9 @@ public class DrawController {
     @Operation(summary = "래플 결과 확인하기")
     @GetMapping("/{raffleId}/draw")
     public ApiResponse<?> drawRaffle(
-            @PathVariable Long raffleId, Authentication authentication, HttpServletResponse response) throws IOException {
+            @PathVariable Long raffleId, HttpServletResponse response) throws IOException {
 
-        if(authentication == null || !authentication.isAuthenticated())
-            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
-
-        DrawResponseDTO.RaffleResult result = drawService.getDrawRaffle(raffleId, Long.parseLong(authentication.getName()));
+        DrawResponseDTO.RaffleResult result = drawService.getDrawRaffle(raffleId);
         DrawResponseDTO.DrawDto drawDto = result.getDrawDto();
         String redirectUrl = result.getRedirectUrl();
 
@@ -43,50 +40,34 @@ public class DrawController {
 
     @Operation(summary = "개최자 - 래플 결과 확인하기")
     @GetMapping("/{raffleId}/result")
-    public ApiResponse<DrawResponseDTO.ResultDto> getResult(
-            @PathVariable Long raffleId, Authentication authentication) {
+    public ApiResponse<DrawResponseDTO.ResultDto> getResult(@PathVariable Long raffleId) {
 
-        if(authentication != null && authentication.isAuthenticated())
-            return ApiResponse.of(_OK, drawService.getResult(raffleId, Long.parseLong(authentication.getName())));
-        else
-            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        return ApiResponse.of(_OK, drawService.getResult(raffleId));
     }
 
     @Operation(summary = "개최자 - 미추첨 래플 수동 추첨하기")
     @PostMapping("/{raffleId}/draw")
-    public ApiResponse<?> selfDraw(
-            @PathVariable Long raffleId, Authentication authentication, HttpServletResponse response) throws IOException {
+    public void selfDraw(
+            @PathVariable Long raffleId, HttpServletResponse response) throws IOException {
 
-        if(authentication == null || !authentication.isAuthenticated())
-            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
-
-        String redirectUrl = drawService.selfDraw(raffleId, Long.parseLong(authentication.getName()));
+        String redirectUrl = drawService.selfDraw(raffleId);
         response.sendRedirect(redirectUrl);
-        return null;
     }
 
     @Operation(summary = "개최자 - 래플 종료하기")
     @GetMapping("/{raffleId}/cancel")
-    public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(
-            @PathVariable Long raffleId, Authentication authentication) {
+    public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(@PathVariable Long raffleId) {
 
-        if(authentication != null && authentication.isAuthenticated())
-            return ApiResponse.of(_OK, drawService.forceCancel(raffleId, Long.parseLong(authentication.getName())));
-        else
-            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        return ApiResponse.of(_OK, drawService.forceCancel(raffleId));
     }
 
     @Operation(summary = "개최자 - 래플 재추첨하기")
     @PostMapping("{raffleId}/redraw")
-    public ApiResponse<?> redraw(
-            @PathVariable Long raffleId, Authentication authentication, HttpServletResponse response) throws IOException {
+    public void redraw(
+            @PathVariable Long raffleId, HttpServletResponse response) throws IOException {
 
-        if(authentication == null || !authentication.isAuthenticated())
-            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
-
-        String redirectUrl = drawService.redraw(raffleId, Long.parseLong(authentication.getName()));
+        String redirectUrl = drawService.redraw(raffleId);
         response.sendRedirect(redirectUrl);
-        return null;
     }
 
 }
