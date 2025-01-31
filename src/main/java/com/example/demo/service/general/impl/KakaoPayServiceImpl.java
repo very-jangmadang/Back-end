@@ -9,7 +9,9 @@ import com.example.demo.domain.dto.Payment.ApproveResponse;
 import com.example.demo.domain.dto.Payment.PaymentRequest;
 import com.example.demo.domain.dto.Payment.ReadyResponse;
 import com.example.demo.entity.Payment;
+import com.example.demo.entity.UserPayment;
 import com.example.demo.repository.PaymentRepository;
+import com.example.demo.repository.UserPaymentRepository;
 import com.example.demo.service.general.KakaoPayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
     private static final Logger logger = LoggerFactory.getLogger(KakaoPayServiceImpl.class);
     private final RestTemplate restTemplate;
     private final PaymentRepository paymentRepository;
+    private final UserPaymentRepository userPaymentRepository;
     private final KakaoPayConverter kakaoPayConverter;
     private final String secretKey;
 
@@ -40,10 +43,12 @@ public class KakaoPayServiceImpl implements KakaoPayService {
             @Value("${kakao.pay.approvalUrl}") String approvalUrl,
             @Value("${kakao.pay.cancelUrl}") String cancelUrl,
             @Value("${kakao.pay.failUrl}") String failUrl,
-            PaymentRepository paymentRepository
+            PaymentRepository paymentRepository,
+            UserPaymentRepository userPaymentRepository
     ) {
         this.secretKey = secretKey;
         this.paymentRepository = paymentRepository;
+        this.userPaymentRepository = userPaymentRepository;
         this.restTemplate = new RestTemplate();
         this.kakaoPayConverter = new KakaoPayConverter(cid, approvalUrl, cancelUrl, failUrl);
     }
@@ -79,13 +84,35 @@ public class KakaoPayServiceImpl implements KakaoPayService {
                 ApproveResponse.class
         );
 
-        // 승인 성공 시 결제 상태 업데이트
         Optional.ofNullable(approveResponse).ifPresent(response -> {
             payment.setStatus("APPROVED");
             payment.setApprovedAt(LocalDateTime.now());
             savePaymentEntity(payment);
+
+            UserPayment userPayment = findOrCreateUser(payment.getUserId());
+
+            // 유저 티켓 수 업데이트 (배송비가 아닌 경우)
+            if (!payment.getItemId().equals("배송비")) {
+                int updatedTickets = userPayment.getUserTicket() + payment.getAmount();
+                userPayment.setUserTicket(updatedTickets);
+                userPayment.setUpdatedAt(LocalDateTime.now());
+            }
+
+            // 변경된 유저 정보 저장
+            userPaymentRepository.save(userPayment);
         });
+
         return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, approveResponse);
+    }
+
+    private UserPayment findOrCreateUser(String userId) {
+        return userPaymentRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    UserPayment newUser = new UserPayment();
+                    newUser.setUserId(userId);
+                    newUser.setCreatedAt(LocalDateTime.now());
+                    return userPaymentRepository.save(newUser);
+                });
     }
 
     private Payment findPaymentByTid(String tid) {

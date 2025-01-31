@@ -39,7 +39,12 @@ public enum SuccessStatus implements BaseCode {
     PAYMENT_READY_SUCCESS(HttpStatus.OK, "PAYMENT_2001", "결제 준비가 성공적으로 완료되었습니다."),
     PAYMENT_APPROVE_SUCCESS(HttpStatus.OK, "PAYMENT_2002", "결제 승인이 성공적으로 완료되었습니다."),
     PAYMENT_CANCEL_SUCCESS(HttpStatus.OK, "PAYMENT_2003", "결제가 성공적으로 취소되었습니다."),
-    PAYMENT_HISTORY_SUCCESS(HttpStatus.OK, "PAYMENT_2004", "결제 내역을 성공적으로 조회하였습니다.");
+    PAYMENT_HISTORY_SUCCESS(HttpStatus.OK, "PAYMENT_2004", "결제 내역을 성공적으로 조회하였습니다."),
+
+    // 7. Yoon - 유저 결제 관련 성공
+    USER_PAYMENT_GET_TICKET(HttpStatus.OK, "USER_PAYMENT_2001", "유저의 현재 티켓 갯수가 성공적으로 조회되었습니다."),
+    USER_PAYMENT_UPDATE_BANK_INFO(HttpStatus.OK, "USER_PAYMENT_2002", "유저의 은행 정보가 성공적으로 업데이트되었습니다."),
+
 
     ;
 

@@ -116,7 +116,14 @@ public enum ErrorStatus implements BaseErrorCode {
     PAYMENT_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAY_4002", "PAY API 요청 중 오류 발생"),
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT_4041", "결제 정보가 없습니다"),
     PAYMENT_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4003", "결제 정보 저장 실패"),
-    PAYMENT_HISTORY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4004", "결제 내역 조회 중 오류 발생");
+    PAYMENT_HISTORY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4004", "결제 내역 조회 중 오류 발생"),
+
+    // 18. Yoon - 결제 상세 관련 에러
+    EXCHANGE_HISTORY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4005", "티켓 환전 내역 조회 중 오류 발생"),
+    EXCHANGE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4006", "티켓 환전 처리 중 오류 발생"),
+
+    // 19. Yoon - 유저 결제 관련 에러
+    USER_PAYMENT_INVALID_PERIOD(HttpStatus.NOT_FOUND, "USER_PAYMENT_4001", "유효하지 않은 기간을 조회하셨습니다.")
 
 
     ;
