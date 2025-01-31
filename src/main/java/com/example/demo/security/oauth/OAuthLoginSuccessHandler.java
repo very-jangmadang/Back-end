@@ -50,22 +50,17 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         // 엑세스 토큰 생성
         Long userId = userService.findIdByEmail(email);
         String accessToken = jwtUtil.createAccessToken(userId, email);
-        // 쿠키로 전달하기
-        response.addCookie(createCookie(accessToken));
 
+        // 쿠키로 전달하기
+        response.addCookie(createCookie("Authorization", accessToken));
+
+        // 신규 -> nickname, 기존 -> home
         response.sendRedirect(redirectUrl);
-//        // 1. 헤더로 전달
-//        response.setHeader("Authorization", "Bearer " + accessToken);
-//        // 2. 쿠키로 전달
-//        response.addCookie(createCookie(accessToken));
-//        // 3. JSON 전달
-//        response.setContentType("application/json");
-//        response.getWriter().write("{\"redirectUrl\":\"/home\", \"accessToken\":\"" + accessToken + "\"}");
     }
 
-    private Cookie createCookie(String value) {
-        Cookie cookie = new Cookie("Authorization", value);
-        cookie.setMaxAge(60*60*60*60);
+    private Cookie createCookie(String name, String value) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(60*60); // 1시간
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 //        cookie.setSecure(true); // HTTPS 필수

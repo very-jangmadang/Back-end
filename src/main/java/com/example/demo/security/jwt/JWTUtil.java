@@ -53,7 +53,7 @@ public class JWTUtil {
                 .claim("email", email)
                 .claim("roles", List.of("USER"))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 만료시간 60분
+                .setExpiration(new Date(System.currentTimeMillis() + 5 * 60 * 1000)) // 만료시간 5분
                 .signWith(secretKey)
                 .compact();
     }
