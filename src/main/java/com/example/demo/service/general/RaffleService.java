@@ -2,7 +2,6 @@ package com.example.demo.service.general;
 
 import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
 import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
-import org.springframework.security.core.Authentication;
 
 public interface RaffleService {
 
