@@ -123,8 +123,8 @@ public enum ErrorStatus implements BaseErrorCode {
     EXCHANGE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4006", "티켓 환전 처리 중 오류 발생"),
 
     // 19. Yoon - 유저 결제 관련 에러
-    USER_PAYMENT_INVALID_PERIOD(HttpStatus.NOT_FOUND, "USER_PAYMENT_4001", "유효하지 않은 기간을 조회하셨습니다.")
-
+    USER_PAYMENT_INVALID_PERIOD(HttpStatus.NOT_FOUND, "USER_PAYMENT_4001", "유효하지 않은 기간을 조회하셨습니다."),
+    USER_INSUFFICIENT_BALANCE(HttpStatus.BAD_REQUEST, "USER_PAYMENT_4002", "잔액이 부족합니다.")
 
     ;
 
