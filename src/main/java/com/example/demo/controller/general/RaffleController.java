@@ -1,7 +1,6 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
 import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
@@ -10,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.base.status.SuccessStatus._OK;
@@ -45,13 +43,9 @@ public class RaffleController {
 
     @Operation(summary = "래플 응모하기")
     @PostMapping("/{raffleId}/apply")
-    public ApiResponse<RaffleResponseDTO.ApplyDTO> apply(
-            @PathVariable Long raffleId, Authentication authentication) {
+    public ApiResponse<RaffleResponseDTO.ApplyDTO> apply(@PathVariable Long raffleId) {
 
-        if(authentication != null && authentication.isAuthenticated())
-            return ApiResponse.of(_OK, raffleService.apply(raffleId, Long.parseLong(authentication.getName())));
-        else
-            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        return ApiResponse.of(_OK, raffleService.apply(raffleId));
     }
 }
 

@@ -14,6 +14,8 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,9 +97,13 @@ public class RaffleServiceImpl implements RaffleService {
 
     @Override
     @Transactional
-    public RaffleResponseDTO.ApplyDTO apply(Long raffleId, Long userId) {
+    public RaffleResponseDTO.ApplyDTO apply(Long raffleId) {
 
-        User user = userRepository.findById(userId)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        User user = userRepository.findById(Long.parseLong(authentication.getName()))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
         int userTicket = user.getTicket_num();
 
