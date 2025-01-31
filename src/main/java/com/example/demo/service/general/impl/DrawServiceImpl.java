@@ -240,8 +240,7 @@ public class DrawServiceImpl implements DrawService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new CustomException(ErrorStatus.USER_NOT_FOUND);
         }
-        Long userId = Long.parseLong(authentication.getName());
-        return userRepository.findById(userId)
+        return userRepository.findById(Long.parseLong(authentication.getName()))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
