@@ -7,11 +7,11 @@ public interface MypageService {
 
     MypageResponseDTO.ApplyListDto getApplies();
 
-    MypageResponseDTO.AddressListDto getAddresses(Long userId);
+    MypageResponseDTO.AddressListDto getAddresses();
 
-    MypageResponseDTO.AddressListDto setDefault(MypageRequestDTO.AddressDto addressDto, Long userId);
+    MypageResponseDTO.AddressListDto setDefault(MypageRequestDTO.AddressDto addressDto);
 
-    void addAddress(MypageRequestDTO.AddressAddDto addressAddDto, Long userId);
+    void addAddress(MypageRequestDTO.AddressAddDto addressAddDto);
 
-    void deleteAddress(MypageRequestDTO.AddressDto addressDto, Long userId);
+    void deleteAddress(MypageRequestDTO.AddressDto addressDto);
 }
