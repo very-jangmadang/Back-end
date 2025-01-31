@@ -14,7 +14,6 @@ import com.example.demo.repository.*;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +53,7 @@ public class DrawServiceImpl implements DrawService {
         raffle.addDelivery(delivery);
         raffleRepository.save(raffle);
 
-        emailService.sendWinnerPrizeEmail(delivery);
+//        emailService.sendWinnerPrizeEmail(delivery);
       
         return delivery;
     }
@@ -77,9 +76,9 @@ public class DrawServiceImpl implements DrawService {
     }
 
     @Override
-    public DrawResponseDTO.RaffleResult getDrawRaffle(Long raffleId, Authentication authentication) {
+    public DrawResponseDTO.RaffleResult getDrawRaffle(Long raffleId, Long userId) {
 
-        User user = getUser(authentication);
+        User user = getUser(userId);
         Raffle raffle = getRaffle(raffleId);
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
@@ -135,8 +134,8 @@ public class DrawServiceImpl implements DrawService {
     }
 
     @Override
-    public DrawResponseDTO.ResultDto getResult(Long raffleId, Authentication authentication) {
-        User user = getUser(authentication);
+    public DrawResponseDTO.ResultDto getResult(Long raffleId, Long userId) {
+        User user = getUser(userId);
         Raffle raffle = getRaffle(raffleId);
 
         validateRaffleOwnership(user, raffle);
@@ -154,8 +153,8 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     @Transactional
-    public String selfDraw(Long raffleId, Authentication authentication) {
-        User user = getUser(authentication);
+    public String selfDraw(Long raffleId, Long userId) {
+        User user = getUser(userId);
         Raffle raffle = getRaffle(raffleId);
 
         validateRaffleOwnership(user, raffle);
@@ -181,8 +180,8 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     @Transactional
-    public DrawResponseDTO.CancelDto forceCancel(Long raffleId, Authentication authentication) {
-        User user = getUser(authentication);
+    public DrawResponseDTO.CancelDto forceCancel(Long raffleId, Long userId) {
+        User user = getUser(userId);
         Raffle raffle = getRaffle(raffleId);
 
         validateRaffleOwnership(user, raffle);
@@ -201,8 +200,8 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     @Transactional
-    public String redraw(Long raffleId, Authentication authentication) {
-        User user = getUser(authentication);
+    public String redraw(Long raffleId, Long userId) {
+        User user = getUser(userId);
         Raffle raffle = getRaffle(raffleId);
 
         validateRaffleOwnership(user, raffle);
@@ -234,8 +233,7 @@ public class DrawServiceImpl implements DrawService {
         return String.format(Constants.DELIVERY_OWNER_URL, delivery.getId());
     }
 
-    private User getUser(Authentication authentication) {
-        Long userId = Long.valueOf(authentication.getName());
+    private User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
@@ -268,7 +266,7 @@ public class DrawServiceImpl implements DrawService {
                 if (deliveryStatus != DeliveryStatus.ADDRESS_EXPIRED)
                     throw new CustomException(ErrorStatus.CANCEL_FAIL);
 
-                emailService.sendWinnerCancelEmail(delivery);
+//                emailService.sendWinnerCancelEmail(delivery);
 
                 delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
                 deliveryRepository.save(delivery);
