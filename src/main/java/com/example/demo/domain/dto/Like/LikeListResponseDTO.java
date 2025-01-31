@@ -1,5 +1,6 @@
 package com.example.demo.domain.dto.Like;
 
+import com.example.demo.entity.base.enums.RaffleStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ public class LikeListResponseDTO {
 
     private Long likeId;
     private Long raffleId;
-    //private String raffleStatus;
+    private RaffleStatus raffleStatus;
     private int ticketNum;
     private String imageUrl;
     private Long timeUntilEnd;
