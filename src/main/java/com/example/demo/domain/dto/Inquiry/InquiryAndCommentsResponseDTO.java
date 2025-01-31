@@ -1,5 +1,6 @@
 package com.example.demo.domain.dto.Inquiry;
 
+import com.example.demo.entity.base.enums.InquiryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,18 +9,17 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InquiryCommentResponseDTO {
-    private Long CommentId;
-    private Long userId;
-    private Long raffleId;
+public class InquiryAndCommentsResponseDTO {
+    private Long inquiryId;
+    private String inquiryTitle;
     private String nickname;
-    private String title;
-    private String content;
-    private boolean isHost;
+    private String inquiryContent;
+    private InquiryStatus status;
     private LocalDateTime timestamp;
-
+    private List<InquiryCommentResponseDTO> comments;
 }

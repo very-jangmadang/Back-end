@@ -1,6 +1,7 @@
 package com.example.demo.domain.dto.Inquiry;
 
 
+import com.example.demo.entity.base.enums.InquiryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +17,10 @@ import java.time.LocalDateTime;
         private Long inquiryId;
         private Long userId;
         private Long raffleId;
+        private String nickname;
         private String title;
         private String content;
+        private InquiryStatus status;
         private LocalDateTime timestamp;
 
     }
