@@ -111,8 +111,12 @@ public enum ErrorStatus implements BaseErrorCode {
     // 16. Huiju - 강제 종료 관련 에러
     CANCEL_FAIL(HttpStatus.BAD_REQUEST, "CANCEL_4001", "종료 가능한 래플이 아닙니다."),
 
-  
+
+    // 17. ajwoong - 검색 관련 에러
+    SEARCH_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH_4001", "존재하지 않는 최근 검색어 입니다."),
+
     ;
+
 
     private final HttpStatus httpStatus;
     private final String code;
