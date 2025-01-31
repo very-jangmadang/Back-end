@@ -5,6 +5,7 @@ import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.converter.KakaoPayConverter;
+import com.example.demo.domain.converter.UserPaymentConverter;
 import com.example.demo.domain.dto.Payment.ApproveResponse;
 import com.example.demo.domain.dto.Payment.PaymentRequest;
 import com.example.demo.domain.dto.Payment.ReadyResponse;
@@ -34,6 +35,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
     private final RestTemplate restTemplate;
     private final PaymentRepository paymentRepository;
     private final UserPaymentRepository userPaymentRepository;
+    private final UserPaymentConverter userPaymentConverter;
     private final KakaoPayConverter kakaoPayConverter;
     private final String secretKey;
 
@@ -44,12 +46,14 @@ public class KakaoPayServiceImpl implements KakaoPayService {
             @Value("${kakao.pay.cancelUrl}") String cancelUrl,
             @Value("${kakao.pay.failUrl}") String failUrl,
             PaymentRepository paymentRepository,
-            UserPaymentRepository userPaymentRepository
+            UserPaymentRepository userPaymentRepository,
+            UserPaymentConverter userPaymentConverter
     ) {
         this.secretKey = secretKey;
         this.paymentRepository = paymentRepository;
         this.userPaymentRepository = userPaymentRepository;
         this.restTemplate = new RestTemplate();
+        this.userPaymentConverter = userPaymentConverter;
         this.kakaoPayConverter = new KakaoPayConverter(cid, approvalUrl, cancelUrl, failUrl);
     }
 
@@ -107,12 +111,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 
     private UserPayment findOrCreateUser(String userId) {
         return userPaymentRepository.findByUserId(userId)
-                .orElseGet(() -> {
-                    UserPayment newUser = new UserPayment();
-                    newUser.setUserId(userId);
-                    newUser.setCreatedAt(LocalDateTime.now());
-                    return userPaymentRepository.save(newUser);
-                });
+                .orElseGet(() -> userPaymentRepository.save(userPaymentConverter.createDefaultUserPayment(userId)));
     }
 
     private Payment findPaymentByTid(String tid) {
