@@ -113,7 +113,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //17. dohyun- 문의 관련 에러
     CANNOT_DELTETE(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "삭제 권한이 없습니다."),
-  
+
+    // 17. ajwoong - 검색 관련 에러
+    SEARCH_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH_4001", "존재하지 않는 최근 검색어 입니다."),
     ;
 
     private final HttpStatus httpStatus;
