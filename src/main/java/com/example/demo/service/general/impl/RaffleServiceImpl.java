@@ -96,9 +96,8 @@ public class RaffleServiceImpl implements RaffleService {
 
     @Override
     @Transactional
-    public RaffleResponseDTO.ApplyDTO apply(Long raffleId, Authentication authentication) {
+    public RaffleResponseDTO.ApplyDTO apply(Long raffleId, Long userId) {
 
-        Long userId = Long.valueOf(authentication.getName());
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
         int userTicket = user.getTicket_num();

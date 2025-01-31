@@ -1,6 +1,7 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
 import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
@@ -47,8 +48,10 @@ public class RaffleController {
     public ApiResponse<RaffleResponseDTO.ApplyDTO> apply(
             @PathVariable Long raffleId, Authentication authentication) {
 
-        return ApiResponse.of(_OK, raffleService.apply(raffleId, authentication));
-
+        if(authentication != null && authentication.isAuthenticated())
+            return ApiResponse.of(_OK, raffleService.apply(raffleId, Long.parseLong(authentication.getName())));
+        else
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
     }
 }
 
