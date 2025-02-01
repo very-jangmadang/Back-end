@@ -1,6 +1,5 @@
 package com.example.demo.service.general;
 
-import com.example.demo.domain.dto.Review.ReviewDeleteDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
 import com.example.demo.entity.Like;
