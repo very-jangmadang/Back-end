@@ -6,14 +6,15 @@ import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
-import com.example.demo.entity.Address;
-import com.example.demo.entity.Delivery;
-import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
+import com.example.demo.entity.*;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.repository.*;
 import com.example.demo.service.general.DeliveryService;
+import com.example.demo.service.general.DrawService;
+import com.example.demo.service.general.EmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,25 +31,13 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
-
-    private User getUser() {
-        // 사용자 정보 조회 (JWT 기반 인증 후 추후 구현 예정)
-        return userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-    }
-
-    private Delivery getDeliveryById(Long deliveryId) {
-        return deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
-    }
+    private final DrawService drawService;
 
     @Override
     public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getWinner()))
-            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
+        validateWinner(delivery, user);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         if (deliveryStatus == DeliveryStatus.WAITING_ADDRESS
@@ -62,12 +51,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     @Transactional
     public DeliveryResponseDTO.ResponseDto setAddress(Long deliveryId) {
-
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getWinner()))
-            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
+        validateWinner(delivery, user);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         switch (deliveryStatus){
@@ -104,9 +90,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public DeliveryResponseDTO.ResponseDto complete(Long deliveryId) {
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getWinner()))
-            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
+        validateWinner(delivery, user);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         switch (deliveryStatus){
@@ -135,9 +119,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId) {
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getWinner()))
-            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
+        validateWinner(delivery, user);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         switch (deliveryStatus) {
@@ -164,12 +146,42 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional
+    public String cancel(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
+        validateWinner(delivery, user);
+
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+        switch (deliveryStatus) {
+            case WAITING_ADDRESS:
+            case WAITING_PAYMENT:
+                throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
+            case ADDRESS_EXPIRED:
+                throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
+            case READY:
+                throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_NOT_EXPIRED);
+            case SHIPPED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
+            case CANCELLED:
+                throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+        }
+
+        Raffle raffle = delivery.getRaffle();
+        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        drawService.cancel(raffle, applyList);
+
+        delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
+        deliveryRepository.save(delivery);
+
+        return String.format(Constants.DELIVERY_WINNER_URL, delivery.getId());
+    }
+
+    @Override
     public DeliveryResponseDTO.ResultDto getResult(Long deliveryId) {
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getUser()))
-            throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
+        validateOwner(delivery, user);
 
         Raffle raffle = delivery.getRaffle();
         int applyNum = applyRepository.countByRaffle(raffle);
@@ -191,9 +203,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getUser()))
-            throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
+        validateOwner(delivery, user);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         switch (deliveryStatus) {
@@ -224,9 +234,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public DeliveryResponseDTO.WaitDto waitAddress(Long deliveryId) {
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
-
-        if (!user.equals(delivery.getUser()))
-            throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
+        validateOwner(delivery, user);
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
 
@@ -251,5 +259,29 @@ public class DeliveryServiceImpl implements DeliveryService {
         deliveryRepository.save(delivery);
 
         return toWaitDto(delivery);
+    }
+
+    private User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        return userRepository.findById(Long.parseLong(authentication.getName()))
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+    }
+
+    private Delivery getDeliveryById(Long deliveryId) {
+        return deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
+    }
+
+    private void validateWinner(Delivery delivery, User user) {
+        if (!user.equals(delivery.getWinner()))
+            throw new CustomException(ErrorStatus.DELIVERY_NOT_WINNER);
+    }
+
+    private void validateOwner(Delivery delivery, User user) {
+        if (!user.equals(delivery.getUser()))
+            throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
     }
 }
