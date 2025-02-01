@@ -4,5 +4,5 @@ import com.example.demo.entity.Raffle;
 
 public interface RaffleSchedulerService {
 
-    public void scheduleRaffleJob(Raffle raffle, boolean isStart);
+    void scheduleRaffleJob(Raffle raffle, boolean isStart);
 }

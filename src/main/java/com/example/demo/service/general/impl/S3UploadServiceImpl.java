@@ -46,4 +46,24 @@ public class S3UploadServiceImpl implements S3UploadService {
         }
         return imageUrls;
     }
+
+
+    // 단일 파일 업로드 처리 (프로필 사진을 위함)
+    public String saveSingleFile(MultipartFile multipartFile) {
+
+        String originalFilename = multipartFile.getOriginalFilename();
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
+
+        try {
+            // S3에 파일 업로드
+            amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
+        } catch (IOException e) {
+            throw new CustomException(ErrorStatus.IMAGE_UPLOAD_FAILED);
+        }
+
+        // 업로드된 파일의 URL 반환
+        return amazonS3.getUrl(bucket, originalFilename).toString();
+    }
 }

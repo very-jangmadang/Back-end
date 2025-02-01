@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -14,6 +15,9 @@ import java.time.LocalDateTime;
 public class InquiryCommentResponseDTO {
     private Long CommentId;
     private Long userId;
+    private Long raffleId;
+    private String nickname;
+    private String title;
     private String content;
     private boolean isHost;
     private LocalDateTime timestamp;

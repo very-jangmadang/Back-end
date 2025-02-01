@@ -40,17 +40,11 @@ public class User extends BaseEntity{
     private List<Address> addresses;
 
     @Column(nullable = false)
-    @Builder.Default
-    private int score = 0;
-
-    @Column(nullable = false)
     @Setter
-    @Builder.Default
-    private double averageScore = 0;
+    private double averageScore;
 
     @Setter
-    @Builder.Default
-    private int reviewCount = 0;
+    private int reviewCount;
 
     private LocalDateTime withdrawTime;
 
@@ -63,6 +57,9 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user")
     private List<Raffle> raffles;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     public void addAddress(Address address) {
         addresses.add(address);
         address.setUser(this);
@@ -70,4 +67,7 @@ public class User extends BaseEntity{
 
     public void setTicket_num(int ticket_num) { this.ticket_num = ticket_num; }
 
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 }

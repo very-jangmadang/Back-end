@@ -17,6 +17,8 @@ public class ReviewResponseDTO {
     private Long reviewId;
     private Long userId;
     private Long raffleId;
+    private String raffleName;
+    private String profileImageUrl;
     private Long reviewerId;
     private double score;
     private String text;

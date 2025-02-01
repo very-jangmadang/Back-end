@@ -2,14 +2,9 @@ package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
 import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
-import com.example.demo.entity.Category;
-import com.example.demo.entity.Image;
-import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
+import com.example.demo.entity.*;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -55,6 +50,15 @@ public class RaffleConverter {
                 .nickname(raffle.getUser().getNickname()) // 판매자 닉네임
                 .followCount(followCount) // 팔로우 수
                 .reviewCount(reviewCount) // 리뷰 수
+                .build();
+    }
+
+    public static RaffleResponseDTO.ApplyDTO toApplyDto(Apply apply) {
+        return RaffleResponseDTO.ApplyDTO.builder()
+                .userId(apply.getUser().getId())
+                .raffleId(apply.getRaffle().getId())
+                .raffleImage(apply.getRaffle().getImages().get(0).getImageUrl())
+                .endAt(apply.getRaffle().getEndAt())
                 .build();
     }
 }
