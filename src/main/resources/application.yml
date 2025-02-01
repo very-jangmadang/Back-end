@@ -101,10 +101,14 @@ cloud:
     stack:
       auto: false
 
+# 카카오페이 API
 kakao:
+  base-url: "http://43.201.106.194:8080"
+  redirect-url: "http://43.201.106.194:8080/hello.html"
+  domain: "43.201.106.194"
   pay:
     cid: "TC0ONETIME"
-    secretKey: "DEV81DCBE19C923CC8AD7F7EA65CF8165A2D6A7A"
-    approvalUrl: "http://localhost:8080/payment/approve"
-    cancelUrl: "http://localhost:8080/payment/cancel"
-    failUrl: "http://localhost:8080/payment/fail"
+    secretKey: "DEV64DDCDABAD6EA300251E0586C621D91497946" # 보안을 해야하나 고민이었는데 테스트용 키라 안해도 괜찮을 것 같습니다..!!
+    approvalUrl: "http://43.201.106.194:8080/payment/approve"
+    cancelUrl: "http://43.201.106.194:8080/payment/cancel"
+    failUrl: "http://43.201.106.194:8080/payment/fail"
