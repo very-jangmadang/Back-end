@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -20,8 +21,9 @@ public class DrawJob implements Job {
     private final EmailService emailService;
 
     @Override
+    @Transactional
     public void execute(JobExecutionContext context) {
-        Long raffleId = context.getJobDetail().getJobDataMap().getLong("raffleId");
+        Long raffleId = Long.parseLong(context.getJobDetail().getJobDataMap().getString("raffleId"));
 
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));

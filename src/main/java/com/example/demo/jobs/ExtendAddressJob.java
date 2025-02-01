@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -22,9 +23,9 @@ public class ExtendAddressJob implements Job {
     private final EmailService emailService;
 
     @Override
+    @Transactional
     public void execute(JobExecutionContext context) {
-
-        Long deliveryId = context.getJobDetail().getJobDataMap().getLong("deliveryId");
+        Long deliveryId = Long.parseLong(context.getJobDetail().getJobDataMap().getString("deliveryId"));
 
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));

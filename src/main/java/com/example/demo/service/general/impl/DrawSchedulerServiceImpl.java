@@ -47,10 +47,29 @@ public class DrawSchedulerServiceImpl implements DrawSchedulerService {
         }
     }
 
+    @Override
+    public void cancelDrawJob(Raffle raffle) {
+        try {
+            String jobName = "Raffle_" + raffle.getId();
+            JobKey jobKey = JobKey.jobKey(jobName);
+            TriggerKey triggerKey = TriggerKey.triggerKey(jobName);
+
+            if (scheduler.checkExists(jobKey)) {
+                scheduler.unscheduleJob(triggerKey);
+                scheduler.deleteJob(jobKey);
+            }
+            else
+                throw new CustomException(ErrorStatus.JOB_NOT_FOUND);
+
+        } catch (SchedulerException e) {
+            throw new CustomException(ErrorStatus.JOB_CANCEL_FAILED);
+        }
+    }
+
     private JobDetail buildDrawJobDetail(Raffle raffle) {
         return JobBuilder.newJob(ExtendShippingJob.class)
-                .withIdentity("Raffle_" + raffle.getId() + "_UNFULFILLED")
-                .usingJobData("raffleId", raffle.getId())
+                .withIdentity("Raffle_" + raffle.getId())
+                .usingJobData("raffleId", String.valueOf(raffle.getId()))
                 .storeDurably()
                 .build();
     }

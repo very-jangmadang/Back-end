@@ -12,6 +12,7 @@ import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.*;
 import com.example.demo.service.general.DeliverySchedulerService;
+import com.example.demo.service.general.DrawSchedulerService;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class DrawServiceImpl implements DrawService {
     private final DeliveryRepository deliveryRepository;
     private final EmailService emailService;
     private final DeliverySchedulerService deliverySchedulerService;
+    private final DrawSchedulerService drawSchedulerService;
 
     @Override
     @Transactional
@@ -178,6 +180,8 @@ public class DrawServiceImpl implements DrawService {
                 throw new CustomException(ErrorStatus.DRAW_FINISHED);
         }
 
+        drawSchedulerService.cancelDrawJob(raffle);
+
         List<Apply> applyList = applyRepository.findByRaffle(raffle);
 
         if (applyList.isEmpty())
@@ -199,6 +203,8 @@ public class DrawServiceImpl implements DrawService {
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
         validateRaffleStatus(raffleStatus);
         validateCancel(raffle, raffleStatus);
+
+        drawSchedulerService.cancelDrawJob(raffle);
 
         cancel(raffle);
 
@@ -278,6 +284,8 @@ public class DrawServiceImpl implements DrawService {
 
                 if (deliveryStatus != DeliveryStatus.ADDRESS_EXPIRED)
                     throw new CustomException(ErrorStatus.CANCEL_FAIL);
+
+                deliverySchedulerService.cancelDeliveryJob(delivery);
 
                 emailService.sendWinnerCancelEmail(delivery);
 

@@ -96,7 +96,7 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
     private JobDetail buildAddressJobDetail(Delivery delivery) {
         return JobBuilder.newJob(AddressJob.class)
                 .withIdentity("Delivery_" + delivery.getId())
-                .usingJobData("deliveryId", delivery.getId())
+                .usingJobData("deliveryId", String.valueOf(delivery.getId()))
                 .storeDurably()
                 .build();
     }
@@ -104,7 +104,7 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
     private JobDetail buildShippingJobDetail(Delivery delivery) {
         return JobBuilder.newJob(ShippingJob.class)
                 .withIdentity("Delivery_" + delivery.getId())
-                .usingJobData("deliveryId", delivery.getId())
+                .usingJobData("deliveryId", String.valueOf(delivery.getId()))
                 .storeDurably()
                 .build();
     }
@@ -112,7 +112,7 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
     private JobDetail buildExtendAddressJobDetail(Delivery delivery) {
         return JobBuilder.newJob(ExtendAddressJob.class)
                 .withIdentity("Delivery_" + delivery.getId())
-                .usingJobData("deliveryId", delivery.getId())
+                .usingJobData("deliveryId", String.valueOf(delivery.getId()))
                 .storeDurably()
                 .build();
     }
@@ -120,7 +120,7 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
     private JobDetail buildExtendShippingJobDetail(Delivery delivery) {
         return JobBuilder.newJob(ExtendShippingJob.class)
                 .withIdentity("Delivery_" + delivery.getId())
-                .usingJobData("deliveryId", delivery.getId())
+                .usingJobData("deliveryId", String.valueOf(delivery.getId()))
                 .storeDurably()
                 .build();
     }

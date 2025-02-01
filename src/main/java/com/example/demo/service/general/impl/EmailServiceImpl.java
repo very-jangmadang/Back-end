@@ -113,7 +113,8 @@ public class EmailServiceImpl implements EmailService {
 
             Context context = new Context();
             context.setVariable("userName", user.getNickname());
-            context.setVariable("url", String.format(Constants.DELIVERY_OWNER_URL, delivery.getId()));
+            context.setVariable("deliveryUrl", String.format(Constants.DELIVERY_OWNER_URL, delivery.getId()));
+
             context.setVariable("fromEmail", fromEmail);
 
             String body = templateEngine.process("OwnerAddressExpiredEmail.html", context);
@@ -174,7 +175,7 @@ public class EmailServiceImpl implements EmailService {
 
             Context context = new Context();
             context.setVariable("userName", user.getNickname());
-//            context.setVariable("url", String.format(Constants.DELIVERY_WINNER_URL, delivery.getId()));
+            context.setVariable("deliveryUrl", String.format(Constants.DELIVERY_WINNER_URL, delivery.getId()));
             context.setVariable("fromEmail", fromEmail);
 
             String body = templateEngine.process("WinnerShippingExpiredEmail.html", context);
@@ -205,7 +206,7 @@ public class EmailServiceImpl implements EmailService {
             Context context = new Context();
             context.setVariable("userName", user.getNickname());
             context.setVariable("raffleName", raffle.getName());
-            context.setVariable("url", String.format(Constants.RAFFLE_OWNER_URL, raffle.getId()));
+            context.setVariable("deliveryUrl", String.format(Constants.RAFFLE_OWNER_URL, raffle.getId()));
             context.setVariable("fromEmail", fromEmail);
 
             String body = templateEngine.process("OwnerUnfulfilledEmail.html", context);
