@@ -40,11 +40,9 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         log.info("{}", kakaoAccount.get("email"));
 
         boolean isNewUser = !userService.isExistUser(email);
-        String redirectUrl = "http://localhost:8080/home";
+
         // 기존 회원이 아닌경우
         if (!userService.isExistUser(email)) {
-            redirectUrl = "http://43.201.106.194:8080/nickname";
-            // DB에 유저 등록
             userService.createUser(email);
         }
 
@@ -52,8 +50,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         Long userId = userService.findIdByEmail(email);
         String accessToken = jwtUtil.createAccessToken(userId, email);
 
-        // 쿠키로 전달하기
-        response.addCookie(createCookie("Authorization", accessToken));
+        response.addCookie(createCookie("Authorization", accessToken)); // 쿠키로 전달하기
 
         // 6. JSON 응답 (리다이렉트 없이 직접 Body 전송)
         response.setStatus(HttpServletResponse.SC_OK);

@@ -28,8 +28,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 2. Yoon - 토큰 관련 에러
     TOKEN_MISSING(HttpStatus.UNAUTHORIZED, "TOKEN_4001", "토큰이 누락되었습니다."),
-    TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "TOKEN_4002", "해당 토큰을 찾을 수 없습니다."),
-    TOKEN_INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_4003", "만료되거나 잘못된 엑세스 토큰입니다."),
+    TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "TOKEN_4002", "해당 토큰을 찾을 수 없습니다. (로그인 필요)"),
+    TOKEN_INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_4003", "만료되거나 잘못된 엑세스 토큰입니다 (로그인 필요)."),
     TOKEN_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_4004", "만료되거나 잘못된 리프레시 토큰입니다."),
 
     // 3. Yoon - 관리자 모드 관련 에러
@@ -38,6 +38,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // 4. Yoon - 소셜 로그인 관련 에러
     OAUTH_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "OAUTH_4001", "OAuth 로그인에 실패했습니다."),
     OAUTH_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAUTH_4002", "OAuth 로그인 처리에 실패했습니다."),
+
+    // Hyungjin - 로그인 관련 에러
+    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "LOGIN_4001", "인증되지 않은 사용자 접근입니다."),
 
     // 5. Hyungjin - 래플 관련 에러
     RAFFLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RAFFLE_4001", "해당 래플을 찾을 수 없습니다."),

@@ -108,7 +108,7 @@ kakao:
   domain: "43.201.106.194"
   pay:
     cid: "TC0ONETIME"
-    secretKey: "DEV64DDCDABAD6EA300251E0586C621D91497946" 
+    secretKey: "DEV64DDCDABAD6EA300251E0586C621D91497946"
     approvalUrl: "http://43.201.106.194:8080/payment/approve"
     cancelUrl: "http://43.201.106.194:8080/payment/cancel"
     failUrl: "http://43.201.106.194:8080/payment/fail"

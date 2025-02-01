@@ -1,4 +1,5 @@
 package com.example.demo.config;
+import com.example.demo.security.CustomAuthenticationEntryPoint;
 import com.example.demo.security.jwt.JWTUtil;
 import com.example.demo.security.jwt.JwtAuthenticationFilter;
 import com.example.demo.security.oauth.OAuthLoginFailureHandler;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -27,10 +29,13 @@ public class SecurityConfig {
     // 소셜 로그인
     private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
     private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(HttpBasicConfigurer::disable)
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -50,6 +55,8 @@ public class SecurityConfig {
                             .successHandler(oAuthLoginSuccessHandler) // 로그인 성공시 수행
                             .failureHandler(oAuthLoginFailureHandler); // 로그인 실패시 수행
                 });
+//                .exceptionHandling(exception -> exception
+//                        .authenticationEntryPoint(customAuthenticationEntryPoint));
         return httpSecurity.build();
     }
 
