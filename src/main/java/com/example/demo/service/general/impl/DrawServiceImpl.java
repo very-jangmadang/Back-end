@@ -285,7 +285,7 @@ public class DrawServiceImpl implements DrawService {
                 if (deliveryStatus != DeliveryStatus.ADDRESS_EXPIRED)
                     throw new CustomException(ErrorStatus.CANCEL_FAIL);
 
-                deliverySchedulerService.cancelDeliveryJob(delivery);
+                deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendAddress");
 
                 emailService.sendWinnerCancelEmail(delivery);
 

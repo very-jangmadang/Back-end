@@ -25,7 +25,7 @@ public class ExtendShippingJob implements Job {
     @Override
     @Transactional
     public void execute(JobExecutionContext context) {
-        Long deliveryId = Long.parseLong(context.getJobDetail().getJobDataMap().getString("deliveryId"));
+        Long deliveryId = context.getJobDetail().getJobDataMap().getLong("deliveryId");
 
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));

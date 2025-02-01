@@ -23,7 +23,7 @@ public class DrawJob implements Job {
     @Override
     @Transactional
     public void execute(JobExecutionContext context) {
-        Long raffleId = Long.parseLong(context.getJobDetail().getJobDataMap().getString("raffleId"));
+        Long raffleId = context.getJobDetail().getJobDataMap().getLong("raffleId");
 
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));

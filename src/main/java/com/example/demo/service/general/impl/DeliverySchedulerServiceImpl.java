@@ -59,6 +59,7 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
             scheduler.scheduleJob(jobDetail, trigger);
 
         } catch (SchedulerException e) {
+            System.out.println("SchedulerException occurred: " + e.getMessage());
             Throwable cause = e.getCause();
 
             if (cause instanceof JobPersistenceException) {
@@ -75,9 +76,9 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
     }
 
     @Override
-    public void cancelDeliveryJob(Delivery delivery) {
+    public void cancelDeliveryJob(Delivery delivery, String type) {
         try {
-            String jobName = "Delivery_" + delivery.getId();
+            String jobName = "Delivery_" + delivery.getId() + "_" + type;
             JobKey jobKey = JobKey.jobKey(jobName);
             TriggerKey triggerKey = TriggerKey.triggerKey(jobName);
 
@@ -95,32 +96,32 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
 
     private JobDetail buildAddressJobDetail(Delivery delivery) {
         return JobBuilder.newJob(AddressJob.class)
-                .withIdentity("Delivery_" + delivery.getId())
-                .usingJobData("deliveryId", String.valueOf(delivery.getId()))
+                .withIdentity("Delivery_" + delivery.getId() + "_Address")
+                .usingJobData("deliveryId", delivery.getId())
                 .storeDurably()
                 .build();
     }
 
     private JobDetail buildShippingJobDetail(Delivery delivery) {
         return JobBuilder.newJob(ShippingJob.class)
-                .withIdentity("Delivery_" + delivery.getId())
-                .usingJobData("deliveryId", String.valueOf(delivery.getId()))
+                .withIdentity("Delivery_" + delivery.getId() + "_Shipping")
+                .usingJobData("deliveryId", delivery.getId())
                 .storeDurably()
                 .build();
     }
 
     private JobDetail buildExtendAddressJobDetail(Delivery delivery) {
         return JobBuilder.newJob(ExtendAddressJob.class)
-                .withIdentity("Delivery_" + delivery.getId())
-                .usingJobData("deliveryId", String.valueOf(delivery.getId()))
+                .withIdentity("Delivery_" + delivery.getId() + "_ExtendAddress")
+                .usingJobData("deliveryId", delivery.getId())
                 .storeDurably()
                 .build();
     }
 
     private JobDetail buildExtendShippingJobDetail(Delivery delivery) {
         return JobBuilder.newJob(ExtendShippingJob.class)
-                .withIdentity("Delivery_" + delivery.getId())
-                .usingJobData("deliveryId", String.valueOf(delivery.getId()))
+                .withIdentity("Delivery_" + delivery.getId() + "_ExtendShipping")
+                .usingJobData("deliveryId", delivery.getId())
                 .storeDurably()
                 .build();
     }

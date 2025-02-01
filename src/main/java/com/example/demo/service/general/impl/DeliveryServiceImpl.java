@@ -108,13 +108,15 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (deliveryStatus != DeliveryStatus.WAITING_PAYMENT)
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
 
-        deliverySchedulerService.cancelDeliveryJob(delivery);
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Address");
 
         delivery.setDeliveryStatus(DeliveryStatus.READY);
         delivery.setShippingDeadline();
         deliveryRepository.save(delivery);
 
         emailService.sendOwnerReadyEmail(delivery);
+
+        deliverySchedulerService.scheduleDeliveryJob(delivery);
 
         return DeliveryResponseDTO.ResponseDto.builder()
                 .deliveryId(deliveryId)
@@ -146,7 +148,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (delivery.isShippingExtended())
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_EXTEND);
 
-        deliverySchedulerService.cancelDeliveryJob(delivery);
+        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Shipping");
       
         delivery.extendShippingDeadline();
         deliveryRepository.save(delivery);
@@ -184,7 +187,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
 
-        deliverySchedulerService.cancelDeliveryJob(delivery);
+        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
         emailService.sendOwnerCancelEmail(raffle);
 
         return String.format(Constants.DELIVERY_WINNER_URL, delivery.getId());
@@ -233,7 +236,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
         }
 
-        deliverySchedulerService.cancelDeliveryJob(delivery);
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Shipping");
 
         delivery.setInvoiceNumber(deliveryRequestDTO.getInvoiceNumber());
         delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
@@ -273,7 +276,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (delivery.isAddressExtended())
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_EXTEND);
 
-        deliverySchedulerService.cancelDeliveryJob(delivery);
+        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendAddress");
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Address");
 
         delivery.extendAddressDeadline();
         deliveryRepository.save(delivery);

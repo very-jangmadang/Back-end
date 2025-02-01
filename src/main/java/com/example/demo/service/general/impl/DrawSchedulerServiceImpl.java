@@ -4,7 +4,7 @@ import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.entity.Raffle;
-import com.example.demo.jobs.ExtendShippingJob;
+import com.example.demo.jobs.DrawJob;
 import com.example.demo.service.general.DrawSchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.*;
@@ -67,9 +67,9 @@ public class DrawSchedulerServiceImpl implements DrawSchedulerService {
     }
 
     private JobDetail buildDrawJobDetail(Raffle raffle) {
-        return JobBuilder.newJob(ExtendShippingJob.class)
+        return JobBuilder.newJob(DrawJob.class)
                 .withIdentity("Raffle_" + raffle.getId())
-                .usingJobData("raffleId", String.valueOf(raffle.getId()))
+                .usingJobData("raffleId", raffle.getId())
                 .storeDurably()
                 .build();
     }

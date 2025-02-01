@@ -55,27 +55,31 @@ public class Delivery extends BaseEntity {
 
     public void setAddressDeadline() {
         this.addressDeadline = LocalDateTime.now()
-                .plusHours(Constants.ADDRESS_DEADLINE)
+//                .plusHours(Constants.ADDRESS_DEADLINE)
+                .plusMinutes(1)
                 .withSecond(0)
                 .withNano(0);
     }
 
     public void setShippingDeadline() {
         this.shippingDeadline = LocalDateTime.now()
-                .plusHours(Constants.SHIPPING_DEADLINE)
+//                .plusHours(Constants.SHIPPING_DEADLINE)
+                .plusMinutes(1)
                 .withSecond(0)
                 .withNano(0);
     }
 
     public void extendAddressDeadline() {
         this.deliveryStatus = DeliveryStatus.WAITING_ADDRESS;
-        this.addressDeadline = this.addressDeadline.plusHours(Constants.WAIT);
+//        this.addressDeadline = this.addressDeadline.plusHours(Constants.WAIT);
+        this.addressDeadline = LocalDateTime.now().plusMinutes(1).withSecond(0).withNano(0);
         this.isAddressExtended = true;
     }
 
     public void extendShippingDeadline() {
         this.deliveryStatus = DeliveryStatus.READY;
-        this.shippingDeadline = this.shippingDeadline.plusHours(Constants.WAIT);
+//        this.shippingDeadline = this.shippingDeadline.plusHours(Constants.WAIT);
+        this.shippingDeadline = LocalDateTime.now().plusMinutes(1).withSecond(0).withNano(0);
         this.isShippingExtended = true;
     }
 
