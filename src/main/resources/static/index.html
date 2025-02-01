@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Form</title>
+</head>
+<body>
+<h1>Payment Form</h1>
+<form id="payment-form">
+    <label for="itemId">Item ID:</label>
+    <input type="text" id="itemId" name="itemId" required><br><br>
+
+    <label for="itemName">Item Name:</label>
+    <input type="text" id="itemName" name="itemName" required><br><br>
+
+    <label for="totalAmount">Total Amount:</label>
+    <input type="number" id="totalAmount" name="totalAmount" required><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    let baseUrl = "";
+    fetch("/config/base-url")
+        .then(response => response.json())
+        .then(data => {
+            baseUrl = data.baseUrl;
+        })
+        .catch(error => {
+            console.error("Error fetching baseUrl:", error);
+        });
+    document.getElementById("payment-form").onsubmit = function (event) {
+        event.preventDefault();
+        var itemId = document.getElementById("itemId").value;
+        var itemName = document.getElementById("itemName").value;
+        var totalAmount = document.getElementById("totalAmount").value;
+        fetch(baseUrl + "/payment/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "itemId=" + encodeURIComponent(itemId) +
+                "&itemName=" + encodeURIComponent(itemName) +
+                "&totalAmount=" + encodeURIComponent(totalAmount)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.redirectUrl) {
+                    console.log("Redirecting to:", data.redirectUrl);
+                    window.location.href = data.redirectUrl;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+    };
+</script>
+</body>
+</html>
