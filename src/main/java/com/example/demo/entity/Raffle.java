@@ -58,7 +58,7 @@ public class Raffle extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     @Builder.Default
-    private Boolean isRedrawn = false;
+    private boolean isRedrawn = false;
 
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(15)")
@@ -66,8 +66,6 @@ public class Raffle extends BaseEntity {
 
     @Column(precision = 10, scale = 2)
     private BigDecimal shippingFee;
-
-    private boolean isRedrawn = false;
 
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
