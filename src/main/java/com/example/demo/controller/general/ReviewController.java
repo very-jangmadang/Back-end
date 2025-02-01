@@ -2,8 +2,8 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
-import com.example.demo.domain.dto.Review.ReviewDeleteDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Mod10Check;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,11 +33,16 @@ public class ReviewController {
 
     //리뷰 작성
     @Operation(summary = "리뷰 작성")
-    @PostMapping(value="/",consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value="",consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ReviewResponseDTO> addReview(
-            @ModelAttribute @Valid ReviewRequestDTO.ReviewUploadDTO reviewRequest) {
+            @ModelAttribute @Valid ReviewRequestDTO.ReviewUploadDTO reviewRequest,Authentication authentication) {
 
-        ReviewResponseDTO reviewResponse = reviewService.addReview(reviewRequest);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+
+        ReviewResponseDTO reviewResponse = reviewService.addReview(reviewRequest,userId);
 
         return ApiResponse.of(SuccessStatus._OK, reviewResponse);
 
@@ -44,23 +50,29 @@ public class ReviewController {
 
     //리뷰 삭제
     @Operation(summary = "리뷰 삭제")
-    @DeleteMapping("/{reviewId}")
-    public ApiResponse<ReviewResponseDTO> deleteReview(
-            @PathVariable Long reviewId,
-            @RequestBody ReviewDeleteDTO reviewDelete) {
+    @DeleteMapping("")
+    public ApiResponse<Void> deleteReview(
+            @RequestParam Long reviewId,
+            Authentication authentication) {
 
-        reviewService.deleteReview(reviewId,reviewDelete);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        reviewService.deleteReview(reviewId,userId);
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }
 
-    //리뷰 목록 조회
-    @GetMapping("/{userId}/review")
+    //상대 리뷰 조회
+    @GetMapping("/{userId}")
     public ApiResponse<ReviewWithAverageDTO> getReviewsByUserId(@PathVariable Long userId) {
 
         ReviewWithAverageDTO reviews = reviewService.getReviewsByUserId(userId);
 
         return ApiResponse.of(SuccessStatus._OK, reviews);
     }
+
 }
 

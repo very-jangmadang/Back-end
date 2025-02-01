@@ -9,4 +9,11 @@ public interface EmailService {
     void sendWinnerPrizeEmail(Delivery delivery);
 
     void sendWinnerCancelEmail(Delivery delivery);
+
+    void sendAddressExpiredEmail(Delivery delivery);
+
+    void sendOwnerCancelEmail(Raffle raffle);
+
+    void sendWinnerShippingExpiredEmail(Delivery delivery);
+
 }

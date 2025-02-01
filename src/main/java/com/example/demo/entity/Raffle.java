@@ -53,11 +53,12 @@ public class Raffle extends BaseEntity {
 
     private int minTicket;
 
+    @Builder.Default
     private int view = 0; // 초기값 0
 
-//    private int likeCount = 0; // 초기값 0
-//
-//    private int apply_count = 0; // 초기값 0
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Builder.Default
+    private Boolean isRedrawn = false;
 
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(15)")
@@ -95,26 +96,6 @@ public class Raffle extends BaseEntity {
 
     public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
     public void setWinner(User winner) { this.winner = winner; }
-
     public void setIsRedrawn() { this.isRedrawn = true; }
 
-//    // 찜 횟수 증가
-//    public void upLikeCount(){
-//        this.likeCount += 1;
-//    }
-//
-//    // 찜 횟수 감소
-//    public void downLikeCount(){
-//        this.likeCount -= 1;
-//    }
-//
-//    // 응모 수 증가
-//    public void addApplyCount(){
-//        this.apply_count += 1;
-//    }
-//
-//    // 응모 수 감소
-//    public void downApplyCount(){
-//        this.apply_count -= 1;
-//    }
 }

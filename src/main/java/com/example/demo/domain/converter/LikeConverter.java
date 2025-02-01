@@ -1,7 +1,6 @@
 package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.Like.LikeListResponseDTO;
-import com.example.demo.domain.dto.Like.LikeRequestDTO;
 import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
@@ -42,7 +41,7 @@ public class LikeConverter {
         return LikeListResponseDTO.builder()
                 .likeId(like.getId())             // likeId
                 .raffleId(like.getRaffle().getId())         // raffleId
-                .raffleStatus(like.getRaffle().getRaffleStatus().toString()) // raffleStatus
+                .raffleStatus(like.getRaffle().getRaffleStatus()) // raffleStatus
                 .ticketNum(like.getRaffle().getTicketNum())    // ticketNum
                 .imageUrl(like.getRaffle().getImageUrl())       // imageUrl
                 .timeUntilEnd(timeUntilEnd)           // timeUntilEnd (남은 시간)

@@ -33,7 +33,7 @@ public class RaffleEndJob implements Job {
     }
 
     @Override
-    @Transactional(rollbackFor = CustomException.class)
+    @Transactional
     public void execute(JobExecutionContext context) {
         Long raffleId = context.getJobDetail().getJobDataMap().getLong("raffleId");
 
