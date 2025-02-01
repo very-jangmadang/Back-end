@@ -49,8 +49,10 @@ public class RaffleEndJob implements Job {
 
         updateRaffleStatus(raffle, RaffleStatus.ENDED);
 
-        if (applyList == null || applyList.isEmpty())
-            throw new CustomException(ErrorStatus.DRAW_EMPTY);
+        if (applyList == null || applyList.isEmpty()) {
+            updateRaffleStatus(raffle, RaffleStatus.FINISHED);
+            return;
+        }
 
         drawService.draw(raffle, applyList);
     }
