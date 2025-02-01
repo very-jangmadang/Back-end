@@ -43,17 +43,17 @@ public class RaffleEndJob implements Job {
         int applyCount = applyRepository.countByRaffle(raffle);
         List<Apply> applyList = applyRepository.findByRaffle(raffle);
 
-        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket())
+        if (applyCount * raffle.getTicketNum() < raffle.getMinTicket()) {
             updateRaffleStatus(raffle, RaffleStatus.UNFULFILLED);
 //            drawService.cancel(raffle, applyList);
+            return;
+        }
 
         updateRaffleStatus(raffle, RaffleStatus.ENDED);
 
         if (applyList == null || applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
-        Delivery delivery = drawService.draw(raffle, applyList);
-
-        emailService.sendEmail(delivery);
+        drawService.draw(raffle, applyList);
     }
 }

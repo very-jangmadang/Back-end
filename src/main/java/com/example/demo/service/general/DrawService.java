@@ -6,7 +6,6 @@ import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
 
 import java.util.List;
-import java.util.Map;
 
 public interface DrawService {
 
@@ -21,4 +20,6 @@ public interface DrawService {
     String selfDraw(Long raffleId);
 
     DrawResponseDTO.CancelDto forceCancel(Long raffleId);
+
+    String redraw(Long raffleId);
 }
