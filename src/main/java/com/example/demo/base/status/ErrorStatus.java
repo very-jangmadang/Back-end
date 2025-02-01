@@ -111,6 +111,30 @@ public enum ErrorStatus implements BaseErrorCode {
     // 16. Huiju - 강제 종료 관련 에러
     CANCEL_FAIL(HttpStatus.BAD_REQUEST, "CANCEL_4001", "종료 가능한 래플이 아닙니다."),
 
+    // 17. Huiju - 재추첨 관련 에러
+    REDRAW_AGAIN(HttpStatus.BAD_REQUEST, "REDRAW_4001", "한번 이상 재추첨할 수 없습니다."),
+
+    // 18. Yoon - 결제 관련 에러
+    PAYMENT_REQUEST_FAILED(HttpStatus.BAD_REQUEST, "PAY_4001", "PAY API 요청 실패"),
+    PAYMENT_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAY_4002", "PAY API 요청 중 오류 발생"),
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT_4041", "결제 정보가 없습니다"),
+    PAYMENT_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4003", "결제 정보 저장 실패"),
+    PAYMENT_HISTORY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4004", "결제 내역 조회 중 오류 발생"),
+
+    // 19. Yoon - 결제 상세 관련 에러
+    EXCHANGE_HISTORY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4005", "티켓 환전 내역 조회 중 오류 발생"),
+    EXCHANGE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_4006", "티켓 환전 처리 중 오류 발생"),
+
+    // 20. Yoon - 유저 결제 관련 에러
+    USER_PAYMENT_INVALID_PERIOD(HttpStatus.NOT_FOUND, "USER_PAYMENT_4001", "유효하지 않은 기간을 조회하셨습니다."),
+    USER_INSUFFICIENT_BALANCE(HttpStatus.BAD_REQUEST, "USER_PAYMENT_4002", "잔액이 부족합니다."),
+
+    // 21. dohyun- 문의 관련 에러
+    CANNOT_DELTETE(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "삭제 권한이 없습니다."),
+
+    // 22. ajwoong - 검색 관련 에러
+    SEARCH_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH_4001", "존재하지 않는 최근 검색어 입니다.")
+
   
     ;
 

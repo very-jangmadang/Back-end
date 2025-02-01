@@ -5,23 +5,23 @@ import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.RaffleConverter;
 import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
 import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
-import com.example.demo.entity.Category;
-import com.example.demo.entity.Image;
-import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
+import com.example.demo.entity.*;
+import com.example.demo.entity.base.enums.RaffleStatus;
+import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.general.ImageService;
-import com.example.demo.service.general.RaffleSchedulerService;
-import com.example.demo.service.general.RaffleService;
-import com.example.demo.service.general.S3UploadService;
+import com.example.demo.service.general.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.example.demo.domain.converter.RaffleConverter.toApplyDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,15 +35,21 @@ public class RaffleServiceImpl implements RaffleService {
     private final RaffleSchedulerService raffleSchedulerService;
     private final S3UploadService s3UploadService;
     private final ImageService imageService;
+    private final ApplyRepository applyRepository;
 
     @Override
     @Transactional
     public RaffleResponseDTO.UploadResultDTO uploadRaffle(RaffleRequestDTO.UploadDTO request) {
 
-        // 0. 업로드 작성자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        // 0. 작성자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+        log.info("작성자 id {}", userId);
 
+        User user = userRepository.findById(userId).orElseThrow();
         // 1. 요청받은 카테고리 이름으로 Category 엔티티 가져오기
         Category category = categoryRepository.findByName(request.getCategory())
                 .orElseThrow(() -> new CustomException(ErrorStatus.CATEGORY_NOT_FOUND));
@@ -92,5 +98,47 @@ public class RaffleServiceImpl implements RaffleService {
 
         // 4. DTO 변환 및 반환
         return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount);
+    }
+
+    @Override
+    @Transactional
+    public RaffleResponseDTO.ApplyDTO apply(Long raffleId) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        User user = userRepository.findById(Long.parseLong(authentication.getName()))
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        int userTicket = user.getTicket_num();
+
+        Raffle raffle = raffleRepository.findById(raffleId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+        int raffleTicket = raffle.getTicketNum();
+
+        if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED)
+            throw new CustomException(ErrorStatus.APPLY_UNOPENED_RAFFLE);
+        if (raffle.getRaffleStatus() != RaffleStatus.ACTIVE)
+            throw new CustomException(ErrorStatus.APPLY_FINISHED_RAFFLE);
+
+        if (raffle.getUser().equals(user))
+            throw new CustomException(ErrorStatus.APPLY_SELF_RAFFLE);
+
+        if (applyRepository.existsByRaffleAndUser(raffle, user))
+            throw new CustomException(ErrorStatus.APPLY_ALREADY_APPLIED);
+
+        if (userTicket < raffleTicket)
+            throw new CustomException(ErrorStatus.APPLY_INSUFFICIENT_TICKET);
+
+        user.setTicket_num(userTicket - raffleTicket);
+        userRepository.save(user);
+
+        Apply apply = Apply.builder()
+                .raffle(raffle)
+                .user(user)
+                .build();
+        applyRepository.save(apply);
+
+        return toApplyDto(apply);
     }
 }

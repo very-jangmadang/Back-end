@@ -4,21 +4,22 @@ import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.MypageConverter;
+import com.example.demo.domain.converter.ReviewConverter;
 import com.example.demo.domain.dto.Mypage.MypageRequestDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
-import com.example.demo.entity.Address;
-import com.example.demo.entity.Apply;
-import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
-import com.example.demo.repository.AddressRepository;
-import com.example.demo.repository.ApplyRepository;
-import com.example.demo.repository.LikeRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.general.MypageService;
+import com.example.demo.service.general.S3UploadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,10 @@ public class MypageServiceImpl implements MypageService {
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
     private final LikeRepository likeRepository;
+    private final ReviewRepository reviewRepository;
+    private final S3UploadService s3UploadService;
     private final AddressRepository addressRepository;
+
 
     @Override
     public MypageResponseDTO.ApplyListDto getApplies() {
@@ -74,7 +78,43 @@ public class MypageServiceImpl implements MypageService {
                 .build();
 
     }
+    @Transactional
+    // 프로필 이미지 업데이트
+    public String updateProfileImage(Long userId, MultipartFile profile) {
 
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        // 이미지 업로드 후 URL 얻기
+        String imageUrl = s3UploadService.saveSingleFile(profile);
+
+        // 사용자 프로필 이미지 URL 업데이트
+        user.setProfileImageUrl(imageUrl);
+
+        // 사용자 정보 저장
+        userRepository.save(user);
+
+        return imageUrl;
+    }
+
+    //내 리뷰 조회
+    public ReviewWithAverageDTO getMyReviewsByUserId(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        // 사용자의 모든 후기 조회
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+
+        List<ReviewResponseDTO> reviewResponseDTO = ReviewConverter.toReviewResponseDTOList(reviews);
+
+        int reviewCount = reviews.size();
+
+        double averageScore = user.getAverageScore();
+
+        return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
+    }
     @Override
     public MypageResponseDTO.AddressListDto getAddresses() {
 
@@ -151,5 +191,7 @@ public class MypageServiceImpl implements MypageService {
 
         addressRepository.save(address);
     }
+
+
 
 }

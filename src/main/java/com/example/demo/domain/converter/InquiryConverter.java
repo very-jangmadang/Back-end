@@ -27,6 +27,7 @@ public class InquiryConverter {
                 .raffleId(inquiry.getRaffle().getId())
                 .title(inquiry.getTitle())
                 .content(inquiry.getContent())
+                .nickname(inquiry.getUser().getNickname())
                 .timestamp(LocalDateTime.now())
                 .build();
     }

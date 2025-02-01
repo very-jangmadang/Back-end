@@ -18,6 +18,7 @@ public class RaffleSchedulerServiceImpl implements RaffleSchedulerService {
 
     private final Scheduler scheduler;
 
+    @Override
     public void scheduleRaffleJob(Raffle raffle, boolean isStart) {
         try {
 
