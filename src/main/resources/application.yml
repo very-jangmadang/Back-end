@@ -108,7 +108,7 @@ kakao:
   domain: "43.201.106.194"
   pay:
     cid: "TC0ONETIME"
-    secretKey: "DEV64DDCDABAD6EA300251E0586C621D91497946" # 보안을 해야하나 고민이었는데 테스트용 키라 안해도 괜찮을 것 같습니다..!!
+    secretKey: "DEV64DDCDABAD6EA300251E0586C621D91497946"
     approvalUrl: "http://43.201.106.194:8080/payment/approve"
     cancelUrl: "http://43.201.106.194:8080/payment/cancel"
     failUrl: "http://43.201.106.194:8080/payment/fail"

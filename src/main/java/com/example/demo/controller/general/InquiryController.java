@@ -13,9 +13,15 @@ import com.example.demo.service.general.InquiryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.apache.coyote.http11.Constants.a;
 
 @RestController
 @RequestMapping("api/permit/inquiry")
@@ -23,16 +29,20 @@ import java.util.List;
 public class InquiryController {
 
     private final InquiryService inquiryService;
-    private final InquiryRepository inquiryRepository;
     private final InquiryCommentService inquiryCommentService;
 
     //문의글 작성
     @Operation(summary = "문의글 작성")
-    @PostMapping("/")
+    @PostMapping("")
     public ApiResponse<InquiryResponseDTO> addInquiry(
-            @RequestBody InquiryRequestDTO inquiryRequest) {
+            @RequestBody InquiryRequestDTO inquiryRequest, Authentication authentication) {
 
-        InquiryResponseDTO inquiryResponse = inquiryService.addInquiry(inquiryRequest);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        InquiryResponseDTO inquiryResponse = inquiryService.addInquiry(inquiryRequest,userId);
 
         return ApiResponse.of(SuccessStatus._OK, inquiryResponse);
 
@@ -41,33 +51,46 @@ public class InquiryController {
 
     //문의글 삭제
     @Operation(summary = "문의글 삭제")
-    @DeleteMapping("/{inquiryId}")
-    public ApiResponse<InquiryResponseDTO> deleteInquiry(
-            @PathVariable Long inquiryId,
-            @RequestBody InquiryDeleteDTO inquiryDelete) {
+    @DeleteMapping("")
+    public ApiResponse<Void> deleteInquiry(
+            @RequestParam  Long inquiryId,
+            Authentication authentication) {
 
-        inquiryService.deleteInquiry(inquiryId,inquiryDelete);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
 
-        return ApiResponse.of(SuccessStatus._OK, null);
+        Long userId = Long.parseLong(authentication.getName());
+        inquiryService.deleteInquiry(inquiryId,userId);
+
+        return ApiResponse.of(SuccessStatus._OK,null);
     }
 
-    //문의 목록 조회
-    @GetMapping("/{raffleId}/inquiry")
-    public ApiResponse<List<InquiryResponseDTO>> getInquiriesByRaffleId(@PathVariable Long raffleId) {
+    //문의 목록과 댓글 조회
+    @GetMapping("/raffles/{raffleId}")
+    @Operation(summary = "래플의 문의글과 댓글 조회")
+    public ApiResponse<List<InquiryAndCommentsResponseDTO>> getInquiryAndComments(
+            @PathVariable Long raffleId) {
 
-        List<InquiryResponseDTO> inquiries = inquiryService.getInquiriesByRaffleId(raffleId);
+        List<InquiryAndCommentsResponseDTO> response = inquiryService.getInquiryAndComments(raffleId);
 
-        return ApiResponse.of(SuccessStatus._OK, inquiries);
+        return ApiResponse.of(SuccessStatus._OK, response);
     }
 
     // 문의 댓글 작성
     @PostMapping("/{inquiryId}/comment")
     public ApiResponse<InquiryCommentResponseDTO> addComment(
             @PathVariable Long inquiryId,
-            @RequestBody InquiryCommentRequestDTO commentRequest) {
+            @RequestBody InquiryCommentRequestDTO commentRequest,
+            Authentication authentication) {
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
 
-        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest,inquiryId);
+        Long userId = Long.parseLong(authentication.getName());
+
+        InquiryCommentResponseDTO commentResponse = inquiryCommentService.addComment(commentRequest,inquiryId,userId);
 
         return ApiResponse.of(SuccessStatus._OK, commentResponse);
 
