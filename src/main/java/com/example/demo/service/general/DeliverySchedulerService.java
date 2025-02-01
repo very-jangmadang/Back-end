@@ -5,5 +5,7 @@ import org.quartz.SchedulerException;
 
 public interface DeliverySchedulerService {
 
-    void scheduleDeliveryJob(Delivery delivery) throws SchedulerException;
+    void scheduleDeliveryJob(Delivery delivery);
+
+    void cancelDeliveryJob(Delivery delivery);
 }

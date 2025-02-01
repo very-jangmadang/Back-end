@@ -3,11 +3,11 @@ package com.example.demo.jobs;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.entity.Apply;
-import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.RaffleRepository;
+import com.example.demo.service.general.DrawSchedulerService;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +26,7 @@ public class RaffleEndJob implements Job {
     private final ApplyRepository applyRepository;
     private final EmailService emailService;
     private final DrawService drawService;
-
-    private void updateRaffleStatus(Raffle raffle, RaffleStatus status) {
-        raffle.setRaffleStatus(status);
-        raffleRepository.save(raffle);
-    }
+    private final DrawSchedulerService drawSchedulerService;
 
     @Override
     @Transactional
@@ -45,7 +41,9 @@ public class RaffleEndJob implements Job {
 
         if (applyCount * raffle.getTicketNum() < raffle.getMinTicket()) {
             updateRaffleStatus(raffle, RaffleStatus.UNFULFILLED);
-//            drawService.cancel(raffle, applyList);
+
+            drawSchedulerService.scheduleDrawJob(raffle);
+            emailService.sendOwnerUnfulfilledEmail(raffle);
             return;
         }
 
@@ -55,5 +53,10 @@ public class RaffleEndJob implements Job {
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
         drawService.draw(raffle, applyList);
+    }
+
+    private void updateRaffleStatus(Raffle raffle, RaffleStatus status) {
+        raffle.setRaffleStatus(status);
+        raffleRepository.save(raffle);
     }
 }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>당첨 안내</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #5C6BC0;
+        }
+        h2 {
+            color: #F44336;
+        }
+        .content {
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 8px 0;
+        }
+        .cta-button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .cta-button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>안녕하세요, <b th:text="${userName}"> </b>님!</h1>
+    <p class="content">먼저, 장마당 래플 서비스에 참여해주셔서 진심으로 감사드립니다. 🎁</p>
+    <p><b th:text="${raffleName}"></b> 래플의 당첨자가 배송지 입력 및 배송비 결제를 완료하였습니다! </p>
+
+    <p class="content">배송 정보와 다음 절차를 아래에서 확인해 주세요.</p>
+    <p><a th:href="${deliveryUrl}">배송 정보 확인하기</a></p>
+
+    <h3>🎯 다음 단계 안내:</h3>
+    <ul>
+        <li><strong>운송장 등록:</strong> <span th:text="${deliveryInfoEnd}"> </span>까지 배송지 정보를 확인하고 상품을 발송해 주세요. 기한 내에 등록을 하지 않으시면 해당 래플은 취소됩니다.</li>
+        <li><strong>배송 진행 상황:</strong> 마이페이지에서 배송 상황을 실시간으로 확인하실 수 있습니다.</li>
+    </ul>
+
+    <p class="content">문의 사항이 있으시면, 래플 내 문의하기 기능을 사용하시거나 <a th:href="'mailto:' + ${fromEmail}">[고객센터 이메일]</a>로 연락해 주세요.</p>
+
+    <p>다시 한 번 장마당 서비스를 이용해 주셔서 감사드리며, 향후 더 좋은 기회로 찾아뵙겠습니다.</p>
+
+    <p>감사합니다.</p>
+
+</div>
+
+<div class="footer">
+    <p>본 메일은 발신 전용입니다. 문의사항이 있으시면 <a th:href="'mailto:' + ${fromEmail}">[고객센터 이메일]</a>로 연락 부탁드립니다.</p>
+</div>
+</div>
+
+</body>
+</html>

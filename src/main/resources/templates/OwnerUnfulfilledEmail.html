@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배송지 입력 및 결제 기한 만료 안내</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: #4CAF50;
+            font-size: 24px;
+        }
+        .content {
+            margin-bottom: 20px;
+        }
+        .content p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .content .highlight {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4CAF50;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>래플 미추첨 안내</h1>
+    </div>
+    <div class="content">
+        <p>안녕하세요, <b th:text="${userName}"></b>님!</p>
+        <p>먼저, 장마당 래플 서비스에 참여해 주셔서 감사합니다.</p>
+        <p>하지만, <b th:text="${raffleName}"></b> 래플이 최소 티켓 수 미충족으로 추첨이 진행되지 않았습니다.</p>
+        <p>따라서, 24시간 동안 수동으로 추첨하실 기회가 제공됩니다.</p>
+        <p>기한 내에 추첨하지 않으시면 해당 래플은 취소되며, 응모된 티켓은 <span class="highlight">모든 응모자에게 반환</span>됩니다.</p>
+
+        <p>### <span class="highlight">아래 URL에 접속해 추첨 여부를 선택해주세요</span></p>
+        <a th:href="@{${url}}" class="button">수동 추첨 선택</a>
+
+        <p>※ 24시간이 지나면 자동으로 응모한 티켓이 반환되며 래플은 취소됩니다.</p>
+
+        <p><span class="highlight">주의사항</span><br>
+            - 기한이 지나면 더 이상의 추첨은 불가하며, 해당 래플은 취소 처리됩니다.<br>
+            - 또한, 강제로 종료시킬 수도 있습니다.<br>
+        </p>
+
+        <p>다시 한 번 장마당 서비스를 이용해 주셔서 감사드리며, 향후 더 좋은 기회로 찾아뵙겠습니다.</p>
+
+        <p>감사합니다.</p>
+
+    </div>
+
+    <div class="footer">
+        <p>본 메일은 발신 전용입니다. 문의사항이 있으시면 <a th:href="'mailto:' + ${fromEmail}">[고객센터 이메일]</a>로 연락 부탁드립니다.</p>
+    </div>
+</div>
+</body>
+</html>

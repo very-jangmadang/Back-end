@@ -1,6 +1,8 @@
 package com.example.demo.service.general.impl;
 
 import com.example.demo.base.Constants;
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.entity.Raffle;
 import com.example.demo.jobs.ExtendShippingJob;
 import com.example.demo.service.general.DrawSchedulerService;
@@ -19,15 +21,30 @@ public class DrawSchedulerServiceImpl implements DrawSchedulerService {
     private final Scheduler scheduler;
 
     @Override
-    public void scheduleDrawJob(Raffle raffle) throws SchedulerException {
-        if (!scheduler.isStarted()) {
-            scheduler.start();
+    public void scheduleDrawJob(Raffle raffle) {
+        try {
+            if (!scheduler.isStarted()) {
+                scheduler.start();
+            }
+
+            JobDetail jobDetail = buildDrawJobDetail(raffle);
+            Trigger trigger = buildJobTrigger(raffle.getEndAt().plusHours(Constants.WAIT));
+
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (SchedulerException e) {
+            Throwable cause = e.getCause();
+
+            if (cause instanceof JobPersistenceException) {
+                // JobPersistenceException: 작업을 저장할 수 없을 때 발생
+                throw new CustomException(ErrorStatus.JOB_STORE_FAILED);
+            } else if (cause instanceof JobExecutionException) {
+                // JobExecutionException: 작업 실행에 문제가 있을 때 발생
+                throw new CustomException(ErrorStatus.JOB_EXECUTION_FAILED);
+            } else {
+                // 그 외 다른 오류들
+                throw new CustomException(ErrorStatus.JOB_UNKNOWN);
+            }
         }
-
-        JobDetail jobDetail = buildDrawJobDetail(raffle);
-        Trigger trigger = buildJobTrigger(raffle.getEndAt().plusHours(Constants.WAIT));
-
-        scheduler.scheduleJob(jobDetail, trigger);
     }
 
     private JobDetail buildDrawJobDetail(Raffle raffle) {

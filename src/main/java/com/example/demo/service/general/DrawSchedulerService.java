@@ -5,5 +5,5 @@ import org.quartz.SchedulerException;
 
 public interface DrawSchedulerService {
 
-    void scheduleDrawJob(Raffle raffle) throws SchedulerException;
+    void scheduleDrawJob(Raffle raffle);
 }

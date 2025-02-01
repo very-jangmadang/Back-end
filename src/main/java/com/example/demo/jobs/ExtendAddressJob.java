@@ -2,7 +2,6 @@ package com.example.demo.jobs;
 
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.entity.Apply;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.DeliveryStatus;
@@ -13,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -36,10 +33,9 @@ public class ExtendAddressJob implements Job {
         deliveryRepository.save(delivery);
 
         Raffle raffle = delivery.getRaffle();
-        List<Apply> applyList = raffle.getApplyList();
-        drawService.cancel(raffle, applyList);
+        drawService.cancel(raffle);
 
-//        emailService.sendWinnerCancelEmail(delivery);
+        emailService.sendWinnerCancelEmail(delivery);
         emailService.sendOwnerCancelEmail(raffle);
     }
 }
