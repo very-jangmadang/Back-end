@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestURI.equals("/home") ||
                 requestURI.equals("/nickname")||
 
-                requestURI.startsWith("/payment") || // yoon 임시
+                requestURI.startsWith("/payment/") || // yoon 임시
                 requestURI.startsWith("/hello.html") || // yoon 임시
                 requestURI.startsWith("/index.html") ; // yoon 임시
     }
