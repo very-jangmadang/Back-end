@@ -32,7 +32,6 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
     private final DrawService drawService;
-    private final EmailService emailService;
 
     @Override
     public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
@@ -171,8 +170,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         Raffle raffle = delivery.getRaffle();
         List<Apply> applyList = applyRepository.findByRaffle(raffle);
         drawService.cancel(raffle, applyList);
-
-        emailService.sendOwnerCancelEmail(delivery);
 
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
