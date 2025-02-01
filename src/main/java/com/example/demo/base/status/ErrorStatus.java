@@ -126,6 +126,13 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_PAYMENT_INVALID_PERIOD(HttpStatus.NOT_FOUND, "USER_PAYMENT_4001", "유효하지 않은 기간을 조회하셨습니다."),
     USER_INSUFFICIENT_BALANCE(HttpStatus.BAD_REQUEST, "USER_PAYMENT_4002", "잔액이 부족합니다.")
 
+    //20. dohyun- 문의 관련 에러
+    CANNOT_DELTETE(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "삭제 권한이 없습니다."),
+
+    // 21. ajwoong - 검색 관련 에러
+    SEARCH_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH_4001", "존재하지 않는 최근 검색어 입니다."),
+
+  
     ;
 
     private final HttpStatus httpStatus;

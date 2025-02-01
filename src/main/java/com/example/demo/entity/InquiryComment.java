@@ -22,9 +22,7 @@ public class InquiryComment extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "raffle_id")
-    private Raffle raffle;
+    private String title;
 
     private String content;
 
