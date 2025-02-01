@@ -23,4 +23,6 @@ public interface MypageService {
 
     void addAddress(MypageRequestDTO.AddressAddDto addressAddDto);
 
+    void deleteAddress(MypageRequestDTO.AddressDto addressDto);
+
 }
