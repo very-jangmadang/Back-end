@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
-    Optional<User> findById(Long id);
-
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u.ticket_num = u.ticket_num + :refundTicket WHERE u.id IN :userIds")
@@ -27,5 +25,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Long findIdByEmail(String email);
 
     boolean existsByNickname(String nickname);
+
 
 }

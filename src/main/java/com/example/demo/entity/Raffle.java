@@ -96,4 +96,5 @@ public class Raffle extends BaseEntity {
     public void setWinner(User winner) { this.winner = winner; }
     public void setIsRedrawn() { this.isRedrawn = true; }
 
+
 }

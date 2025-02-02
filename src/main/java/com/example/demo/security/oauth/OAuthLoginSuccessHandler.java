@@ -1,5 +1,7 @@
 package com.example.demo.security.oauth;
 
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JWTUtil;
 import com.example.demo.service.general.UserService;
 import jakarta.servlet.http.Cookie;
@@ -22,6 +24,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     private final UserService userService;
     private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -39,28 +42,26 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String email = kakaoAccount.get("email").toString();
         log.info("{}", kakaoAccount.get("email"));
 
-        boolean isNewUser = !userService.isExistUser(email);
+        String redirectUrl = "/";
 
         // 기존 회원이 아닌경우
         if (!userService.isExistUser(email)) {
             userService.createUser(email);
+            redirectUrl = "/nickname";
         }
 
         // 엑세스 토큰 생성
         Long userId = userService.findIdByEmail(email);
-        String accessToken = jwtUtil.createAccessToken(userId, email);
+        String accessToken = jwtUtil.createAccessToken("access", userId, email);
+        String refreshToken = jwtUtil.createRefreshToken("refresh", userId, email);
 
-        response.addCookie(createCookie("Authorization", accessToken)); // 쿠키로 전달하기
+        userService.addRefreshToken(userId, refreshToken); // 리프레시토큰 저장
 
-        // 6. JSON 응답 (리다이렉트 없이 직접 Body 전송)
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json;charset=UTF-8");
+        response.addCookie(createCookie("access", accessToken)); // 쿠키로 전달
+        response.addCookie(createCookie("refresh", refreshToken));
 
-        String jsonResponse = String.format(
-                "{\"accessToken\":\"%s\", \"isNewUser\":%b}",
-                accessToken, isNewUser
-        );
-        response.getWriter().write(jsonResponse);
+        response.sendRedirect(redirectUrl);
+
     }
 
     private Cookie createCookie(String name, String value) {

@@ -15,12 +15,12 @@ import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/permit/raffles")
+@RequestMapping
 public class RaffleController {
 
     private final RaffleService raffleService;
     @Operation(summary = "래플 업로드")
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/api/member/raffles", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<RaffleResponseDTO.UploadResultDTO> upload(@ModelAttribute @Valid RaffleRequestDTO.UploadDTO request) {
 
         // 1. raffle 업로드 처리 : 서비스 계층에 요청
@@ -31,7 +31,7 @@ public class RaffleController {
     }
 
     @Operation(summary = "래플 상세보기")
-    @GetMapping("/{raffleId}")
+    @GetMapping("/api/permit/raffles/{raffleId}")
     public ApiResponse<RaffleResponseDTO.RaffleDetailDTO> getPostById(@PathVariable Long raffleId) {
 
         // 1. 래플id로 해당 detailDTO 받아오기
