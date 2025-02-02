@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
-@RequestMapping("/api/permit/mypage")
+@RequestMapping("/api/member/mypage")
 @RequiredArgsConstructor
 public class MypageController {
 
@@ -44,13 +44,10 @@ public class MypageController {
         return ApiResponse.of(SuccessStatus._OK, profileImageUrl);
     }
 
+    // 닉네임 변경
     @Operation(summary = "닉네임 변경하기")
     @PatchMapping("/nickname")
     public ApiResponse<String> changeNickname(Authentication authentication, @RequestParam String nickname) {
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
-        }
 
         Long userId = Long.parseLong(authentication.getName());
         String updatedNickname = mypageService.changeNickname(userId, nickname);
