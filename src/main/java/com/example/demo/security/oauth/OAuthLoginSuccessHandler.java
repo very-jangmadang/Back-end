@@ -42,12 +42,12 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String email = kakaoAccount.get("email").toString();
         log.info("{}", kakaoAccount.get("email"));
 
-        String redirectUrl = "/";
+        String redirectUrl = "https://www.jangmadang.site/";
 
         // 기존 회원이 아닌경우
         if (!userService.isExistUser(email)) {
             userService.createUser(email);
-            redirectUrl = "/nickname";
+            redirectUrl = "https://www.jangmadang.site/nickname";
         }
 
         // 엑세스 토큰 생성
