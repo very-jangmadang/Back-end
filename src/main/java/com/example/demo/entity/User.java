@@ -40,10 +40,6 @@ public class User extends BaseEntity{
     private List<Address> addresses;
 
     @Column(nullable = false)
-    @Builder.Default
-    private int score = 0;
-
-    @Column(nullable = false)
     @Setter
     @Builder.Default
     private double averageScore = 0;
@@ -60,8 +56,13 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "follower")
     private List<Follow> followings;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @OneToMany(mappedBy = "user")
     private List<Raffle> raffles;
+
+    private String refreshToken;
 
     public void addAddress(Address address) {
         addresses.add(address);
@@ -70,4 +71,11 @@ public class User extends BaseEntity{
 
     public void setTicket_num(int ticket_num) { this.ticket_num = ticket_num; }
 
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

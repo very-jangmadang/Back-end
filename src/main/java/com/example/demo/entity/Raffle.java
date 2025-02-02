@@ -95,4 +95,5 @@ public class Raffle extends BaseEntity {
     public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
     public void setWinner(User winner) { this.winner = winner; }
 
+
 }
