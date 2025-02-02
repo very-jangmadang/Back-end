@@ -55,11 +55,13 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "follower")
     private List<Follow> followings;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @OneToMany(mappedBy = "user")
     private List<Raffle> raffles;
 
-    @Column(name = "profile_image_url")
-    private String profileImageUrl;
+    private String refreshToken;
 
     public void addAddress(Address address) {
         addresses.add(address);
@@ -70,5 +72,9 @@ public class User extends BaseEntity{
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

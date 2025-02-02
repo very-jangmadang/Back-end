@@ -12,4 +12,7 @@ public interface UserService{
 
     // 신규 회원 등록
     void createUser(String email);
+
+    // 리프레시 토큰 저장
+    void addRefreshToken(Long userId, String token);
 }

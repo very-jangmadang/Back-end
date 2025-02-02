@@ -44,7 +44,8 @@ public class SecurityConfig {
                     authorize
                             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                             .requestMatchers("/api/permit/**", "/login/**", "/nickname/**", "/home/**").permitAll()
-                            .requestMatchers("/favicon.ico", "/static/**", "/api/member/**").permitAll() // 인증 없이 허용
+                            .requestMatchers("/favicon.ico", "/static/**").permitAll() // 인증 없이 허용
+                            .requestMatchers("/payment/**", "/payment/create/**", "/payment/approve/**", "/payment/redirect/**", "/index.html", "/hello.html/**").permitAll() // 인증 없이 허용 - yoon 테스트
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(oauth -> {
@@ -61,12 +62,19 @@ public class SecurityConfig {
 
     CorsConfigurationSource corsConfigurationSource() {
         return request -> {
-            CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedHeaders(Collections.singletonList("*"));
-            config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(Collections.singletonList("*"));
-            config.setAllowCredentials(true);
-            return config;
+            CorsConfiguration configuration = new CorsConfiguration();
+
+            configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+            configuration.setAllowedMethods(Collections.singletonList("*"));
+            configuration.setAllowCredentials(true);
+            configuration.setAllowedHeaders(Collections.singletonList("*"));
+            configuration.setMaxAge(3600L);
+
+            // 쿠키를 반환하여 JWT를 전달하기 때문에 허용 필요
+            configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+            configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+            return configuration;
         };
     }
 }

@@ -1,5 +1,7 @@
 package com.example.demo.service.general.impl;
 
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.UserConverter;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
@@ -42,5 +44,14 @@ public class UserServiceImpl implements UserService {
 
         // 3. 저장
         userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void addRefreshToken(Long userId, String token) {
+       User user = userRepository.findById(userId)
+               .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+       user.setRefreshToken(token);
     }
 }

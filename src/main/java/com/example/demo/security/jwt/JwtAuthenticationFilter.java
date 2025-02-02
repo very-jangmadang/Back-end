@@ -2,6 +2,7 @@ package com.example.demo.security.jwt;
 
 import com.example.demo.base.code.ErrorReasonDTO;
 import com.example.demo.base.status.ErrorStatus;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -35,23 +36,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 1. 쿠키에서 토큰 가져오기
-        String token = extractTokenFromCookies(request);
+        String accessToken = extractTokenFromCookies(request);
 
-        if (token == null) {
+        if (accessToken == null) {
             sendJsonErrorResponse(response, ErrorStatus.TOKEN_NOT_FOUND);
+            log.info("쿠키에 토큰없음");
             return;
         }
 
-        // 2. 토큰 검증
-        boolean isValid = jwtUtil.validateToken(token);
-
-        if (!isValid) {
+        // 엑세스 토큰 만료 확인
+        try {
+            jwtUtil.isExpired(accessToken);
+        } catch (ExpiredJwtException e) {
             sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
+            log.info("엑세스 토큰 만료");
+            return;
+        }
+
+        // 토큰이 access인지 확인 (발급시 페이로드에 명시)
+        String category = jwtUtil.getCategory(accessToken);
+
+        if (!category.equals("access")) {
+            sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
+            log.info("엑세스 토큰이 아님");
             return;
         }
 
         // 토큰에서 인증정보 생성
-        Authentication authentication = jwtUtil.getAuthentication(token);
+        Authentication authentication = jwtUtil.getAuthentication(accessToken);
         log.info("Setting Authentication: {}", authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         log.info("Current Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
@@ -59,6 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    // 필터 통과
     private boolean isPermittedRequest(String requestURI) {
         return requestURI.startsWith("/swagger-ui/") ||
                 requestURI.startsWith("/v3/api-docs") ||
@@ -71,10 +84,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestURI.equals("/nickname");
     }
 
+    // 쿠키에서 토큰 추출
     private String extractTokenFromCookies(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if ("Authorization".equals(cookie.getName())) {
+                if ("access".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
@@ -82,6 +96,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+    // JSON 형식으로 응답
     private void sendJsonErrorResponse(HttpServletResponse response, ErrorStatus errorStatus) throws IOException {
         ErrorReasonDTO errorReason = errorStatus.getReason();
 
