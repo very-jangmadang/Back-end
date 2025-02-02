@@ -25,6 +25,9 @@ jobs:
           echo "SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }}" >> .env
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}" >> .env
           echo "AWS_BUKET=${{ secrets.AWS_BUKET }}" >> .env
+          echo "DOMAIN"=${{secrets.DOMAIN}} >> .env
+          echo "KAKAO_PAY_CID"=${{secrets.KAKAO_PAY_CID}} >> .env
+          echo "KAKAO_PAY_SECRET_KEY"=${{secrets.KAKAO_PAY_SECRET_KEY}} >> .env
 
       # gradle build 준비
       - name: Set up JDK 17
@@ -72,6 +75,9 @@ jobs:
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}" >> ~/.env
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.env
             echo "AWS_BUKET=${{ secrets.AWS_BUKET }}" >> ~/.env
+            echo "DOMAIN"=${{secrets.DOMAIN}} >> ~/.env
+            echo "KAKAO_PAY_CID"=${{secrets.KAKAO_PAY_CID}} >> ~/.env
+            echo "KAKAO_PAY_SECRET_KEY"=${{secrets.KAKAO_PAY_SECRET_KEY}} >> ~/.env
           debug: true
 
       # pull 받은 도커 이미지로 컨테이너 실행
