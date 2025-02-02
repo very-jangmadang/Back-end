@@ -23,13 +23,16 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/payment")
-public class PaymentConnectController extends BaseController {
+public class PaymentConnectController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PaymentConnectController.class);
 
     private final KakaoPayService kakaoPayService;
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final BaseController baseController;
 
     @Value("${kakao.redirect-url}")
     private String redirectUrl;
+
     @Value("${kakao.domain}")
     private String domain;
 
@@ -70,8 +73,8 @@ public class PaymentConnectController extends BaseController {
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> createPayment(@RequestParam String itemId, @RequestParam String itemName, @RequestParam int totalAmount) {
 
-        // 사용자 ID 가져오기
-        String userId = getCurrentUserId();
+        // 사용자 email 가져오기
+        String userId = baseController.getCurrentUserEmail();
 
         PaymentRequest paymentRequest = KakaoPayConverter.toPaymentRequest(userId, itemId, itemName, totalAmount);
         ReadyResponse readyResponse = kakaoPayService.preparePayment(paymentRequest).getResult();
@@ -83,5 +86,4 @@ public class PaymentConnectController extends BaseController {
 
         return ResponseEntity.ok(response);
     }
-
 }
