@@ -45,7 +45,7 @@ public class SecurityConfig {
                             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                             .requestMatchers("/api/permit/**", "/login/**", "/nickname/**", "/home/**").permitAll()
                             .requestMatchers("/favicon.ico", "/static/**", "/api/member/**").permitAll() // 인증 없이 허용
-                            .requestMatchers("/payment/**", "/payment/create/**", "/payment/approve/**", "/payment/redirect/**", "/index.html", "/hello.html/**").permitAll() // 인증 없이 허용 - yoon 테스트
+                            //.requestMatchers("/payment/**", "/payment/create/**", "/payment/approve/**", "/payment/redirect/**", "/index.html", "/hello.html/**").permitAll() // 인증 없이 허용 - yoon 테스트
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(oauth -> {
