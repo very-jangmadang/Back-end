@@ -30,6 +30,8 @@ public class ExtendShippingJob implements Job {
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
 
+        // Todo: 배송비 환불
+
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
 
@@ -38,8 +40,6 @@ public class ExtendShippingJob implements Job {
 
         emailService.sendWinnerCancelEmail(delivery);
         emailService.sendOwnerCancelEmail(raffle);
-
-        // Todo: 배송비 환불
 
     }
 }

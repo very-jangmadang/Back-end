@@ -39,10 +39,10 @@ public class ShippingJob implements Job {
             deliverySchedulerService.scheduleDeliveryJob(delivery);
             emailService.sendWinnerShippingExpiredEmail(delivery);
         } else {
+            // Todo: 배송비 환불
+
             delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
             deliveryRepository.save(delivery);
-
-            // Todo: 배송비 환불
 
             Raffle raffle = delivery.getRaffle();
             drawService.cancel(raffle);

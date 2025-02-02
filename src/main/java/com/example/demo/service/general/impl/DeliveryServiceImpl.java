@@ -181,13 +181,16 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
         }
 
-        Raffle raffle = delivery.getRaffle();
-        drawService.cancel(raffle);
+        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
+
+        // Todo: 배송비 환불
 
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
 
-        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
+        Raffle raffle = delivery.getRaffle();
+        drawService.cancel(raffle);
+
         emailService.sendOwnerCancelEmail(raffle);
 
         return String.format(Constants.DELIVERY_WINNER_URL, delivery.getId());
