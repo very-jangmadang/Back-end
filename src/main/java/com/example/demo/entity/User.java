@@ -21,6 +21,7 @@ public class User extends BaseEntity{
     private String email;
 
     @Column(length = 20)
+    @Setter
     private String nickname;
 
     @Builder.Default

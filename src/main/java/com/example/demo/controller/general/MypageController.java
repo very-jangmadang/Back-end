@@ -30,6 +30,7 @@ public class MypageController {
 
     }
 
+    @Operation(summary = "프로필 이미지 변경하기")
     @PatchMapping(value="/profile-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> uploadProfileImage(Authentication authentication, @RequestPart MultipartFile profile) {
 
@@ -43,7 +44,23 @@ public class MypageController {
         return ApiResponse.of(SuccessStatus._OK, profileImageUrl);
     }
 
+    @Operation(summary = "닉네임 변경하기")
+    @PatchMapping("/nickname")
+    public ApiResponse<String> changeNickname(Authentication authentication, @RequestParam String nickname) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        String updatedNickname = mypageService.changeNickname(userId, nickname);
+
+        return ApiResponse.of(SuccessStatus._OK, updatedNickname);
+    }
+
+
     //내 리뷰 조회
+    @Operation(summary = "내 리뷰 조회하기")
     @GetMapping("/review")
     public ApiResponse<ReviewWithAverageDTO> getMyReviewsByUserId(Authentication authentication) {
 
