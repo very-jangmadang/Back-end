@@ -58,11 +58,14 @@ public class Raffle extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     @Builder.Default
-    private Boolean isRedrawn = false;
+    private boolean isRedrawn = false;
 
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(15)")
     private RaffleStatus raffleStatus;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal shippingFee;
 
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Apply> applyList;
@@ -70,9 +73,6 @@ public class Raffle extends BaseEntity {
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     @Builder.Default // 이슈
     List<Image> images = new ArrayList<>();
-
-    @Column(precision = 10, scale = 2)
-    private BigDecimal shippingFee;
 
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     List<Delivery> delivery;
@@ -94,6 +94,7 @@ public class Raffle extends BaseEntity {
 
     public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
     public void setWinner(User winner) { this.winner = winner; }
+    public void setIsRedrawn() { this.isRedrawn = true; }
 
 
 }

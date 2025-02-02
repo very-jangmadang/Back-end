@@ -12,26 +12,26 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/payment")
-public class PaymentController extends BaseController {
+public class PaymentController {
 
     private final UserPaymentService userPaymentService;
+    private final BaseController baseController;
 
     @GetMapping("/tickets")
     public ApiResponse<UserTicketResponse> getUserTickets() {
-        String userId = getCurrentUserId();
+        String userId = baseController.getCurrentUserEmail();
         return userPaymentService.getUserTickets(userId);
     }
 
     @PostMapping("/bankInfo")
     public ApiResponse<UserBankInfoResponse> getUserPaymentInfo(@RequestBody UserBankInfoRequest userBankInfoRequest) {
-        String userId = getCurrentUserId();
+        String userId = baseController.getCurrentUserEmail();
         return userPaymentService.getUserPaymentInfo(userId, userBankInfoRequest);
     }
 
     @GetMapping("/history/charge")
-    public ApiResponse<List<PaymentResponse>> getPaymentHistory(String period) { // < 7d, 1m, 3m, 6m > 4개 중 하나
-        String userId = getCurrentUserId();
+    public ApiResponse<List<PaymentResponse>> getPaymentHistory(@RequestParam String period) {
+        String userId = baseController.getCurrentUserEmail();
         return userPaymentService.getPaymentHistory(userId, period);
     }
-
 }

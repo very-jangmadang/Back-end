@@ -41,12 +41,10 @@ public class User extends BaseEntity{
 
     @Column(nullable = false)
     @Setter
-    @Builder.Default
-    private double averageScore = 0;
+    private double averageScore;
 
     @Setter
-    @Builder.Default
-    private int reviewCount = 0;
+    private int reviewCount;
 
     private LocalDateTime withdrawTime;
 

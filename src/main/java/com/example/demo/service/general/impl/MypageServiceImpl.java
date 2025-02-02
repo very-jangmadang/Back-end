@@ -4,21 +4,24 @@ import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.MypageConverter;
+import com.example.demo.domain.converter.ReviewConverter;
 import com.example.demo.domain.dto.Mypage.MypageRequestDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
-import com.example.demo.entity.Address;
-import com.example.demo.entity.Apply;
-import com.example.demo.entity.Raffle;
-import com.example.demo.entity.User;
-import com.example.demo.repository.AddressRepository;
-import com.example.demo.repository.ApplyRepository;
-import com.example.demo.repository.LikeRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.entity.*;
+import com.example.demo.entity.base.enums.DeliveryStatus;
+import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
+import com.example.demo.repository.*;
 import com.example.demo.service.general.MypageService;
+import com.example.demo.service.general.S3UploadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +37,11 @@ public class MypageServiceImpl implements MypageService {
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
     private final LikeRepository likeRepository;
+    private final ReviewRepository reviewRepository;
+    private final S3UploadService s3UploadService;
     private final AddressRepository addressRepository;
+    private final DeliveryRepository deliveryRepository;
+
 
     @Override
     public MypageResponseDTO.ApplyListDto getApplies() {
@@ -74,14 +81,48 @@ public class MypageServiceImpl implements MypageService {
                 .build();
 
     }
+    @Transactional
+    // 프로필 이미지 업데이트
+    public String updateProfileImage(Long userId, MultipartFile profile) {
 
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        // 이미지 업로드 후 URL 얻기
+        String imageUrl = s3UploadService.saveSingleFile(profile);
+
+        // 사용자 프로필 이미지 URL 업데이트
+        user.setProfileImageUrl(imageUrl);
+
+        // 사용자 정보 저장
+        userRepository.save(user);
+
+        return imageUrl;
+    }
+
+    //내 리뷰 조회
+    public ReviewWithAverageDTO getMyReviewsByUserId(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        // 사용자의 모든 후기 조회
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+
+        List<ReviewResponseDTO> reviewResponseDTO = ReviewConverter.toReviewResponseDTOList(reviews);
+
+        int reviewCount = reviews.size();
+
+        double averageScore = user.getAverageScore();
+
+        return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
+    }
+  
     @Override
     public MypageResponseDTO.AddressListDto getAddresses() {
 
-        // 사용자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-
+        User user = getUser();
         List<Address> addressList = user.getAddresses();
 
         if (addressList == null || addressList.isEmpty())
@@ -99,14 +140,13 @@ public class MypageServiceImpl implements MypageService {
     @Override
     @Transactional
     public MypageResponseDTO.AddressListDto setDefault(MypageRequestDTO.AddressDto addressDto) {
-        // 사용자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        User user = getUser();
 
         Address address = addressRepository.findById(addressDto.getAddressId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
 
-        if (!address.getUser().getId().equals(user.getId()))
+        if (!address.getUser().equals(user))
             throw new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER);
 
         List<Address> addressList = user.getAddresses();
@@ -128,9 +168,8 @@ public class MypageServiceImpl implements MypageService {
     @Override
     @Transactional
     public void addAddress(MypageRequestDTO.AddressAddDto addressAddDto) {
-        // 사용자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        User user = getUser();
 
         if (user.getAddresses().size() == Constants.MAX_ADDRESS_COUNT)
             throw new CustomException(ErrorStatus.ADDRESS_FULL);
@@ -150,6 +189,38 @@ public class MypageServiceImpl implements MypageService {
         }
 
         addressRepository.save(address);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAddress(MypageRequestDTO.AddressDto addressDto) {
+        User user = getUser();
+
+        Address address = addressRepository.findById(addressDto.getAddressId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
+
+        if (!address.getUser().equals(user))
+            throw new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER);
+
+        if (address.isDefault() || user.getAddresses().size() == 1)
+            throw new CustomException(ErrorStatus.ADDRESS_DEFAULT_LOCKED);
+
+        boolean hasActiveDelivery = deliveryRepository.existsByAddressAndDeliveryStatusIn(
+                address, List.of(DeliveryStatus.READY, DeliveryStatus.SHIPPING_EXPIRED));
+        if (hasActiveDelivery)
+            throw new CustomException(ErrorStatus.ADDRESS_HAS_ACTIVE_DELIVERY);
+
+        user.getAddresses().remove(address);
+        addressRepository.delete(address);
+    }
+
+    private User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        return userRepository.findById(Long.parseLong(authentication.getName()))
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
 }

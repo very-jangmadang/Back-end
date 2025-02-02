@@ -12,9 +12,12 @@ public interface DeliveryService {
 
     DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId);
 
+    String cancel(Long deliveryId);
+
     DeliveryResponseDTO.ResultDto getResult(Long deliveryId);
 
     DeliveryResponseDTO.ResponseDto addInvoice(Long deliveryId, DeliveryRequestDTO deliveryRequestDTO);
 
     DeliveryResponseDTO.WaitDto waitAddress(Long deliveryId);
+
 }
