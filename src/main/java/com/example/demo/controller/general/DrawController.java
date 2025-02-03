@@ -14,7 +14,7 @@ import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/permit/raffles")
+@RequestMapping("/api/member/raffles")
 public class DrawController {
 
     private final DrawService drawService;
