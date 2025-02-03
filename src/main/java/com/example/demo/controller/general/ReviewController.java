@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/permit/review")
 @RequiredArgsConstructor
 public class ReviewController {
 
@@ -33,7 +32,7 @@ public class ReviewController {
 
     //리뷰 작성
     @Operation(summary = "리뷰 작성")
-    @PostMapping(value="",consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value="api/member/review",consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ReviewResponseDTO> addReview(
             @ModelAttribute @Valid ReviewRequestDTO.ReviewUploadDTO reviewRequest,Authentication authentication) {
 
@@ -50,7 +49,7 @@ public class ReviewController {
 
     //리뷰 삭제
     @Operation(summary = "리뷰 삭제")
-    @DeleteMapping("")
+    @DeleteMapping("api/member/review")
     public ApiResponse<Void> deleteReview(
             @RequestParam Long reviewId,
             Authentication authentication) {
@@ -66,7 +65,7 @@ public class ReviewController {
     }
 
     //상대 리뷰 조회
-    @GetMapping("/{userId}")
+    @GetMapping("api/permit/review/{userId}")
     public ApiResponse<ReviewWithAverageDTO> getReviewsByUserId(@PathVariable Long userId) {
 
         ReviewWithAverageDTO reviews = reviewService.getReviewsByUserId(userId);

@@ -17,6 +17,8 @@ public interface MypageService {
     //내 리뷰 조회
     ReviewWithAverageDTO getMyReviewsByUserId(Long userId);
 
+    String changeNickname(Long userId, String nickname);
+
     MypageResponseDTO.AddressListDto getAddresses();
 
     MypageResponseDTO.AddressListDto setDefault(MypageRequestDTO.AddressDto addressDto);
