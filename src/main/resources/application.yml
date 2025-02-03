@@ -103,12 +103,12 @@ cloud:
 
 # 카카오페이 API
 kakao:
-  base-url: "http://43.201.106.194:8080"
-  redirect-url: "http://43.201.106.194:8080/hello.html"
-  domain: "43.201.106.194"
+  base-url: "http://${DOMAIN}:8080"
+  redirect-url: "https://www.jangmadang.site"
+  domain: "${DOMAIN}"
   pay:
-    cid: "TC0ONETIME"
-    secretKey: "DEV64DDCDABAD6EA300251E0586C621D91497946"
-    approvalUrl: "http://43.201.106.194:8080/payment/approve"
-    cancelUrl: "http://43.201.106.194:8080/payment/cancel"
-    failUrl: "http://43.201.106.194:8080/payment/fail"
+    cid: "${KAKAO_PAY_CID}"
+    secretKey: "${KAKAO_PAY_SECRET_KEY}"
+    approvalUrl: "http://${DOMAIN}:8080/payment/approve"
+    cancelUrl: "http://${DOMAIN}:8080/payment/cancel"
+    failUrl: "http://${DOMAIN}:8080/payment/fail"

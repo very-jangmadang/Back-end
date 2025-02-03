@@ -49,6 +49,10 @@ public class MypageController {
     @PatchMapping("/nickname")
     public ApiResponse<String> changeNickname(Authentication authentication, @RequestParam String nickname) {
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
         Long userId = Long.parseLong(authentication.getName());
         String updatedNickname = mypageService.changeNickname(userId, nickname);
 
