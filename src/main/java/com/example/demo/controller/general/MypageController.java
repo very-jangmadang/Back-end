@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
-@RequestMapping("/api/member/mypage")
+@RequestMapping("/api/permit/mypage")
 @RequiredArgsConstructor
 public class MypageController {
 
