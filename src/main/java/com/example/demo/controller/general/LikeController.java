@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/permit/raffles")
+@RequestMapping("api/member/raffles")
     public class LikeController {
 
     private final LikeService likeService;
@@ -29,7 +29,6 @@ import java.util.List;
         if (authentication == null || !authentication.isAuthenticated()) {
             return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
         }
-
         Long userId = Long.parseLong(authentication.getName());
 
         LikeResponseDTO likeResponse = likeService.addLike(raffleId,userId);
@@ -57,7 +56,6 @@ import java.util.List;
         if (authentication == null || !authentication.isAuthenticated()) {
             return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
         }
-
         Long userId = Long.parseLong(authentication.getName());
         List<LikeListResponseDTO> likeResponseList = likeService.getLikedItems(userId);
 

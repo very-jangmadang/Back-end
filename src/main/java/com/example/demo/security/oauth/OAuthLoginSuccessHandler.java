@@ -65,4 +65,14 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         response.sendRedirect("https://www.jangmadang.site");
 
     }
+
+    private Cookie createCookie(String name, String value) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(60*60); // 1시간
+        cookie.setPath("/");
+        cookie.setDomain("jangmadang.site");
+        cookie.setHttpOnly(true);
+//        cookie.setSecure(true); // HTTPS 필수
+        return cookie;
+    }
 }

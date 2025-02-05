@@ -24,7 +24,6 @@ import java.util.List;
 import static org.apache.coyote.http11.Constants.a;
 
 @RestController
-@RequestMapping("api/permit/inquiry")
 @RequiredArgsConstructor
 public class InquiryController {
 
@@ -33,7 +32,7 @@ public class InquiryController {
 
     //문의글 작성
     @Operation(summary = "문의글 작성")
-    @PostMapping("")
+    @PostMapping("api/member/inquiry")
     public ApiResponse<InquiryResponseDTO> addInquiry(
             @RequestBody InquiryRequestDTO inquiryRequest, Authentication authentication) {
 
@@ -51,7 +50,7 @@ public class InquiryController {
 
     //문의글 삭제
     @Operation(summary = "문의글 삭제")
-    @DeleteMapping("")
+    @DeleteMapping("api/member/inquiry")
     public ApiResponse<Void> deleteInquiry(
             @RequestParam  Long inquiryId,
             Authentication authentication) {
@@ -67,7 +66,7 @@ public class InquiryController {
     }
 
     //문의 목록과 댓글 조회
-    @GetMapping("/raffles/{raffleId}")
+    @GetMapping("api/permit/inquiry/raffles/{raffleId}")
     @Operation(summary = "래플의 문의글과 댓글 조회")
     public ApiResponse<List<InquiryAndCommentsResponseDTO>> getInquiryAndComments(
             @PathVariable Long raffleId) {
@@ -78,7 +77,7 @@ public class InquiryController {
     }
 
     // 문의 댓글 작성
-    @PostMapping("/{inquiryId}/comment")
+    @PostMapping("api/member/inquiry/{inquiryId}/comment")
     public ApiResponse<InquiryCommentResponseDTO> addComment(
             @PathVariable Long inquiryId,
             @RequestBody InquiryCommentRequestDTO commentRequest,

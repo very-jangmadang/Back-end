@@ -101,6 +101,33 @@ public class MypageServiceImpl implements MypageService {
         return imageUrl;
     }
 
+    @Transactional
+    // 닉네임 변경
+    public String changeNickname(Long userId, String nickname) {
+
+        // 닉네임 유효성 검사
+        if (!nickname.matches("^[a-zA-Z0-9가-힣]{2,10}$")) {
+            throw new CustomException(ErrorStatus.INVALID_NICKNAME);
+        }
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        if (userRepository.existsByNickname(nickname)) {
+            throw new CustomException(ErrorStatus.NICKNAME_ALREADY_EXISTS);
+        }
+
+        // 닉네임 업데이트
+        user.setNickname(nickname);
+
+        // 사용자 정보 저장
+        userRepository.save(user);
+
+        return nickname;
+    }
+
+
     //내 리뷰 조회
     public ReviewWithAverageDTO getMyReviewsByUserId(Long userId) {
 

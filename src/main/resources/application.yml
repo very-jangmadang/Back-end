@@ -1,5 +1,5 @@
-base-url: "http://localhost:8080"
-redirect-url: "http://localhost:8080/swagger-ui/index.html"
+base-url: "http://${DOMAIN}:8080"
+redirect-url: "http://${DOMAIN}:8080/swagger-ui/index.html"
 
 server:
   port: 8080
