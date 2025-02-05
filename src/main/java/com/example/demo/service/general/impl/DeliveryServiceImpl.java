@@ -172,6 +172,8 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
             case CANCELLED:
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
         if (delivery.isShippingExtended())
@@ -208,6 +210,8 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
             case CANCELLED:
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
         deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
@@ -237,7 +241,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         if (deliveryStatus != DeliveryStatus.READY
-                && deliveryStatus != DeliveryStatus.SHIPPED)
+                && deliveryStatus != DeliveryStatus.SHIPPED
+                && deliveryStatus != DeliveryStatus.COMPLETED)
             return toResultDto(delivery, applyNum * ticket, null);
 
         MypageResponseDTO.AddressDto addressDto = toAddressDto(delivery.getAddress());
@@ -266,6 +271,8 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
             case CANCELLED:
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
         deliverySchedulerService.cancelDeliveryJob(delivery, "Shipping");
@@ -300,6 +307,8 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
             case CANCELLED:
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
         if (delivery.isAddressExtended())

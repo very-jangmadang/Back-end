@@ -154,7 +154,7 @@ public class DrawServiceImpl implements DrawService {
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
         validateRaffleStatus(raffleStatus);
-        if (raffleStatus == RaffleStatus.ENDED)
+        if (raffleStatus != RaffleStatus.UNFULFILLED)
             throw new CustomException(ErrorStatus.DRAW_COMPLETED);
 
         int applyNum = applyRepository.countByRaffle(raffle);
@@ -177,6 +177,7 @@ public class DrawServiceImpl implements DrawService {
             case ENDED:
                 throw new CustomException(ErrorStatus.DRAW_COMPLETED);
             case FINISHED:
+            case COMPLETED:
                 throw new CustomException(ErrorStatus.DRAW_FINISHED);
         }
 
@@ -273,7 +274,7 @@ public class DrawServiceImpl implements DrawService {
     }
 
     private void validateCancel(Raffle raffle, RaffleStatus raffleStatus) {
-        if (raffleStatus == RaffleStatus.FINISHED)
+        if (raffleStatus == RaffleStatus.FINISHED || raffleStatus == RaffleStatus.COMPLETED)
             throw new CustomException(ErrorStatus.DRAW_FINISHED);
 
         if (raffleStatus == RaffleStatus.ENDED) {
