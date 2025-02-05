@@ -68,6 +68,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(60*60); // 1시간
         cookie.setPath("/");
+        cookie.setDomain("jangmadang.site");
         cookie.setHttpOnly(true);
 //        cookie.setSecure(true); // HTTPS 필수
         return cookie;
