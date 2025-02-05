@@ -35,10 +35,10 @@ public class RaffleController {
     public ApiResponse<RaffleResponseDTO.RaffleDetailDTO> getPostById(@PathVariable Long raffleId) {
 
         // 1. 래플id로 해당 detailDTO 받아오기
-        RaffleResponseDTO.RaffleDetailDTO raffleDetailDTO = raffleService.getRaffleDetailsDTO(raffleId);
+        RaffleResponseDTO.RaffleDetailDTO result = raffleService.getRaffleDetailsDTO(raffleId);
 
         // 2. 성공 응답 + 해당 detailDTO 반환
-        return ApiResponse.of(SuccessStatus.RAFFLE_FETCH_SUCCESS, raffleDetailDTO);
+        return ApiResponse.of(SuccessStatus.RAFFLE_FETCH_SUCCESS, result);
     }
 
     @Operation(summary = "래플 응모하기")

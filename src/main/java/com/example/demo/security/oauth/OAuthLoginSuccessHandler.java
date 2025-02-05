@@ -1,12 +1,12 @@
 package com.example.demo.security.oauth;
 
-import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JWTUtil;
 import com.example.demo.service.general.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -42,12 +42,14 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String email = kakaoAccount.get("email").toString();
         log.info("{}", kakaoAccount.get("email"));
 
-        String redirectUrl = "https://www.jangmadang.site";
-
-        // 기존 회원이 아닌경우
-        if (!userService.isExistUser(email)) {
-            userService.createUser(email);
-            redirectUrl = "https://www.jangmadang.site/kakao";
+        // 신규 회원
+        if (!userService.isExistUserByEmail(email)) {
+            HttpSession session = request.getSession();
+            log.info("세션아이디 {}", session);
+            session.setAttribute("oauthEmail", email);
+            log.info("세션값 {}", session.getAttribute("oauthEmail"));
+            response.sendRedirect("https://www.jangmadang.site/kakao");
+            return;
         }
 
         // 엑세스 토큰 생성
@@ -55,21 +57,12 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String accessToken = jwtUtil.createAccessToken("access", userId, email);
         String refreshToken = jwtUtil.createRefreshToken("refresh", userId, email);
 
-        userService.addRefreshToken(userId, refreshToken); // 리프레시토큰 저장
+        userService.addRefreshToken(userId, refreshToken); // 리프레시 토큰 저장
 
-        response.addCookie(createCookie("access", accessToken)); // 쿠키로 전달
-        response.addCookie(createCookie("refresh", refreshToken));
+        response.addCookie(jwtUtil.createCookie("access", accessToken)); // 쿠키로 전달
+        response.addCookie(jwtUtil.createCookie("refresh", refreshToken)); // 쿠키로 전달
 
-        response.sendRedirect(redirectUrl);
+        response.sendRedirect("https://www.jangmadang.site");
 
-    }
-
-    private Cookie createCookie(String name, String value) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(60*60); // 1시간
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-//        cookie.setSecure(true); // HTTPS 필수
-        return cookie;
     }
 }
