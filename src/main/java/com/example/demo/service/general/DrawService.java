@@ -11,7 +11,7 @@ public interface DrawService {
 
     Delivery draw(Raffle raffle, List<Apply> applyList);
 
-    void cancel(Raffle raffle, List<Apply> applyList);
+    void cancel(Raffle raffle);
 
     DrawResponseDTO.RaffleResult getDrawRaffle(Long raffleId);
 

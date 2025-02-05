@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.time.format.DateTimeFormatter;
-
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -40,9 +38,6 @@ public class EmailServiceImpl implements EmailService {
 
         try {
 
-            if (user.getEmail() == null)
-                throw new CustomException(ErrorStatus.DRAW_NO_WINNER_EMAIL);
-
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -57,7 +52,6 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("raffleName", raffle.getName());
             context.setVariable("deliveryUrl", String.format(Constants.DELIVERY_WINNER_URL, delivery.getId()));
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             context.setVariable("deliveryInfoEnd", delivery.getAddressDeadline());
             context.setVariable("fromEmail", fromEmail);
 
@@ -77,9 +71,6 @@ public class EmailServiceImpl implements EmailService {
         Raffle raffle = delivery.getRaffle();
 
         try {
-
-            if (user.getEmail() == null)
-                throw new CustomException(ErrorStatus.DRAW_NO_WINNER_EMAIL);
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -105,7 +96,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendAddressExpiredEmail(Delivery delivery) {
+    public void sendOwnerAddressExpiredEmail(Delivery delivery) {
         User user = delivery.getUser();
         Raffle raffle = delivery.getRaffle();
 
@@ -122,7 +113,8 @@ public class EmailServiceImpl implements EmailService {
 
             Context context = new Context();
             context.setVariable("userName", user.getNickname());
-            context.setVariable("url", String.format(Constants.DELIVERY_OWNER_URL, delivery.getId()));
+            context.setVariable("deliveryUrl", String.format(Constants.DELIVERY_OWNER_URL, delivery.getId()));
+
             context.setVariable("fromEmail", fromEmail);
 
             String body = templateEngine.process("OwnerAddressExpiredEmail.html", context);
@@ -183,10 +175,76 @@ public class EmailServiceImpl implements EmailService {
 
             Context context = new Context();
             context.setVariable("userName", user.getNickname());
-//            context.setVariable("url", String.format(Constants.DELIVERY_WINNER_URL, delivery.getId()));
+            context.setVariable("deliveryUrl", String.format(Constants.DELIVERY_WINNER_URL, delivery.getId()));
             context.setVariable("fromEmail", fromEmail);
 
             String body = templateEngine.process("WinnerShippingExpiredEmail.html", context);
+            helper.setText(body, true);
+
+            mailSender.send(helper.getMimeMessage());
+
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
+        }
+    }
+
+    @Override
+    public void sendOwnerUnfulfilledEmail(Raffle raffle) {
+        User user = raffle.getUser();
+
+        try {
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(user.getEmail());
+            helper.setFrom(fromEmail);
+
+            String subject = "[장마당] " + raffle.getName() + " 미추첨 안내";
+            helper.setSubject(subject);
+
+            Context context = new Context();
+            context.setVariable("userName", user.getNickname());
+            context.setVariable("raffleName", raffle.getName());
+            context.setVariable("deliveryUrl", String.format(Constants.RAFFLE_OWNER_URL, raffle.getId()));
+            context.setVariable("fromEmail", fromEmail);
+
+            String body = templateEngine.process("OwnerUnfulfilledEmail.html", context);
+            helper.setText(body, true);
+
+            mailSender.send(helper.getMimeMessage());
+
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
+        }
+
+    }
+
+    @Override
+    public void sendOwnerReadyEmail(Delivery delivery) {
+        User user = delivery.getUser();
+        Raffle raffle = delivery.getRaffle();
+
+        try {
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(user.getEmail());
+            helper.setFrom(fromEmail);
+
+            String subject = "[장마당] " + raffle.getName() + " 운송장 입력 안내";
+            helper.setSubject(subject);
+
+            Context context = new Context();
+            context.setVariable("userName", user.getNickname());
+            context.setVariable("raffleName", raffle.getName());
+            context.setVariable("deliveryUrl", String.format(Constants.DELIVERY_OWNER_URL, delivery.getId()));
+
+            context.setVariable("deliveryInfoEnd", delivery.getShippingDeadline());
+            context.setVariable("fromEmail", fromEmail);
+
+            String body = templateEngine.process("OwnerReadyEmail.html", context);
             helper.setText(body, true);
 
             mailSender.send(helper.getMimeMessage());
