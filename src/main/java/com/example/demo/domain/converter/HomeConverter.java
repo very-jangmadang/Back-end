@@ -24,7 +24,7 @@ public class HomeConverter {
                 .like(likeStatus)
                 .name(raffle.getName())
                 .ticketNum(raffle.getTicketNum())
-                .timeUntilEnd(duration.toMinutes())
+                .timeUntilEnd(duration.toSeconds())
                 .participantNum(raffle.getApplyList().size())
                 .finish(finish)
                 .build();
