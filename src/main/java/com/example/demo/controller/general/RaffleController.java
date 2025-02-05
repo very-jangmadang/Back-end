@@ -42,7 +42,7 @@ public class RaffleController {
     }
 
     @Operation(summary = "래플 응모하기")
-    @PostMapping("/{raffleId}/apply")
+    @PostMapping("/api/member/raffles/{raffleId}/apply")
     public ApiResponse<RaffleResponseDTO.ApplyDTO> apply(@PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, raffleService.apply(raffleId));

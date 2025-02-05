@@ -15,7 +15,7 @@ import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/permit/delivery")
+@RequestMapping("/api/member/delivery")
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
