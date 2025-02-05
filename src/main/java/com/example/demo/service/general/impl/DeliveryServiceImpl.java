@@ -8,6 +8,7 @@ import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
 import com.example.demo.entity.*;
 import com.example.demo.entity.base.enums.DeliveryStatus;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.*;
 import com.example.demo.service.general.DeliverySchedulerService;
 import com.example.demo.service.general.DeliveryService;
@@ -35,6 +36,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final DrawService drawService;
     private final DeliverySchedulerService deliverySchedulerService;
     private final EmailService emailService;
+    private final RaffleRepository raffleRepository;
 
     @Override
     public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
@@ -83,9 +85,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.setDeliveryStatus(DeliveryStatus.WAITING_PAYMENT);
         deliveryRepository.save(delivery);
 
-        return DeliveryResponseDTO.ResponseDto.builder()
-                .deliveryId(deliveryId)
-                .build();
+        return toResponseDto(deliveryId);
     }
 
     @Override
@@ -118,9 +118,38 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         deliverySchedulerService.scheduleDeliveryJob(delivery);
 
-        return DeliveryResponseDTO.ResponseDto.builder()
-                .deliveryId(deliveryId)
-                .build();
+        return toResponseDto(deliveryId);
+    }
+
+    @Override
+    @Transactional
+    public DeliveryResponseDTO.ResponseDto success(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
+        validateWinner(delivery, user);
+
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+        switch (deliveryStatus){
+            case WAITING_ADDRESS:
+            case WAITING_PAYMENT:
+                throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
+            case ADDRESS_EXPIRED:
+                throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
+            case READY:
+                throw new CustomException(ErrorStatus.DELIVERY_BEFORE_SHIPPING);
+            case SHIPPING_EXPIRED:
+                throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
+            case CANCELLED:
+                throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
+        }
+
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Complete");
+
+        finalize(delivery);
+
+        return toResponseDto(deliveryId);
     }
 
     @Override
@@ -245,12 +274,9 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
         deliveryRepository.save(delivery);
 
-        // Todo: 자동 수령 완료 설정
-//        deliverySchedulerService.scheduleDeliveryJob(delivery);
+        deliverySchedulerService.scheduleDeliveryJob(delivery);
 
-        return DeliveryResponseDTO.ResponseDto.builder()
-                .deliveryId(deliveryId)
-                .build();
+        return toResponseDto(deliveryId);
     }
 
     @Override
@@ -312,5 +338,23 @@ public class DeliveryServiceImpl implements DeliveryService {
     private void validateOwner(Delivery delivery, User user) {
         if (!user.equals(delivery.getUser()))
             throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
+    }
+
+    @Override
+    @Transactional
+    public void finalize(Delivery delivery) {
+        delivery.setDeliveryStatus(DeliveryStatus.COMPLETED);
+        deliveryRepository.save(delivery);
+
+        Raffle raffle = delivery.getRaffle();
+        raffle.setRaffleStatus(RaffleStatus.COMPLETED);
+        raffleRepository.save(raffle);
+
+        User user = raffle.getUser();
+        int applyNum = applyRepository.countByRaffle(raffle);
+        int ticket = raffle.getTicketNum();
+
+        user.setTicket_num(user.getTicket_num() + (ticket * applyNum));
+        userRepository.save(user);
     }
 }

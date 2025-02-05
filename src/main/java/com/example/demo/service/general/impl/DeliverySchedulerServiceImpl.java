@@ -41,6 +41,9 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
                     jobDetail = buildShippingJobDetail(delivery);
                     trigger = buildJobTrigger(delivery.getShippingDeadline());
                     break;
+                case SHIPPED:
+                    jobDetail = buildCompleteJobDetail(delivery);
+                    trigger = buildJobTrigger(LocalDateTime.now().withSecond(0).withNano(0).plusHours(Constants.COMPLETE));
                 case ADDRESS_EXPIRED:
                     jobDetail = buildExtendAddressJobDetail(delivery);
                     trigger = buildJobTrigger(delivery.getAddressDeadline().plusHours(Constants.WAIT));
@@ -105,6 +108,14 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
     private JobDetail buildShippingJobDetail(Delivery delivery) {
         return JobBuilder.newJob(ShippingJob.class)
                 .withIdentity("Delivery_" + delivery.getId() + "_Shipping")
+                .usingJobData("deliveryId", delivery.getId())
+                .storeDurably()
+                .build();
+    }
+
+    private JobDetail buildCompleteJobDetail(Delivery delivery) {
+        return JobBuilder.newJob(CompleteJob.class)
+                .withIdentity("Delivery_" + delivery.getId() + "_Complete")
                 .usingJobData("deliveryId", delivery.getId())
                 .storeDurably()
                 .build();

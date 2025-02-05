@@ -57,6 +57,13 @@ public class DeliveryController {
         response.sendRedirect(redirectUrl);
     }
 
+    @Operation(summary = "당첨자 - 배송 완료 처리하기")
+    @PostMapping("{deliveryId}/winner/success")
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> success(@PathVariable Long deliveryId) {
+
+        return ApiResponse.of(_OK, deliveryService.success(deliveryId));
+    }
+
     @Operation(summary = "개최자 - 배송 정보 확인하기")
     @GetMapping("{deliveryId}/owner")
     public ApiResponse<DeliveryResponseDTO.ResultDto> getResult(@PathVariable Long deliveryId) {
