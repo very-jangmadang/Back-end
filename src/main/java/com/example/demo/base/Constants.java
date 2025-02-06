@@ -14,6 +14,9 @@ public class Constants {
     // 배송지/운송장 입력 기한 연장 (시간 단위)
     public static final int WAIT = 24;
 
+    // 수령 완료 기한(7일) (시간 단위)
+    public static final int COMPLETE = 168;
+
     // 추첨 완료된 래플 개최자 리디렉션 url
     public static final String DELIVERY_OWNER_URL = "/api/permit/delivery/%d/owner";
 

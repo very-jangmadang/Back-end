@@ -5,5 +5,6 @@ public enum RaffleStatus {
     ACTIVE,     // 응모 중
     UNFULFILLED,    // 최소 티켓 수 미충족 마감
     ENDED,       // 응모 마감 및 당첨자 추첨 완료
-    FINISHED     // 완전 종료
+    FINISHED,     // 완전 종료
+    COMPLETED       // 상품 수령 완료
 }

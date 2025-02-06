@@ -106,6 +106,8 @@ public enum ErrorStatus implements BaseErrorCode {
     DELIVERY_CANCELLED(HttpStatus.BAD_REQUEST, "DELIVERY_4011", "당첨이 취소되었습니다."),
     DELIVERY_NO_DEFAULT_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4012", "기본 배송지가 없습니다."),
     DELIVERY_ALREADY_EXTEND(HttpStatus.BAD_REQUEST, "DELIVERY_4013", "한번 이상 연장할 수 없습니다."),
+    DELIVERY_BEFORE_SHIPPING(HttpStatus.BAD_REQUEST, "DELIVERY_4014", "아직 운송장이 등록되지 않았습니다."),
+    DELIVERY_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "DELIVERY_4015", "이미 수령 완료된 배송입니다."),
 
     // 15. Huiju - 주소 관련 에러
     ADDRESS_EMPTY(HttpStatus.BAD_REQUEST, "ADDRESS_4001", "사용자에게 등록된 주소가 없습니다."),
