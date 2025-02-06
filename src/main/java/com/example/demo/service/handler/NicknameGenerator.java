@@ -1,8 +1,11 @@
 package com.example.demo.service.handler;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Random;
 
 // 랜덤 닉네임 생성
+@Service
 public class NicknameGenerator {
 
     private static final String[] ADJECTIVES = {

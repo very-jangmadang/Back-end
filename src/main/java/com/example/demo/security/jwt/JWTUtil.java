@@ -2,6 +2,7 @@ package com.example.demo.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -134,5 +135,15 @@ public class JWTUtil {
                 .getPayload()
                 .getExpiration()
                 .before(new Date());
+    }
+
+    public Cookie createCookie(String name, String value) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(60*60); // 1시간
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setDomain("jangmadang.site");
+//        cookie.setSecure(true); // HTTPS 필수
+        return cookie;
     }
 }

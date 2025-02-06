@@ -22,7 +22,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException {
 
-        // JSON 응답을 위한 Map 생성
+        // JSON 응답을 위한 Map 생성∑
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("code", "LOGIN4001");
         responseData.put("message", "인증되지 않은 사용자 접근입니다.");

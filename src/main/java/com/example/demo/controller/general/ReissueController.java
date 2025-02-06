@@ -34,31 +34,33 @@ public class ReissueController {
             }
         }
 
-        // 리프레시 토큰 없으면 에러 반환
+        // 리프레시 토큰 여부
         if (refresh == null) {
             return ApiResponse.onFailure(ErrorStatus.TOKEN_NOT_FOUND, null);
         }
 
-        // 리프레시 토큰 만료됐는지 확인
+        // 리프레시 토큰 만료 확인
         if (jwtUtil.isExpired(refresh)) {
             return ApiResponse.onFailure(ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN, null);
         }
 
         // 리프레시 토큰 맞는지 확인
         String category = jwtUtil.getCategory(refresh);
-
         if (!category.equals("refresh")) {
             return ApiResponse.onFailure(ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN, null);
         }
 
-        // 엑세스 토큰 발급
+        // 정보 가져오기
         String userId = jwtUtil.getId(refresh);
         String email = jwtUtil.getEmail(refresh);
 
+        // 토큰 발급
         String newAccessToken = jwtUtil.createAccessToken("access", Long.parseLong(userId), email);
+        String newRefreshToken = jwtUtil.createRefreshToken("refresh", Long.parseLong(userId), email);
 
-        // 응답 완료
-        response.setHeader("access", newAccessToken);
+        // 응답
+        response.addCookie(jwtUtil.createCookie("access", newAccessToken));
+        response.addCookie(jwtUtil.createCookie("refresh", newRefreshToken));
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }

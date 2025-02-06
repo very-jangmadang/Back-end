@@ -1,6 +1,7 @@
 package com.example.demo.domain.dto.Raffle;
 import com.example.demo.entity.base.enums.ItemStatus;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +12,7 @@ import java.util.List;
 public class RaffleRequestDTO {
 
     @Getter
-    @Setter
+    @Builder
     public static class UploadDTO {
 
         @NotNull

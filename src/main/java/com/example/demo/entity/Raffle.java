@@ -45,8 +45,10 @@ public class Raffle extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(10)")
     private ItemStatus itemStatus;
 
+    @Column(columnDefinition = "DATETIME(0)")
     private LocalDateTime startAt;
 
+    @Column(columnDefinition = "DATETIME(0)")
     private LocalDateTime endAt;
 
     private int ticketNum;
