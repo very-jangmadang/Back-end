@@ -3,7 +3,6 @@ package com.example.demo.security.oauth;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JWTUtil;
 import com.example.demo.service.general.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -64,15 +63,5 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
         response.sendRedirect("https://www.jangmadang.site");
 
-    }
-
-    private Cookie createCookie(String name, String value) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(60*60); // 1시간
-        cookie.setPath("/");
-        cookie.setDomain("jangmadang.site");
-        cookie.setHttpOnly(true);
-//        cookie.setSecure(true); // HTTPS 필수
-        return cookie;
     }
 }
