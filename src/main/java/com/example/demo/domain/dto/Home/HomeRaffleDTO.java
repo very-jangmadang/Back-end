@@ -1,9 +1,12 @@
 package com.example.demo.domain.dto.Home;
 
+import com.example.demo.entity.Raffle;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -12,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class HomeRaffleDTO {
 
     private Long raffleId;
-    private String imageUrl;
+    private List<String> imageUrls;
     private String name;
     private int ticketNum;
     private Long timeUntilEnd;
