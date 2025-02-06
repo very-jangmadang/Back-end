@@ -63,4 +63,10 @@ public class DeliveryConverter {
                 .build();
     }
 
+    public static DeliveryResponseDTO.ResponseDto toResponseDto(Long deliveryId) {
+        return DeliveryResponseDTO.ResponseDto.builder()
+                .deliveryId(deliveryId)
+                .build();
+    }
+
 }

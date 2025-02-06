@@ -15,7 +15,7 @@ import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/permit/delivery")
+@RequestMapping("/api/member/delivery")
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
@@ -55,6 +55,13 @@ public class DeliveryController {
 
         String redirectUrl = deliveryService.cancel(deliveryId);
         response.sendRedirect(redirectUrl);
+    }
+
+    @Operation(summary = "당첨자 - 배송 완료 처리하기")
+    @PostMapping("{deliveryId}/winner/success")
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> success(@PathVariable Long deliveryId) {
+
+        return ApiResponse.of(_OK, deliveryService.success(deliveryId));
     }
 
     @Operation(summary = "개최자 - 배송 정보 확인하기")

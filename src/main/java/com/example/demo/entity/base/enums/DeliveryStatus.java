@@ -7,5 +7,6 @@ public enum DeliveryStatus {
     SHIPPED,        // 운송장 입력 완료 (발송 완료)
     CANCELLED,      // 당첨 취소
     ADDRESS_EXPIRED,    // 배송지 입력 기한 만료
-    SHIPPING_EXPIRED     // 운송장 입력 기한 만료
+    SHIPPING_EXPIRED,     // 운송장 입력 기한 만료
+    COMPLETED           // 상품 수령 완료
 }

@@ -8,7 +8,9 @@ import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
 import com.example.demo.entity.*;
 import com.example.demo.entity.base.enums.DeliveryStatus;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.*;
+import com.example.demo.service.general.DeliverySchedulerService;
 import com.example.demo.service.general.DeliveryService;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
@@ -32,6 +34,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
     private final DrawService drawService;
+    private final DeliverySchedulerService deliverySchedulerService;
+    private final EmailService emailService;
+    private final RaffleRepository raffleRepository;
 
     @Override
     public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
@@ -80,9 +85,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.setDeliveryStatus(DeliveryStatus.WAITING_PAYMENT);
         deliveryRepository.save(delivery);
 
-        return DeliveryResponseDTO.ResponseDto.builder()
-                .deliveryId(deliveryId)
-                .build();
+        return toResponseDto(deliveryId);
     }
 
     @Override
@@ -105,13 +108,48 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (deliveryStatus != DeliveryStatus.WAITING_PAYMENT)
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
 
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Address");
+
         delivery.setDeliveryStatus(DeliveryStatus.READY);
         delivery.setShippingDeadline();
         deliveryRepository.save(delivery);
 
-        return DeliveryResponseDTO.ResponseDto.builder()
-                .deliveryId(deliveryId)
-                .build();
+        emailService.sendOwnerReadyEmail(delivery);
+
+        deliverySchedulerService.scheduleDeliveryJob(delivery);
+
+        return toResponseDto(deliveryId);
+    }
+
+    @Override
+    @Transactional
+    public DeliveryResponseDTO.ResponseDto success(Long deliveryId) {
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
+        validateWinner(delivery, user);
+
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
+        switch (deliveryStatus){
+            case WAITING_ADDRESS:
+            case WAITING_PAYMENT:
+                throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
+            case ADDRESS_EXPIRED:
+                throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
+            case READY:
+                throw new CustomException(ErrorStatus.DELIVERY_BEFORE_SHIPPING);
+            case SHIPPING_EXPIRED:
+                throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
+            case CANCELLED:
+                throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
+        }
+
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Complete");
+
+        finalize(delivery);
+
+        return toResponseDto(deliveryId);
     }
 
     @Override
@@ -134,13 +172,20 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
             case CANCELLED:
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
         if (delivery.isShippingExtended())
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_EXTEND);
+
+        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Shipping");
       
         delivery.extendShippingDeadline();
         deliveryRepository.save(delivery);
+
+        deliverySchedulerService.scheduleDeliveryJob(delivery);
 
         return toWaitDto(delivery);
     }
@@ -165,14 +210,21 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_ALREADY_SHIPPED);
             case CANCELLED:
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
-        Raffle raffle = delivery.getRaffle();
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
-        drawService.cancel(raffle, applyList);
+        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
+
+        // Todo: 배송비 환불
 
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
+
+        Raffle raffle = delivery.getRaffle();
+        drawService.cancel(raffle);
+
+        emailService.sendOwnerCancelEmail(raffle);
 
         return String.format(Constants.DELIVERY_WINNER_URL, delivery.getId());
     }
@@ -189,7 +241,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         if (deliveryStatus != DeliveryStatus.READY
-                && deliveryStatus != DeliveryStatus.SHIPPED)
+                && deliveryStatus != DeliveryStatus.SHIPPED
+                && deliveryStatus != DeliveryStatus.COMPLETED)
             return toResultDto(delivery, applyNum * ticket, null);
 
         MypageResponseDTO.AddressDto addressDto = toAddressDto(delivery.getAddress());
@@ -218,15 +271,19 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
             case CANCELLED:
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
+
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Shipping");
 
         delivery.setInvoiceNumber(deliveryRequestDTO.getInvoiceNumber());
         delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
         deliveryRepository.save(delivery);
 
-        return DeliveryResponseDTO.ResponseDto.builder()
-                .deliveryId(deliveryId)
-                .build();
+        deliverySchedulerService.scheduleDeliveryJob(delivery);
+
+        return toResponseDto(deliveryId);
     }
 
     @Override
@@ -250,13 +307,20 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_SHIPPING_EXPIRED);
             case CANCELLED:
                 throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
+            case COMPLETED:
+                throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
         if (delivery.isAddressExtended())
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_EXTEND);
 
+        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendAddress");
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Address");
+
         delivery.extendAddressDeadline();
         deliveryRepository.save(delivery);
+
+        deliverySchedulerService.scheduleDeliveryJob(delivery);
 
         return toWaitDto(delivery);
     }
@@ -283,5 +347,23 @@ public class DeliveryServiceImpl implements DeliveryService {
     private void validateOwner(Delivery delivery, User user) {
         if (!user.equals(delivery.getUser()))
             throw new CustomException(ErrorStatus.DELIVERY_NOT_OWNER);
+    }
+
+    @Override
+    @Transactional
+    public void finalize(Delivery delivery) {
+        delivery.setDeliveryStatus(DeliveryStatus.COMPLETED);
+        deliveryRepository.save(delivery);
+
+        Raffle raffle = delivery.getRaffle();
+        raffle.setRaffleStatus(RaffleStatus.COMPLETED);
+        raffleRepository.save(raffle);
+
+        User user = raffle.getUser();
+        int applyNum = applyRepository.countByRaffle(raffle);
+        int ticket = raffle.getTicketNum();
+
+        user.setTicket_num(user.getTicket_num() + (ticket * applyNum));
+        userRepository.save(user);
     }
 }

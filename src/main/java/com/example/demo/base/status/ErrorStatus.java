@@ -78,7 +78,10 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_EXECUTION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4001", "Job 실행에 실패했습니다."),
     JOB_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5001", "Job 저장에 실패했습니다."),
     JOB_UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5002", "알 수 없는 Job 에러가 발생했습니다."),
-//    JOB_INTERRUPT(HttpStatus.SERVICE_UNAVAILABLE, "JOB_5031", "Job 인터럽트가 발생했습니다."),
+    JOB_NOT_FOUND(HttpStatus.BAD_REQUEST, "JOB_4002", "Job을 찾을 수 없습니다."),
+    JOB_CANCEL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5003", "Job 취소에 실패했습니다."),
+    INVALID_DELIVERY_STATUS(HttpStatus.BAD_REQUEST, "JOB_4003", "Job 설정 가능한 배송 상태가 아닙니다."),
+    JOB_CREATION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4004", "Job 생성에 실패했습니다."),
 
     // 13. Huiju - 당첨자 추첨 관련 에러
     DRAW_EMPTY(HttpStatus.BAD_REQUEST, "DRAW_4001", "응모한 사용자가 없습니다."),
@@ -105,6 +108,8 @@ public enum ErrorStatus implements BaseErrorCode {
     DELIVERY_CANCELLED(HttpStatus.BAD_REQUEST, "DELIVERY_4011", "당첨이 취소되었습니다."),
     DELIVERY_NO_DEFAULT_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4012", "기본 배송지가 없습니다."),
     DELIVERY_ALREADY_EXTEND(HttpStatus.BAD_REQUEST, "DELIVERY_4013", "한번 이상 연장할 수 없습니다."),
+    DELIVERY_BEFORE_SHIPPING(HttpStatus.BAD_REQUEST, "DELIVERY_4014", "아직 운송장이 등록되지 않았습니다."),
+    DELIVERY_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "DELIVERY_4015", "이미 수령 완료된 배송입니다."),
 
     // 15. Huiju - 주소 관련 에러
     ADDRESS_EMPTY(HttpStatus.BAD_REQUEST, "ADDRESS_4001", "사용자에게 등록된 주소가 없습니다."),
