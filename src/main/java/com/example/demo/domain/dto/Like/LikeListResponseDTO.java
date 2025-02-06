@@ -4,6 +4,8 @@ import com.example.demo.entity.base.enums.RaffleStatus;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Builder
 @Getter
 public class LikeListResponseDTO {
@@ -12,7 +14,7 @@ public class LikeListResponseDTO {
     private Long raffleId;
     private RaffleStatus raffleStatus;
     private int ticketNum;
-    private String imageUrl;
+    private List<String> imageUrls;
     private Long timeUntilEnd;
     private String raffleName;
     private int applyCount;

@@ -4,6 +4,7 @@ import com.example.demo.domain.dto.Like.LikeListResponseDTO;
 import com.example.demo.domain.dto.Like.LikeResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewRequestDTO;
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.entity.Image;
 import com.example.demo.entity.Like;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
@@ -43,7 +44,7 @@ public class LikeConverter {
                 .raffleId(like.getRaffle().getId())         // raffleId
                 .raffleStatus(like.getRaffle().getRaffleStatus()) // raffleStatus
                 .ticketNum(like.getRaffle().getTicketNum())    // ticketNum
-                .imageUrl(like.getRaffle().getImageUrl())       // imageUrl
+                .imageUrls(raffle.getImages().stream().map(Image::getImageUrl).toList()) // 이미지 url 리스트 (추후 쿼리 개선)
                 .timeUntilEnd(timeUntilEnd)           // timeUntilEnd (남은 시간)
                 .raffleName(like.getRaffle().getName())         // raffleName
                 .applyCount(applyCount)
