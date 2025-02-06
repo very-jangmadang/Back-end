@@ -295,7 +295,8 @@ public class HomeServiceImpl implements HomeService {
 
         if(limit != null){
             return raffles.stream()
-                    .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
+                    .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0 &&
+                            Duration.between(now, r.getEndAt()).toHours() <= 24)
                     .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
                     .limit(limit)
                     .toList();
@@ -303,7 +304,8 @@ public class HomeServiceImpl implements HomeService {
 
         else{
             return raffles.stream()
-                    .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
+                    .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0 &&
+                            Duration.between(now, r.getEndAt()).toHours() <= 24)
                     .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
                     .toList();
         }
