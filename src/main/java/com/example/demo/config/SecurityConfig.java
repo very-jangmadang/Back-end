@@ -65,7 +65,7 @@ public class SecurityConfig {
         return request -> {
             CorsConfiguration configuration = new CorsConfiguration();
 
-            configuration.setAllowedOriginPatterns(Arrays.asList("https://jangmadang.site", "http://43.201.106.194:8080"));
+            configuration.setAllowedOriginPatterns(Arrays.asList("https://jangmadang.site", "http://43.201.106.194:8080", "http://api.jangmadang.site"));
             configuration.setAllowedMethods(Collections.singletonList("*"));
             configuration.setAllowCredentials(true);
             configuration.setAllowedHeaders(Collections.singletonList("*"));
