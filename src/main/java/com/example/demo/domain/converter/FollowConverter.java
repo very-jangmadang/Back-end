@@ -9,9 +9,7 @@ public class FollowConverter {
 
     public FollowResponse toResponse(Follow follow) {
         return new FollowResponse(
-                follow.getId(),
-                follow.getUser().getId(),
-                follow.getFollower() != null ? follow.getFollower().getId() : null // null 체크 추가
+                follow.getStoreId()
         );
     }
 }
