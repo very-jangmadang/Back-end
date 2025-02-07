@@ -1,5 +1,5 @@
-base-url: "http://${DOMAIN}"
-redirect-url: "http://${DOMAIN}/swagger-ui/index.html"
+base-url: "https://${DOMAIN}"
+redirect-url: "https://${DOMAIN}/swagger-ui/index.html"
 
 server:
   port: 8080 
@@ -76,7 +76,7 @@ spring:
             client-id: af7f76095596a2c3c083f5a6d5b055f8
             client-secret: hN8Rie4aeelLrG3q9jgUm07gVsjdvVR8
             authorization-grant-type: authorization_code
-            redirect-uri: http://${DOMAIN}/login/oauth2/code/kakao
+            redirect-uri: https://${DOMAIN}/login/oauth2/code/kakao
             scope:
               - account_email
             client-name: Kakao
@@ -103,12 +103,12 @@ cloud:
 
 # 카카오페이 API
 kakao:
-  base-url: "http://${DOMAIN}"
+  base-url: "https://${DOMAIN}"
   redirect-url: "https://www.jangmadang.site"
   domain: "${DOMAIN}"
   pay:
     cid: "${KAKAO_PAY_CID}"
     secretKey: "${KAKAO_PAY_SECRET_KEY}"
-    approvalUrl: "http://${DOMAIN}/api/payment/approve"
-    cancelUrl: "http://${DOMAIN}/api/payment/cancel"
-    failUrl: "http://${DOMAIN}/api/payment/fail"
+    approvalUrl: "https://${DOMAIN}/api/payment/approve"
+    cancelUrl: "https://${DOMAIN}/api/payment/cancel"
+    failUrl: "https://${DOMAIN}/api/payment/fail"
