@@ -33,6 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (isPermittedRequest(requestURI)) {
             log.info("있으면 저장, 없으면 통과 URI");
             String accessToken = extractTokenFromCookies(request);
+            if (accessToken == null) {
+                accessToken = extractTokenFromHeader(request);
+            }
             if (accessToken != null && !jwtUtil.isExpired(accessToken)) {
                 log.info("로그인 한 경우");
                 Authentication authentication = jwtUtil.getAuthentication(accessToken);
@@ -46,10 +49,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 쿠키에서 토큰 가져오기
         String accessToken = extractTokenFromCookies(request);
+        if (accessToken == null) {
+            accessToken = extractTokenFromHeader(request);
+        }
 
         if (accessToken == null) {
             sendJsonErrorResponse(response, ErrorStatus.TOKEN_NOT_FOUND);
-            log.info("쿠키에 토큰없음");
+            log.info("쿠키와 헤더에 토큰없음");
             return;
         }
 
@@ -97,6 +103,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return cookie.getValue();
                 }
             }
+        }
+        return null;
+    }
+
+    private String extractTokenFromHeader(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
         }
         return null;
     }

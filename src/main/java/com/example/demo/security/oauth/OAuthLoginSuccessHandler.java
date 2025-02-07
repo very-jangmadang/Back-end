@@ -14,6 +14,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Slf4j
@@ -62,8 +64,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         response.addCookie(jwtUtil.createCookie("refresh", refreshToken)); // 쿠키로 전달
         log.info("쿠키 전달 완료");
 
-
-        response.sendRedirect("https://www.jangmadang.site/");
+        response.sendRedirect("https://www.jangmadang.site?token=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
 
     }
 }

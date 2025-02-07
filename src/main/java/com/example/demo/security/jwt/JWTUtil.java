@@ -36,7 +36,7 @@ public class JWTUtil {
                 .claim("email", email)
                 .claim("role", "USER")
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 30 * 60 * 1000)) // 만료시간 30분
+                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 만료시간 60분
                 .signWith(secretKey)
                 .compact();
     }
@@ -103,29 +103,6 @@ public class JWTUtil {
                 .getPayload()
                 .get("category", String.class);
     }
-
-    // 토큰 파싱 및 서명 검증
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith((SecretKey) secretKey)
-                    .build()
-                    .parseSignedClaims(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            log.error("JWT expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT: {}", e.getMessage());
-        } catch (MalformedJwtException e) {
-            log.error("Malformed JWT: {}", e.getMessage());
-        } catch (SignatureException e) {
-            log.error("Invalid signature: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.error("Illegal argument token: {}", e.getMessage());
-        }
-        return false;
-    }
-
     // 토큰 만료 시간 지나면 true
     public Boolean isExpired(String token) {
         return Jwts.parser()
