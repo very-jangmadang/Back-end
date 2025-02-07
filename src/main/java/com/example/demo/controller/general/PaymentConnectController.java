@@ -82,7 +82,7 @@ public class PaymentConnectController {
         String url = readyResponse.getNextRedirectPcUrl();
         logger.info("KakaoPay ReadyResponse - TID: {}, Redirect URL: {}", tid, url);
         Map<String, String> response = new HashMap<>();
-        response.put("redirectUrl", "/payment/redirect?tid=" + tid + "&url=" + url);
+        response.put("redirectUrl", "/api/payment/redirect?tid=" + tid + "&url=" + url);
 
         return ResponseEntity.ok(response);
     }
