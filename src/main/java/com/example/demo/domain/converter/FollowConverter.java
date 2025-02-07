@@ -11,7 +11,7 @@ public class FollowConverter {
         return new FollowResponse(
                 follow.getId(),
                 follow.getUser().getId(),
-                follow.getFollower().getId()
+                follow.getFollower() != null ? follow.getFollower().getId() : null // null 체크 추가
         );
     }
 }

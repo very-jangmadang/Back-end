@@ -19,10 +19,10 @@ public class Follow extends BaseEntity{
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_id")
+    @JoinColumn(name = "follower_id", nullable = true)
     private User follower;
 
-    @Column(name = "store_id", nullable = false)
+    @Column(name = "store_id", nullable = true)
     private Long storeId; // 상점 ID를 Long 값으로 저장
 
 }
