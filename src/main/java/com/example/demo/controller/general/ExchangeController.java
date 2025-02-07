@@ -12,20 +12,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/member/payment/exchange")
+@RequestMapping("/api/member/payment")
 @RequiredArgsConstructor
 public class ExchangeController {
 
     private final ExchangeService exchangeService;
     private final BaseController baseController;
 
-    @PostMapping("")
+    @PostMapping("/exchange")
     public ApiResponse<ExchangeResponse> exchange(@RequestBody ExchangeRequest request) {
         String userEmail = baseController.getCurrentUserEmail();
         return exchangeService.exchange(userEmail, request);
     }
 
-    @GetMapping("/history")
+    @GetMapping("/history/exchange")
     public ApiResponse<List<ExchangeHistoryResponse>> getExchangeHistory(@RequestParam String period) {
         String userEmail = baseController.getCurrentUserEmail();
         return exchangeService.getExchangeHistory(userEmail, period);
