@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/payment")
+@RequestMapping("/api/member/payment")
 public class PaymentConnectController {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentConnectController.class);

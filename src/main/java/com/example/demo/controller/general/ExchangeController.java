@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/payment/exchange")
+@RequestMapping("/api/member/payment/exchange")
 @RequiredArgsConstructor
 public class ExchangeController {
 
     private final ExchangeService exchangeService;
     private final BaseController baseController;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ApiResponse<ExchangeResponse> exchange(@RequestBody ExchangeRequest request) {
         String userEmail = baseController.getCurrentUserEmail();
         return exchangeService.exchange(userEmail, request);
