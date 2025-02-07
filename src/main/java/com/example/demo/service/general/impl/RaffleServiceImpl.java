@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.demo.domain.converter.RaffleConverter.toApplyDto;
 
@@ -90,6 +91,7 @@ public class RaffleServiceImpl implements RaffleService {
         // 필요 데이터 조회 (쿼리 4개 날아가서 추후 개선 예정)
         int likeCount, applyCount, followCount, reviewCount;
         String state;
+        String isWinner = "낙첨";
         likeCount = raffleRepository.countLikeByRaffleId(raffleId);
         applyCount = raffleRepository.countApplyByRaffleId(raffleId);
         followCount = raffleRepository.countFollowsByUserId(raffleUserId);
@@ -123,13 +125,26 @@ public class RaffleServiceImpl implements RaffleService {
             else {
                 state = "응모 가능";
             }
+
+            User winner = raffle.getWinner();
+            if (winner == null) {
+                isWinner = "아직 추첨 안됨";
+            } else{
+                if (winner == user) {
+                    isWinner = "당첨자입니다.";
+                } else {
+                    isWinner = "낙첨자입니다";
+                }
+            }
         }
+
+        RaffleStatus raffleStatus = raffle.getRaffleStatus();
 
         // 3. 조회 수 증가
         raffle.addView();
 
         // 4. DTO 변환 및 반환
-        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount, state);
+        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount, state, isWinner, raffleStatus);
     }
 
     @Override

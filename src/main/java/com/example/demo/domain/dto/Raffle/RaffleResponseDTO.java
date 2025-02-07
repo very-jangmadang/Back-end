@@ -1,9 +1,11 @@
 package com.example.demo.domain.dto.Raffle;
 
+import com.example.demo.entity.base.enums.RaffleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,7 +40,9 @@ public class RaffleResponseDTO {
         private String nickname;
         private int followCount;
         private int reviewCount;
-        private String state;
+        private String userStatus;
+        private String isWinner;
+        private RaffleStatus raffleStatus;
     }
 
     @Getter
