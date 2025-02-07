@@ -100,4 +100,34 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         }
     }
 
+    @Override
+    public ApiResponse<Void> tradeTickets(String userId, String role, int ticketCount) {
+        if (ticketCount < 1) {
+            throw new CustomException(ErrorStatus.TRADE_INVALID_TICKET_COUNT);
+        }
+
+        UserPayment userPayment = findOrCreateUserPayment(userId);
+
+        switch (role) {
+            case "구매자":
+                if (userPayment.getUserTicket() < ticketCount) {
+                    throw new CustomException(ErrorStatus.TRADE_INSUFFICIENT_TICKETS);
+                }
+                userPayment.setUserTicket(userPayment.getUserTicket() - ticketCount);
+                break;
+
+            case "판매자":
+                userPayment.setUserTicket(userPayment.getUserTicket() + ticketCount);
+                break;
+
+            default:
+                throw new CustomException(ErrorStatus.TRADE_INVALID_ROLE);
+        }
+
+        userPayment.setUpdatedAt(LocalDateTime.now());
+        userPaymentRepository.save(userPayment);
+
+        return ApiResponse.of(SuccessStatus.TRADE_TICKET_SUCCESS, null);
+    }
+
 }

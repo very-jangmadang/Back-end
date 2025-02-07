@@ -9,4 +9,5 @@ public interface UserPaymentService {
     ApiResponse<UserTicketResponse> getUserTickets(String userId);
     ApiResponse<UserBankInfoResponse> getUserPaymentInfo(String userId, UserBankInfoRequest userBankInfoRequest);
     ApiResponse<List<PaymentResponse>> getPaymentHistory(String userId, String period);
+    ApiResponse<Void> tradeTickets(String userId, String role, int ticketCount);
 }

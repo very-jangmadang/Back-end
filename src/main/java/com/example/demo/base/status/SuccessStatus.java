@@ -50,7 +50,10 @@ public enum SuccessStatus implements BaseCode {
 
     // 9. Yoon - 팔로우 관련 성공
     FOLLOW_SUCCESS(HttpStatus.OK, "FOLLOW_2001", "상점을 성공적으로 팔로우했습니다."),
-    FOLLOW_UNFOLLOW_SUCCESS(HttpStatus.OK, "FOLLOW_2002", "상점을 성공적으로 언팔로우했습니다.")
+    FOLLOW_UNFOLLOW_SUCCESS(HttpStatus.OK, "FOLLOW_2002", "상점을 성공적으로 언팔로우했습니다."),
+
+    // 10. Yoon - 거래 관련 성공
+    TRADE_TICKET_SUCCESS(HttpStatus.OK, "TRADE_2001", "티켓 거래가 완료되었습니다.");
 
 
     ;

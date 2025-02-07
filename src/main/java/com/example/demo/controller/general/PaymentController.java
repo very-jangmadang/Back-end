@@ -34,4 +34,11 @@ public class PaymentController {
         String userId = baseController.getCurrentUserEmail();
         return userPaymentService.getPaymentHistory(userId, period);
     }
+
+    @PostMapping("/trade")
+    public ApiResponse<Void> tradeTickets(@RequestParam String role, @RequestParam int ticketCount) {
+        String userId = baseController.getCurrentUserEmail();
+        return userPaymentService.tradeTickets(userId, role, ticketCount);
+    }
+
 }
