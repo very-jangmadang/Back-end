@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -64,16 +65,13 @@ public class SecurityConfig {
         return request -> {
             CorsConfiguration configuration = new CorsConfiguration();
 
-            configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+            configuration.setAllowedOrigins(Collections.singletonList("https://jangmadang.site"));
             configuration.setAllowedMethods(Collections.singletonList("*"));
             configuration.setAllowCredentials(true);
             configuration.setAllowedHeaders(Collections.singletonList("*"));
             configuration.setMaxAge(3600L);
 
-            // 쿠키를 반환하여 JWT를 전달하기 때문에 허용 필요
-            configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-            configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
+            configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "access"));
             return configuration;
         };
     }
