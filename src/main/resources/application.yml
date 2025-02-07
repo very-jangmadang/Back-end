@@ -111,4 +111,4 @@ kakao:
     secretKey: "${KAKAO_PAY_SECRET_KEY}"
     approvalUrl: "http://${DOMAIN}:8080/api/payment/approve"
     cancelUrl: "http://${DOMAIN}:8080/api/payment/cancel"
-    failUrl: "http://${DOMAIN}:8080/api/payment/fail" 
+    failUrl: "http://${DOMAIN}:8080/api/payment/fail"
