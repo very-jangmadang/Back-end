@@ -38,6 +38,7 @@ public class RaffleResponseDTO {
         private String nickname;
         private int followCount;
         private int reviewCount;
+        private String state;
     }
 
     @Getter

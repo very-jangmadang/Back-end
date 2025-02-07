@@ -80,24 +80,56 @@ public class RaffleServiceImpl implements RaffleService {
     @Transactional
     public RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long raffleId) {
 
-        // 1. 요청받은 래플 id로 엔티티 조회
+        // 요청받은 래플 id로 엔티티 조회
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-        Long userId = raffle.getUser().getId(); // userId 조회
+        // userId 조회
+        Long raffleUserId = raffle.getUser().getId();
 
-        // 2. 필요 데이터 조회 (쿼리 4개 날아가서 추후 개선 예정)
+        // 필요 데이터 조회 (쿼리 4개 날아가서 추후 개선 예정)
         int likeCount, applyCount, followCount, reviewCount;
+        String state;
         likeCount = raffleRepository.countLikeByRaffleId(raffleId);
         applyCount = raffleRepository.countApplyByRaffleId(raffleId);
-        followCount = raffleRepository.countFollowsByUserId(userId);
-        reviewCount = raffleRepository.countReviewsByUserId(userId);
+        followCount = raffleRepository.countFollowsByUserId(raffleUserId);
+        reviewCount = raffleRepository.countReviewsByUserId(raffleUserId);
+
+        // 유저 정보 받아오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 비회원인 경우
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())){
+            log.info("비회원 접근");
+            state = "게스트";
+        }
+
+        // 회원인 경우
+        else {
+            log.info("회원 접근");
+            Long currentUserid = Long.parseLong(authentication.getName());
+            User user = userRepository.findById(currentUserid)
+                    .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+            // 사용자가 개최자인 경우
+            if (currentUserid.equals(raffleUserId)) {
+                state = "개최자";
+            }
+            // 사용자가 이미 응모한 경우
+            else if (applyRepository.existsByRaffleAndUser(raffle, user)) {
+                state = "이미 응모";
+            }
+            // 사용자가 응모 가능한 경우
+            else {
+                state = "응모 가능";
+            }
+        }
 
         // 3. 조회 수 증가
         raffle.addView();
 
         // 4. DTO 변환 및 반환
-        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount);
+        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount, state);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class RaffleConverter {
                 .build();
     }
 
-    public static RaffleResponseDTO.RaffleDetailDTO toDetailDTO(Raffle raffle, int likeCount, int applyCount, int followCount, int reviewCount) {
+    public static RaffleResponseDTO.RaffleDetailDTO toDetailDTO(Raffle raffle, int likeCount, int applyCount, int followCount, int reviewCount, String state) {
 
         return RaffleResponseDTO.RaffleDetailDTO.builder()
                 .imageUrls(raffle.getImages().stream().map(Image::getImageUrl).toList()) // 이미지 url 리스트 (추후 쿼리 개선)
@@ -50,6 +50,7 @@ public class RaffleConverter {
                 .nickname(raffle.getUser().getNickname()) // 판매자 닉네임
                 .followCount(followCount) // 팔로우 수
                 .reviewCount(reviewCount) // 리뷰 수
+                .state(state) // 응모상태
                 .build();
     }
 
