@@ -46,7 +46,12 @@ public enum SuccessStatus implements BaseCode {
     USER_PAYMENT_UPDATE_BANK_INFO(HttpStatus.OK, "USER_PAYMENT_2002", "유저의 은행 정보가 성공적으로 업데이트되었습니다."),
 
     // 8. Yoon - 환전 관련 성공
-    EXCHANGE_HISTORY_SUCCESS(HttpStatus.OK, "EXCHANGE_2001", "성공적으로 환전되었습니다.")
+    EXCHANGE_HISTORY_SUCCESS(HttpStatus.OK, "EXCHANGE_2001", "성공적으로 환전되었습니다."),
+
+    // 9. Yoon - 팔로우 관련 성공
+    FOLLOW_SUCCESS(HttpStatus.OK, "FOLLOW_2001", "상점을 성공적으로 팔로우했습니다."),
+    FOLLOW_UNFOLLOW_SUCCESS(HttpStatus.OK, "FOLLOW_2002", "상점을 성공적으로 언팔로우했습니다.")
+
 
     ;
 

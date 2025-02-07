@@ -39,4 +39,28 @@ public class BaseController {
             throw new CustomException(ErrorStatus.TOKEN_MISSING);
         }
     }
+
+
+    public Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            logger.warn("인증되지 않은 사용자");
+            return 1L;
+        }
+
+        try {
+            Long userId = Long.valueOf(authentication.getName());
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+            userId = user.getId();
+            logger.info("현재 사용자 Id: {}", userId);
+            return userId;
+
+        } catch (NumberFormatException e) {
+            logger.error("유효하지 않은 사용자 ID: {}", authentication.getName(), e);
+            throw new CustomException(ErrorStatus.TOKEN_MISSING);
+        }
+    }
 }

@@ -22,4 +22,7 @@ public class Follow extends BaseEntity{
     @JoinColumn(name = "follower_id")
     private User follower;
 
+    @Column(name = "store_id", nullable = false)
+    private Long storeId; // 상점 ID를 Long 값으로 저장
+
 }

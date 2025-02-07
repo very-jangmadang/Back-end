@@ -149,7 +149,13 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 23. dohyun - 닉네임 변경 관련 에러
     NICKNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "NICKNAME_4001", "이미 존재하는 닉네임입니다."),
-    INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "NICKNAME_4002","사용할 수 없는 닉네임입니다")
+    INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "NICKNAME_4002","사용할 수 없는 닉네임입니다"),
+
+    // 24. Yoon - 팔로우 관련 에러
+    FOLLOW_ALREADY(HttpStatus.BAD_REQUEST, "FOLLOW_4001", "이미 팔로우한 상점입니다."),
+    FOLLOW_NOT(HttpStatus.BAD_REQUEST, "FOLLOW_4002", "팔로우 상태가 아닙니다."),
+    FOLLOW_STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW_4003", "상점을 찾을 수 없습니다.")
+
 
     ;
 
