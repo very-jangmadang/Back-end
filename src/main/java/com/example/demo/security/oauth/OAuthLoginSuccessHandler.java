@@ -64,7 +64,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         response.addCookie(jwtUtil.createCookie("refresh", refreshToken)); // 쿠키로 전달
         log.info("쿠키 전달 완료");
 
-        response.sendRedirect("https://www.jangmadang.site?token=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
+        response.sendRedirect("https://www.jangmadang.site");
 
     }
 }
