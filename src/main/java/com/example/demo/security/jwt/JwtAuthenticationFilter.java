@@ -29,13 +29,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
 
-        // 토큰 검증 없이 통과하는 URI
+        // 게스트, 유저 둘다 이용가능한 uri
         if (isPermittedRequest(requestURI)) {
-            filterChain.doFilter(request, response);
+            log.info("있으면 저장, 없으면 통과 URI");
+            String accessToken = extractTokenFromCookies(request);
+            if (accessToken != null && !jwtUtil.isExpired(accessToken)) {
+                log.info("로그인 한 경우");
+                Authentication authentication = jwtUtil.getAuthentication(accessToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("저장완료");
+            }
+            log.info("다음 필터 실행");
+            filterChain.doFilter(request,response);
             return;
         }
 
-        // 1. 쿠키에서 토큰 가져오기
+        // 쿠키에서 토큰 가져오기
         String accessToken = extractTokenFromCookies(request);
 
         if (accessToken == null) {
@@ -53,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 토큰이 access인지 확인 (발급시 페이로드에 명시)
+        // 토큰 확인 (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
 
         if (!category.equals("access")) {
@@ -64,9 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰에서 인증정보 생성
         Authentication authentication = jwtUtil.getAuthentication(accessToken);
-        log.info("Setting Authentication: {}", authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info("Current Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
 
         filterChain.doFilter(request, response);
     }
@@ -79,9 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/webjars") ||
                 requestURI.startsWith("/api/permit/") ||
                 requestURI.startsWith("/login") ||
-                requestURI.equals("/favicon.ico") ||
-                requestURI.equals("/home") ||
-                requestURI.equals("/nickname");
+                requestURI.equals("/favicon.ico");
     }
 
     // 쿠키에서 토큰 추출
@@ -113,4 +118,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         writer.write(jsonResponse);
         writer.flush();
     }
+
+
 }
