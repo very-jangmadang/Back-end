@@ -103,9 +103,9 @@ public class MypageController {
     @Operation(summary = "주소 삭제하기")
     @DeleteMapping("/setting/addresses")
     public ApiResponse<?> deleteAddress(
-            @RequestBody MypageRequestDTO.AddressDto addressDto){
+            @RequestBody MypageRequestDTO.AddressDeleteDto addressDeleteDto){
 
-        mypageService.deleteAddress(addressDto);
+        mypageService.deleteAddress(addressDeleteDto);
 
         return ApiResponse.of(_OK, null);
     }
