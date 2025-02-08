@@ -9,7 +9,8 @@ public class FollowConverter {
 
     public FollowResponse toResponse(Follow follow) {
         return new FollowResponse(
-                follow.getStoreId()
+                follow.getStoreId(),
+                follow.getFollower().getProfileImageUrl()  // 유저의 프로필 이미지
         );
     }
 }
