@@ -220,31 +220,25 @@ public class MypageServiceImpl implements MypageService {
 
     @Override
     @Transactional
-    public void deleteAddress(MypageRequestDTO.AddressDeleteDto addressDeleteDto) {
+    public void deleteAddress(MypageRequestDTO.AddressDto addressDto) {
         User user = getUser();
 
-        if (user.getAddresses().size() == addressDeleteDto.getAddressIdList().size())
+        Address address = addressRepository.findById(addressDto.getAddressId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.ADDRESS_NOT_FOUND));
+
+        if (!address.getUser().equals(user))
+            throw new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER);
+
+        if (address.isDefault() || user.getAddresses().size() == 1)
             throw new CustomException(ErrorStatus.ADDRESS_DEFAULT_LOCKED);
 
-        List<Address> addressesList = addressRepository.findAllById(addressDeleteDto.getAddressIdList());
+        boolean hasActiveDelivery = deliveryRepository.existsByAddressAndDeliveryStatusIn(
+                address, List.of(DeliveryStatus.READY, DeliveryStatus.SHIPPING_EXPIRED));
+        if (hasActiveDelivery)
+            throw new CustomException(ErrorStatus.ADDRESS_HAS_ACTIVE_DELIVERY);
 
-        for (Address address : addressesList) {
-            if (!address.getUser().equals(user))
-                throw new CustomException(ErrorStatus.ADDRESS_MISMATCH_USER);
-
-            if (address.isDefault() || user.getAddresses().size() == 1)
-                throw new CustomException(ErrorStatus.ADDRESS_DEFAULT_LOCKED);
-
-            boolean hasActiveDelivery = deliveryRepository.existsByAddressAndDeliveryStatusIn(
-                    address, List.of(DeliveryStatus.READY, DeliveryStatus.SHIPPING_EXPIRED));
-
-            if (hasActiveDelivery) {
-                throw new CustomException(ErrorStatus.ADDRESS_HAS_ACTIVE_DELIVERY);
-            }
-        }
-
-        user.getAddresses().removeAll(addressesList);
-        addressRepository.deleteAll(addressesList);
+        user.getAddresses().remove(address);
+        addressRepository.delete(address);
     }
 
     private User getUser() {

@@ -2,8 +2,6 @@ package com.example.demo.domain.dto.Mypage;
 
 import lombok.Getter;
 
-import java.util.List;
-
 public class MypageRequestDTO {
 
     @Getter
@@ -19,10 +17,5 @@ public class MypageRequestDTO {
         private String phoneNumber;
         private String message;
         private Boolean isDefault;
-    }
-
-    @Getter
-    public static class AddressDeleteDto {
-        private List<Long> addressIdList;
     }
 }
