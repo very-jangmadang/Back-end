@@ -43,6 +43,12 @@ public class FollowServiceImpl implements FollowService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
+        // storeId가 존재하는 user 인지 확인
+        boolean storeExists = userRepository.existsById(storeId);
+        if (!storeExists) {
+            throw new CustomException(ErrorStatus.FOLLOW_STORE_NOT_FOUND); // 존재하지 않는 스토어(유저)
+        }
+
         // 이미 팔로우한 경우 예외 처리
         if (followRepository.findByUserAndStoreId(user, storeId).isPresent()) {
             throw new CustomException(ErrorStatus.FOLLOW_ALREADY);
