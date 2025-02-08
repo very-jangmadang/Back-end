@@ -65,13 +65,13 @@ public class SecurityConfig {
         return request -> {
             CorsConfiguration configuration = new CorsConfiguration();
 
-            configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+            configuration.setAllowedOrigins(Arrays.asList("https://jangmadang.site", "https://api.jangmadang.site"));
             configuration.setAllowedMethods(Collections.singletonList("*"));
-//            configuration.setAllowCredentials(true);
+            configuration.setAllowCredentials(true);
             configuration.setAllowedHeaders(Collections.singletonList("*"));
             configuration.setMaxAge(3600L);
 
-            configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "access"));
+            configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "access", "refresh"));
             return configuration;
         };
     }
