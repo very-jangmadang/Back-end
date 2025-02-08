@@ -30,17 +30,21 @@ public class SecurityConfig {
     // 소셜 로그인
     private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
     private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .httpBasic(HttpBasicConfigurer::disable)
+
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+
                 .csrf(AbstractHttpConfigurer::disable)
+
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+
                 .authorizeHttpRequests(authorize -> {
                     authorize
                             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
@@ -49,6 +53,7 @@ public class SecurityConfig {
                             .requestMatchers("/payment/**", "/payment/create/**", "/payment/approve/**", "/payment/redirect/**", "/index.html", "/hello.html/**").permitAll() // 인증 없이 허용 - yoon 테스트
                             .anyRequest().authenticated();
                 })
+
                 .oauth2Login(oauth -> {
                     oauth
                             // 여기서 Spring Security가 DefaultOAuth2UserSerivce 사용해 자동으로 사용자 정보 처리.
@@ -65,7 +70,7 @@ public class SecurityConfig {
         return request -> {
             CorsConfiguration configuration = new CorsConfiguration();
 
-            configuration.setAllowedOrigins(Arrays.asList("https://jangmadang.site", "https://api.jangmadang.site","http://localhost:5173"));
+            configuration.setAllowedOrigins(Arrays.asList("https://www.jangmadang.site", "https://jangmadang.site", "https://api.jangmadang.site", "http://localhost:5173"));
             configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
             configuration.setAllowCredentials(true);
             configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
