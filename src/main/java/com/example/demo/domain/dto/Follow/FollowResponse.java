@@ -7,4 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FollowResponse {
     private Long storeId;
+    private String profileImg;
 }

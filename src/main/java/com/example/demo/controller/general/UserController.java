@@ -59,6 +59,10 @@ public class UserController {
                                                                        HttpServletResponse httpServletResponse,
                                                                        @Valid @RequestBody UserRequestDTO.nicknameDTO request) {
 
+        if(httpServletRequestequest.getSession().getAttribute("oauthEmail") == null){
+            log.info("세션아이디 {}",httpServletRequestequest.getSession());
+        }
+
         String email = httpServletRequestequest.getSession().getAttribute("oauthEmail").toString();
         String nickname = request.getNickname();
         userService.createUser(nickname, email);
