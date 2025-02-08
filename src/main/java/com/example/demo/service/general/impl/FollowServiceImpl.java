@@ -32,7 +32,7 @@ public class FollowServiceImpl implements FollowService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         List<FollowResponse> followedStores = followRepository.findByUser(user).stream()
-                .map(FollowConverter::toResponse)
+                .map(follow -> FollowConverter.toResponse(follow, userRepository))
                 .collect(Collectors.toList());
 
         return ApiResponse.of(SuccessStatus._OK, followedStores);
