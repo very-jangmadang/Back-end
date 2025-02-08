@@ -55,6 +55,9 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "follower")
     private List<Follow> followings;
 
+    @OneToMany(mappedBy = "user")
+    private List<Follow> followers;
+
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 

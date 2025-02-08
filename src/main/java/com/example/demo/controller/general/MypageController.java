@@ -23,11 +23,20 @@ public class MypageController {
 
     private final MypageService mypageService;
 
-    @GetMapping("/applies")
-    public ApiResponse<MypageResponseDTO.ApplyListDto> getApplies(){
+    @Operation(summary = "마이페이지 프로필(내가 응모한 래플 조회)")
+    @GetMapping("")
+    public ApiResponse<MypageResponseDTO.MyPageInfoDto> getMyPageMyApply(Authentication authentication){
+        Long userId = Long.parseLong(authentication.getName());
+        MypageResponseDTO.MyPageInfoDto result = mypageService.getMyPageMyApplyRaffles(userId);
+        return ApiResponse.of(_OK, result);
+    }
 
-        return ApiResponse.of(_OK, mypageService.getApplies());
-
+    @Operation(summary = "마이페이지 프로필(내가 주최한 래플 조회)")
+    @GetMapping("/myRaffles")
+    public ApiResponse<MypageResponseDTO.MyPageInfoDto> getMyPageMyHost(Authentication authentication){
+        Long userId = Long.parseLong(authentication.getName());
+        MypageResponseDTO.MyPageInfoDto result = mypageService.getMyPageMyHostRaffles(userId);
+        return ApiResponse.of(_OK, result);
     }
 
     @Operation(summary = "프로필 이미지 변경하기")
@@ -109,6 +118,7 @@ public class MypageController {
 
         return ApiResponse.of(_OK, null);
     }
+
 }
 
 
