@@ -41,46 +41,9 @@ public class MypageServiceImpl implements MypageService {
     private final S3UploadService s3UploadService;
     private final AddressRepository addressRepository;
     private final DeliveryRepository deliveryRepository;
+    private final RaffleRepository raffleRepository;
 
 
-    @Override
-    public MypageResponseDTO.ApplyListDto getApplies() {
-
-        // 사용자 정보 가져오기 (JWT 기반 인증 후 추후 구현 예정)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-
-        List<Apply> applyList = applyRepository.findWithRaffleByUser(user);
-        applyList.sort(Comparator.comparing(Apply::getCreatedAt, Comparator.reverseOrder()));
-
-        List<Long> raffleIds = applyList.stream()
-                .map(apply -> apply.getRaffle().getId())
-                .collect(Collectors.toList());
-
-        List<Object[]> applyCounts = applyRepository.countAppliesByRaffleIds(raffleIds);
-        List<Object[]> likeStatuses = likeRepository.checkLikesByRaffleIdsAndUser(raffleIds, user);
-
-        Map<Long, Integer> raffleApplyCountMap = applyCounts.stream()
-                .collect(Collectors.toMap(result -> (Long) result[0], result -> ((Long) result[1]).intValue()));
-
-        Map<Long, Boolean> raffleLikeMap = likeStatuses.stream()
-                .collect(Collectors.toMap(result -> (Long) result[0], result -> (Boolean) result[1]));
-
-        List<MypageResponseDTO.RaffleDto> applyListDtos = applyList.stream()
-                .map(apply -> {
-                    Raffle raffle = apply.getRaffle();
-                    int applyNum = raffleApplyCountMap.getOrDefault(raffle.getId(), 0);
-                    boolean isLiked = raffleLikeMap.getOrDefault(raffle.getId(), false);
-
-                    return MypageConverter.toRaffleDto(raffle, applyNum, isLiked);
-                })
-                .collect(Collectors.toList());
-
-        return MypageResponseDTO.ApplyListDto.builder()
-                .raffleList(applyListDtos)
-                .build();
-
-    }
     @Transactional
     // 프로필 이미지 업데이트
     public String updateProfileImage(Long userId, MultipartFile profile) {
@@ -240,6 +203,71 @@ public class MypageServiceImpl implements MypageService {
         user.getAddresses().remove(address);
         addressRepository.delete(address);
     }
+
+    @Override
+    public MypageResponseDTO.MyPageInfoDto getMyPageMyApplyRaffles(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        List<Review> myReviews = reviewRepository.findAllByUser(user);
+
+        List<Apply> applyList = applyRepository.findWithRaffleByUser(user);
+        applyList.sort(Comparator.comparing(Apply::getCreatedAt, Comparator.reverseOrder()));
+
+        List<Long> raffleIds = applyList.stream()
+                .map(apply -> apply.getRaffle().getId())
+                .collect(Collectors.toList());
+
+        List<Object[]> applyCounts = applyRepository.countAppliesByRaffleIds(raffleIds);
+        List<Object[]> likeStatuses = likeRepository.checkLikesByRaffleIdsAndUser(raffleIds, user);
+
+        Map<Long, Integer> raffleApplyCountMap = applyCounts.stream()
+                .collect(Collectors.toMap(result -> (Long) result[0], result -> ((Long) result[1]).intValue()));
+
+        Map<Long, Boolean> raffleLikeMap = likeStatuses.stream()
+                .collect(Collectors.toMap(result -> (Long) result[0], result -> (Boolean) result[1]));
+
+        List<MypageResponseDTO.RaffleDto> applyListDtos = applyList.stream()
+                .map(apply -> {
+                    Raffle raffle = apply.getRaffle();
+                    int applyNum = raffleApplyCountMap.getOrDefault(raffle.getId(), 0);
+                    boolean isLiked = raffleLikeMap.getOrDefault(raffle.getId(), false);
+
+                    return MypageConverter.toRaffleDto(raffle, applyNum, isLiked);
+                })
+                .collect(Collectors.toList());
+
+        return MypageResponseDTO.MyPageInfoDto.builder()
+                .nickname(user.getNickname())
+                .reviewNum(myReviews.size())
+                .followerNum(user.getFollowers().size())
+                .raffles(applyListDtos)
+                .build();
+    }
+
+    @Override
+    public MypageResponseDTO.MyPageInfoDto getMyPageMyHostRaffles(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        List<Review> myReviews = reviewRepository.findAllByUser(user);
+        List<Raffle> myHostRaffles = raffleRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId());
+
+        List<MypageResponseDTO.RaffleDto> raffleDtoList = new ArrayList<>();
+
+        for (Raffle myHostRaffle : myHostRaffles) {
+            boolean likeStatus = likeRepository.findByUserIdAndRaffleId(userId, myHostRaffle.getId()).isPresent();
+            MypageResponseDTO.RaffleDto raffleDto = MypageConverter.toRaffleDto(myHostRaffle, myHostRaffle.getApplyList().size(), likeStatus);
+            raffleDtoList.add(raffleDto);
+        }
+
+        return MypageResponseDTO.MyPageInfoDto
+                .builder()
+                .nickname(user.getNickname())
+                .followerNum(user.getFollowers().size())
+                .reviewNum(myReviews.size())
+                .raffles(raffleDtoList)
+                .build();
+    }
+
 
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

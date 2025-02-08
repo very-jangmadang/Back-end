@@ -29,4 +29,7 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
 
     // 이름으로 래플 검색
     List<Raffle> findAllByNameContaining(String keyword);
+
+    // 주최자로 래플 찾기
+    List<Raffle> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 }

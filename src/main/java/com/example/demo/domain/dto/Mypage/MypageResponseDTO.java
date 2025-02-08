@@ -52,5 +52,16 @@ public class MypageResponseDTO {
     public static class AddressListDto {
         List<AddressDto> addressList;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyPageInfoDto {
+        private String nickname;
+        private int followerNum;
+        private int reviewNum;
+        List<RaffleDto> raffles;
+    }
   
 }

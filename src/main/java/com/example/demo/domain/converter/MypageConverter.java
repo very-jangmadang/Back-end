@@ -28,7 +28,7 @@ public class MypageConverter {
                 .raffleImage(raffle.getImages().get(0).getImageUrl())
                 .ticketNum(raffle.getTicketNum())
                 .applyNum(applyNum)
-                .timeUntilEnd(duration.toMinutes())
+                .timeUntilEnd(duration.toSeconds())
                 .finished(isFinished)
                 .liked(isLiked)
                 .build();
