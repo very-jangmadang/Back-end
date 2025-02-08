@@ -44,12 +44,24 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = getDeliveryById(deliveryId);
         validateWinner(delivery, user);
 
+        MypageResponseDTO.AddressDto addressDto = null;
+
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         if (deliveryStatus == DeliveryStatus.WAITING_ADDRESS
-                || deliveryStatus == DeliveryStatus.WAITING_PAYMENT)
-            return toDeliveryDto(delivery, null);
+                || deliveryStatus == DeliveryStatus.WAITING_PAYMENT) {
 
-        MypageResponseDTO.AddressDto addressDto = toAddressDto(delivery.getAddress());
+            if (!user.getAddresses().isEmpty()) {
+                Address defaultAddress = user.getAddresses().stream()
+                        .filter(Address::isDefault)
+                        .findFirst()
+                        .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NO_DEFAULT_ADDRESS));
+
+                addressDto = toAddressDto(defaultAddress);
+            }
+
+        } else
+            addressDto = toAddressDto(delivery.getAddress());
+
         return toDeliveryDto(delivery, addressDto);
     }
 
