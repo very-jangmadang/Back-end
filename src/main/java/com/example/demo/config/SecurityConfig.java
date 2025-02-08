@@ -66,9 +66,9 @@ public class SecurityConfig {
             CorsConfiguration configuration = new CorsConfiguration();
 
             configuration.setAllowedOrigins(Arrays.asList("https://jangmadang.site", "https://api.jangmadang.site","http://localhost:5173"));
-            configuration.setAllowedMethods(Collections.singletonList("*"));
+            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
             configuration.setAllowCredentials(true);
-            configuration.setAllowedHeaders(Collections.singletonList("*"));
+            configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
             configuration.setMaxAge(3600L);
 
             configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "access", "refresh"));
