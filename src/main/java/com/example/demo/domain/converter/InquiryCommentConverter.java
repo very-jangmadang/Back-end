@@ -14,6 +14,7 @@ public class InquiryCommentConverter {
     public static InquiryComment toComment(InquiryCommentRequestDTO CommentRequest, User user, boolean isHost, Inquiry inquiry) {
         return InquiryComment.builder()
                 .user(user)
+                .title(CommentRequest.getTitle())
                 .content(CommentRequest.getContent())
                 .inquiry(inquiry)
                 .isHost(isHost)
