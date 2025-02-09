@@ -91,7 +91,7 @@ public class RaffleServiceImpl implements RaffleService {
         // 필요 데이터 조회 (쿼리 4개 날아가서 추후 개선 예정)
         int likeCount, applyCount, followCount, reviewCount;
         String state;
-        String isWinner = "낙첨";
+        String isWinner = "no";
         likeCount = raffleRepository.countLikeByRaffleId(raffleId);
         applyCount = raffleRepository.countApplyByRaffleId(raffleId);
         followCount = raffleRepository.countFollowsByUserId(raffleUserId);
@@ -103,7 +103,7 @@ public class RaffleServiceImpl implements RaffleService {
         // 비회원인 경우
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())){
             log.info("비회원 접근");
-            state = "게스트";
+            state = "nonParticipant";
         }
 
         // 회원인 경우
