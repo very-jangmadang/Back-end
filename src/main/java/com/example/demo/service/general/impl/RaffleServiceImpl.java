@@ -115,25 +115,25 @@ public class RaffleServiceImpl implements RaffleService {
 
             // 사용자가 개최자인 경우
             if (currentUserid.equals(raffleUserId)) {
-                state = "개최자";
+                state = "host";
             }
             // 사용자가 이미 응모한 경우
             else if (applyRepository.existsByRaffleAndUser(raffle, user)) {
-                state = "이미 응모";
+                state = "participant";
             }
             // 사용자가 응모 가능한 경우
             else {
-                state = "응모 가능";
+                state = "nonParticipant";
             }
 
             User winner = raffle.getWinner();
             if (winner == null) {
-                isWinner = "아직 추첨 안됨";
+                isWinner = "hope";
             } else{
                 if (winner == user) {
-                    isWinner = "당첨자입니다.";
+                    isWinner = "yes";
                 } else {
-                    isWinner = "낙첨자입니다";
+                    isWinner = "no";
                 }
             }
         }
