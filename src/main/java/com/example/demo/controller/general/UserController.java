@@ -42,7 +42,7 @@ public class UserController {
     @Operation(summary = "로그아웃")
     @PostMapping("api/permit/logout")
     public ApiResponse<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("Authorization", null);
+        Cookie cookie = new Cookie("access", null);
         cookie.setPath("/");
         cookie.setMaxAge(0);
 
