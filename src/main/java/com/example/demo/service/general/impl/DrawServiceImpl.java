@@ -267,6 +267,8 @@ public class DrawServiceImpl implements DrawService {
 
         Delivery delivery = draw(raffle, applyList);
 
+        applyRepository.updateUncheckedByRaffle(raffle);
+
         return String.format(Constants.DELIVERY_OWNER_URL, delivery.getId());
     }
 

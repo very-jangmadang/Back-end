@@ -4,6 +4,7 @@ import com.example.demo.entity.Apply;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,8 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     List<Object[]> countAppliesByRaffleIds(@Param("raffleIds") List<Long> raffleIds);
 
     Apply findByRaffleAndUser(Raffle raffle, User user);
+
+    @Modifying
+    @Query("UPDATE Apply a SET a.isChecked = false WHERE a.raffle = :raffle")
+    void updateUncheckedByRaffle(@Param("raffle") Raffle raffle);
 }
