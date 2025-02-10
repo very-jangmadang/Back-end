@@ -26,6 +26,5 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     @Query("SELECT a.raffle.id, COUNT(a) FROM Apply a WHERE a.raffle.id IN :raffleIds GROUP BY a.raffle.id")
     List<Object[]> countAppliesByRaffleIds(@Param("raffleIds") List<Long> raffleIds);
 
-
-
+    Apply findByRaffleAndUser(Raffle raffle, User user);
 }

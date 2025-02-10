@@ -50,7 +50,7 @@ public class RaffleEndJob implements Job {
         updateRaffleStatus(raffle, RaffleStatus.ENDED);
 
         if (applyList == null || applyList.isEmpty()) {
-            updateRaffleStatus(raffle, RaffleStatus.FINISHED);
+            updateRaffleStatus(raffle, RaffleStatus.CANCELLED);
             return;
         }
 

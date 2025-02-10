@@ -15,4 +15,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     Delivery findByRaffleAndWinner(Raffle raffle, User winner);
 
     boolean existsByAddressAndDeliveryStatusIn(Address address, List<DeliveryStatus> status);
+
+    Delivery findByRaffleAndDeliveryStatusIn(Raffle raffle, List<DeliveryStatus> waitingAddress);
 }

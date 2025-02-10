@@ -6,11 +6,9 @@ import com.example.demo.domain.converter.RaffleConverter;
 import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
 import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
 import com.example.demo.entity.*;
+import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.entity.base.enums.RaffleStatus;
-import com.example.demo.repository.ApplyRepository;
-import com.example.demo.repository.CategoryRepository;
-import com.example.demo.repository.RaffleRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.*;
 import com.example.demo.service.general.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +35,7 @@ public class RaffleServiceImpl implements RaffleService {
     private final S3UploadService s3UploadService;
     private final ImageService imageService;
     private final ApplyRepository applyRepository;
+    private final DeliveryRepository deliveryRepository;
 
     @Override
     @Transactional
@@ -92,6 +91,7 @@ public class RaffleServiceImpl implements RaffleService {
         int likeCount, applyCount, followCount, reviewCount;
         String state;
         String isWinner = "no";
+        Long deliveryId = null;
         likeCount = raffleRepository.countLikeByRaffleId(raffleId);
         applyCount = raffleRepository.countApplyByRaffleId(raffleId);
         followCount = raffleRepository.countFollowsByUserId(raffleUserId);
@@ -116,6 +116,13 @@ public class RaffleServiceImpl implements RaffleService {
             // 사용자가 개최자인 경우
             if (currentUserid.equals(raffleUserId)) {
                 state = "host";
+
+                Delivery delivery = deliveryRepository.findByRaffleAndDeliveryStatusIn(raffle, List.of(
+                        DeliveryStatus.WAITING_ADDRESS, DeliveryStatus.WAITING_PAYMENT,
+                        DeliveryStatus.READY, DeliveryStatus.SHIPPED, DeliveryStatus.COMPLETED));
+
+                if (delivery != null)
+                    deliveryId = delivery.getId();
             }
             // 사용자가 이미 응모한 경우
             else if (applyRepository.existsByRaffleAndUser(raffle, user)) {
@@ -130,8 +137,16 @@ public class RaffleServiceImpl implements RaffleService {
             if (winner == null) {
                 isWinner = "hope";
             } else{
+
+                boolean isChecked = false;
+                Apply apply = applyRepository.findByRaffleAndUser(raffle, user);
+                if (apply != null)
+                    isChecked = apply.isChecked();
+
                 if (winner == user) {
                     isWinner = "yes";
+                } else if (!isChecked) {
+                    isWinner = "hope";
                 } else {
                     isWinner = "no";
                 }
@@ -144,7 +159,7 @@ public class RaffleServiceImpl implements RaffleService {
         raffle.addView();
 
         // 4. DTO 변환 및 반환
-        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount, state, isWinner, raffleStatus);
+        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount, state, isWinner, raffleStatus, deliveryId);
     }
 
     @Override

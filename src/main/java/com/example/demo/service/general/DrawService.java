@@ -13,7 +13,9 @@ public interface DrawService {
 
     void cancel(Raffle raffle);
 
-    DrawResponseDTO.RaffleResult getDrawRaffle(Long raffleId);
+    DrawResponseDTO.DrawDto getDrawRaffle(Long raffleId);
+
+    void checkRaffle(Long raffleId);
 
     DrawResponseDTO.ResultDto getResult(Long raffleId);
 
