@@ -3,6 +3,7 @@ package com.example.demo.domain.converter;
 import com.example.demo.entity.Payment.Exchange;
 import com.example.demo.domain.dto.Payment.ExchangeHistoryResponse;
 import com.example.demo.domain.dto.Payment.ExchangeRequest;
+import com.example.demo.entity.Payment.UserPayment;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -10,11 +11,11 @@ import java.time.LocalDateTime;
 @Component
 public class ExchangeConverter {
 
-    public ExchangeHistoryResponse toExchangeHistoryResponse(Exchange exchange) {
+    public ExchangeHistoryResponse toExchangeHistoryResponse(Exchange exchange, UserPayment userPayment) {
         return new ExchangeHistoryResponse(
                 exchange.getId(),
                 exchange.getExchangedAt(),
-                exchange.getQuantity(),
+                userPayment.getUserTicket(),
                 "통장입금",
                 exchange.getAmount()
         );

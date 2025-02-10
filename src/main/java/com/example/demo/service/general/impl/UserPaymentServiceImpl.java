@@ -78,19 +78,21 @@ public class UserPaymentServiceImpl implements UserPaymentService {
             // 현재 시간 기준으로 조회할 기간 설정
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime startDate = switch (period) {
+                case "recent" -> now.minusYears(100); // 충분히 조회되도록 설정
                 case "7d" -> now.minusDays(7);
                 case "1m" -> now.minusMonths(1);
                 case "3m" -> now.minusMonths(3);
                 case "6m" -> now.minusMonths(6);
-                default -> throw new CustomException(ErrorStatus.USER_PAYMENT_INVALID_PERIOD); // 유효하지 않은 기간 입력 처리
+                default -> throw new CustomException(ErrorStatus.USER_PAYMENT_INVALID_PERIOD);
             };
 
-            Pageable pageable = PageRequest.of(0, 50); // 50개씩 페이징
+            Pageable pageable = period.equals("recent") ? PageRequest.of(0, 1) : PageRequest.of(0, 50);
             Page<Payment> payments = paymentRepository.findByUserIdAndApprovedAtAfterOrderByApprovedAtDesc(
                     userId, startDate, pageable);
 
             List<PaymentResponse> paymentHistory = payments.stream()
-                    .map(userPaymentConverter::toPaymentResponse)
+                    .map(payment -> userPaymentConverter.toPaymentResponse(
+                            payment, userPaymentRepository.findByUserId(userId).get()))
                     .collect(Collectors.toList());
 
             return ApiResponse.of(SuccessStatus.PAYMENT_HISTORY_SUCCESS, paymentHistory);

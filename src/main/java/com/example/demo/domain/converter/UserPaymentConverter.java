@@ -26,11 +26,11 @@ public class UserPaymentConverter {
         userPayment.setUpdatedAt(LocalDateTime.now());
     }
 
-    public PaymentResponse toPaymentResponse(Payment payment) {
+    public PaymentResponse toPaymentResponse(Payment payment, UserPayment userPayment) {
         return new PaymentResponse(
                 payment.getId(),
                 payment.getApprovedAt(),
-                payment.getQuantity(),
+                userPayment.getUserTicket(),
                 "카카오페이",
                 payment.getAmount()
         );

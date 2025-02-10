@@ -67,24 +67,26 @@ public class ExchangeServiceImpl implements ExchangeService {
             // 현재 시간 기준으로 조회할 기간 설정
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime startDate = switch (period) {
+                case "recent" -> now.minusYears(100); // 충분히 조회되도록 설정
                 case "7d" -> now.minusDays(7);
                 case "1m" -> now.minusMonths(1);
                 case "3m" -> now.minusMonths(3);
                 case "6m" -> now.minusMonths(6);
-                default -> throw new CustomException(ErrorStatus.USER_PAYMENT_INVALID_PERIOD); // 유효하지 않은 기간 입력 처리
+                default -> throw new CustomException(ErrorStatus.USER_PAYMENT_INVALID_PERIOD);
             };
 
-            Pageable pageable = PageRequest.of(0, 50); // 50개씩 페이징
+            Pageable pageable = period.equals("recent") ? PageRequest.of(0, 1) : PageRequest.of(0, 50);
             Page<Exchange> exchanges = exchangeRepository.findByUserIdAndExchangedAtAfterOrderByExchangedAtDesc(
                     userId, startDate, pageable);
 
             List<ExchangeHistoryResponse> exchangeHistory = exchanges.stream()
-                    .map(exchangeConverter::toExchangeHistoryResponse)
+                    .map(exchange -> exchangeConverter.toExchangeHistoryResponse(
+                            exchange, userPaymentRepository.findByUserId(userId).get()))
                     .collect(Collectors.toList());
 
             return ApiResponse.of(SuccessStatus.PAYMENT_HISTORY_SUCCESS, exchangeHistory);
         } catch (Exception e) {
-            logger.error("결제 내역 조회 중 오류 발생: {}", e.getMessage(), e);
+            logger.error("교환 내역 조회 중 오류 발생: {}", e.getMessage(), e);
             throw new CustomException(ErrorStatus.PAYMENT_HISTORY_ERROR);
         }
     }
