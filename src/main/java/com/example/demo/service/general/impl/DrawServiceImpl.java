@@ -110,7 +110,7 @@ public class DrawServiceImpl implements DrawService {
         if (raffleStatus == RaffleStatus.UNFULFILLED)
             throw new CustomException(ErrorStatus.DRAW_PENDING);
 
-        if (userApply.isChecked())
+        if (userApply.isChecked() && !user.equals(raffle.getWinner()))
             throw new CustomException(ErrorStatus.DRAW_ALREADY_CHECKED);
 
         List<Apply> applyList = applyRepository.findByRaffle(raffle);
