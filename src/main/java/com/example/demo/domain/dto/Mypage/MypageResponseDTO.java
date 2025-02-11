@@ -1,5 +1,6 @@
 package com.example.demo.domain.dto.Mypage;
 
+import com.example.demo.domain.dto.Review.ReviewResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,6 +63,17 @@ public class MypageResponseDTO {
         private int followerNum;
         private int reviewNum;
         List<RaffleDto> raffles;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyPageInfoWithReviewsDto{
+        private String nickname;
+        private int followerNum;
+        private int reviewNum;
+        List<ReviewResponseDTO> reviews;
     }
   
 }

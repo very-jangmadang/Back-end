@@ -268,6 +268,23 @@ public class MypageServiceImpl implements MypageService {
                 .build();
     }
 
+    @Override
+    public MypageResponseDTO.MyPageInfoWithReviewsDto getProfileMyReviews(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+
+        List<ReviewResponseDTO> reviewResponseDTO = ReviewConverter.toReviewResponseDTOList(reviews);
+
+
+        return MypageResponseDTO.MyPageInfoWithReviewsDto.builder()
+                .reviews(reviewResponseDTO)
+                .reviewNum(reviews.size())
+                .nickname(user.getNickname())
+                .followerNum(user.getFollowers().size())
+                .build();
+    }
+
 
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

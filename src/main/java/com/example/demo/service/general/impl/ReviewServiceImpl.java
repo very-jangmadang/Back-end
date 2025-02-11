@@ -98,26 +98,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     }
 
-    //리뷰 조회
-    public ReviewWithAverageDTO getReviewsByUserId(Long userId) {
-
-        // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-
-        // 사용자의 모든 후기 조회
-        List<Review> reviews = reviewRepository.findAllByUser(user);
-
-        List<ReviewResponseDTO> reviewResponseDTO = ReviewConverter.toReviewResponseDTOList(reviews);
-
-        int reviewCount = reviews.size();
-
-        double averageScore = user.getAverageScore();
-
-        return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
-    }
-
-
 
     private void updateAverageScore(User user, double score, boolean isAdd) {
         int currentReviewCount = user.getReviewCount();
