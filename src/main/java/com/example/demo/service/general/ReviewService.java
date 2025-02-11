@@ -16,6 +16,8 @@ public interface ReviewService {
     // 리뷰 삭제
     void deleteReview(Long reviewId, Long userId);
 
+    // 리뷰 조회
+    ReviewWithAverageDTO getReviewsByUserId(Long userId);
 }
 
 
