@@ -73,6 +73,7 @@ public class MypageResponseDTO {
         private String nickname;
         private int followerNum;
         private int reviewNum;
+        private double avgScore;
         List<ReviewResponseDTO> reviews;
     }
   

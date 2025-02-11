@@ -281,6 +281,7 @@ public class MypageServiceImpl implements MypageService {
                 .reviews(reviewResponseDTO)
                 .reviewNum(reviews.size())
                 .nickname(user.getNickname())
+                .avgScore(user.getAverageScore())
                 .followerNum(user.getFollowers().size())
                 .build();
     }
