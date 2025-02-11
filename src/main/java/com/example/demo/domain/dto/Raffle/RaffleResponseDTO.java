@@ -43,6 +43,7 @@ public class RaffleResponseDTO {
         private String userStatus;
         private String isWinner;
         private RaffleStatus raffleStatus;
+        private Long deliveryId;
     }
 
     @Getter

@@ -42,13 +42,4 @@ public class DrawResponseDTO {
         private Long raffleId;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RaffleResult {
-        private String redirectUrl;
-        private DrawDto drawDto;
-    }
-
 }

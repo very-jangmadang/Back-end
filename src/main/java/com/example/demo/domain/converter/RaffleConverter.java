@@ -33,7 +33,7 @@ public class RaffleConverter {
                 .build();
     }
 
-    public static RaffleResponseDTO.RaffleDetailDTO toDetailDTO(Raffle raffle, int likeCount, int applyCount, int followCount, int reviewCount, String state, String isWinner, RaffleStatus raffleStatus) {
+    public static RaffleResponseDTO.RaffleDetailDTO toDetailDTO(Raffle raffle, int likeCount, int applyCount, int followCount, int reviewCount, String state, String isWinner, RaffleStatus raffleStatus, Long deliveryId) {
 
         return RaffleResponseDTO.RaffleDetailDTO.builder()
                 .imageUrls(raffle.getImages().stream().map(Image::getImageUrl).toList()) // 이미지 url 리스트 (추후 쿼리 개선)
@@ -53,6 +53,7 @@ public class RaffleConverter {
                 .userStatus(state) // 사용자 응모 상태
                 .isWinner(isWinner) // 당첨여부
                 .raffleStatus(raffleStatus) // 래플 상태
+                .deliveryId(deliveryId) // 배송 정보 아이디
                 .build();
     }
 

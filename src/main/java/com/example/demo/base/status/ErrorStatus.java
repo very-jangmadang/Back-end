@@ -93,6 +93,8 @@ public enum ErrorStatus implements BaseErrorCode {
     DRAW_PENDING(HttpStatus.BAD_REQUEST, "DRAW_4006", "아직 추첨이 되지 않았습니다."),
     DRAW_COMPLETED(HttpStatus.BAD_REQUEST, "DRAW_4007", "이미 추첨이 완료되었습니다."),
     DRAW_FINISHED(HttpStatus.BAD_REQUEST, "DRAW_4008", "이미 종료된 래플입니다."),
+    DRAW_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "DRAW_4009", "이미 결과를 확인한 래플입니다"),
+    DRAW_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4010", "래플의 개최자입니다."),
 
     // 14. Huiju - 배송 관련 에러
     DELIVERY_NOT_WINNER(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "당첨자가 아닙니다."),

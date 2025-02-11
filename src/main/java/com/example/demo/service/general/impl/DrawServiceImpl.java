@@ -83,12 +83,12 @@ public class DrawServiceImpl implements DrawService {
             userRepository.batchUpdateTicketNum(refundTicket, userIds);
         }
 
-        raffle.setRaffleStatus(RaffleStatus.FINISHED);
+        raffle.setRaffleStatus(RaffleStatus.CANCELLED);
         raffleRepository.save(raffle);
     }
 
     @Override
-    public DrawResponseDTO.RaffleResult getDrawRaffle(Long raffleId) {
+    public DrawResponseDTO.DrawDto getDrawRaffle(Long raffleId) {
 
         User user = getUser();
         Raffle raffle = getRaffle(raffleId);
@@ -99,22 +99,19 @@ public class DrawServiceImpl implements DrawService {
         Delivery delivery = deliveryRepository.findByRaffleAndWinner(raffle, raffle.getWinner());
 
         // 개최자인 경우
-        if (raffle.getUser().equals(user)) {
-            String redirectUrl = raffleStatus != RaffleStatus.UNFULFILLED ?
-                    String.format(Constants.DELIVERY_OWNER_URL, delivery.getId()) :
-                    String.format(Constants.RAFFLE_OWNER_URL, raffleId);
+        if (raffle.getUser().equals(user))
+            throw new CustomException(ErrorStatus.DRAW_OWNER);
 
-            return DrawResponseDTO.RaffleResult.builder()
-                    .drawDto(null)
-                    .redirectUrl(redirectUrl)
-                    .build();
-        }
+        Apply userApply = applyRepository.findByRaffleAndUser(raffle, user);
 
-        if (!applyRepository.existsByRaffleAndUser(raffle, user))
+        if (userApply == null)
             throw new CustomException(ErrorStatus.DRAW_NOT_IN);
 
         if (raffleStatus == RaffleStatus.UNFULFILLED)
             throw new CustomException(ErrorStatus.DRAW_PENDING);
+
+        if (userApply.isChecked() && !user.equals(raffle.getWinner()))
+            throw new CustomException(ErrorStatus.DRAW_ALREADY_CHECKED);
 
         List<Apply> applyList = applyRepository.findByRaffle(raffle);
         if (applyList.isEmpty())
@@ -139,10 +136,34 @@ public class DrawServiceImpl implements DrawService {
         nicknameSet.add(user.getNickname());
         boolean isWin = raffle.getWinner().equals(user);
 
-        return DrawResponseDTO.RaffleResult.builder()
-                .drawDto(toDrawDto(delivery, nicknameSet, isWin))
-                .redirectUrl(null)
-                .build();
+        return toDrawDto(delivery, nicknameSet, isWin);
+    }
+
+    @Override
+    @Transactional
+    public void checkRaffle(Long raffleId) {
+        User user = getUser();
+        Raffle raffle = getRaffle(raffleId);
+
+        RaffleStatus raffleStatus = raffle.getRaffleStatus();
+        validateRaffleStatus(raffleStatus);
+        if (raffleStatus == RaffleStatus.UNFULFILLED)
+            throw new CustomException(ErrorStatus.DRAW_PENDING);
+
+        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        if (applyList.isEmpty())
+            throw new CustomException(ErrorStatus.DRAW_EMPTY);
+
+        Apply apply = applyRepository.findByRaffleAndUser(raffle, user);
+
+        if (apply == null)
+            throw new CustomException(ErrorStatus.DRAW_NOT_IN);
+
+        if (apply.isChecked())
+            throw new CustomException(ErrorStatus.DRAW_ALREADY_CHECKED);
+
+        apply.setChecked();
+        applyRepository.save(apply);
     }
 
     @Override
@@ -176,7 +197,7 @@ public class DrawServiceImpl implements DrawService {
         switch (raffleStatus) {
             case ENDED:
                 throw new CustomException(ErrorStatus.DRAW_COMPLETED);
-            case FINISHED:
+            case CANCELLED:
             case COMPLETED:
                 throw new CustomException(ErrorStatus.DRAW_FINISHED);
         }
@@ -246,6 +267,8 @@ public class DrawServiceImpl implements DrawService {
 
         Delivery delivery = draw(raffle, applyList);
 
+        applyRepository.updateUncheckedByRaffle(raffle);
+
         return String.format(Constants.DELIVERY_OWNER_URL, delivery.getId());
     }
 
@@ -274,7 +297,7 @@ public class DrawServiceImpl implements DrawService {
     }
 
     private void validateCancel(Raffle raffle, RaffleStatus raffleStatus) {
-        if (raffleStatus == RaffleStatus.FINISHED || raffleStatus == RaffleStatus.COMPLETED)
+        if (raffleStatus == RaffleStatus.CANCELLED || raffleStatus == RaffleStatus.COMPLETED)
             throw new CustomException(ErrorStatus.DRAW_FINISHED);
 
         if (raffleStatus == RaffleStatus.ENDED) {
