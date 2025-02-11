@@ -19,21 +19,20 @@ public class DrawController {
 
     private final DrawService drawService;
 
-    @Operation(summary = "래플 결과 확인하기")
+    @Operation(summary = "응모자 - 래플 결과 확인하기")
     @GetMapping("/{raffleId}/draw")
-    public ApiResponse<?> drawRaffle(
-            @PathVariable Long raffleId, HttpServletResponse response) throws IOException {
+    public ApiResponse<DrawResponseDTO.DrawDto> drawRaffle(@PathVariable Long raffleId) {
 
-        DrawResponseDTO.RaffleResult result = drawService.getDrawRaffle(raffleId);
-        DrawResponseDTO.DrawDto drawDto = result.getDrawDto();
-        String redirectUrl = result.getRedirectUrl();
+        return ApiResponse.of(_OK, drawService.getDrawRaffle(raffleId));
+    }
 
-        if (drawDto == null){
-            response.sendRedirect(redirectUrl);
-            return null;
-        }
+    @Operation(summary = "응모자 - 래플 결과 조회 완료하기")
+    @PostMapping("/{raffleId}/check")
+    public ApiResponse<?> checkRaffle(@PathVariable Long raffleId) {
 
-        return ApiResponse.of(_OK, drawDto);
+        drawService.checkRaffle(raffleId);
+
+        return ApiResponse.of(_OK, null);
     }
 
     @Operation(summary = "개최자 - 래플 결과 확인하기")
