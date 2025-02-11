@@ -57,5 +57,14 @@ public class ReviewController {
         return ApiResponse.of(SuccessStatus._OK, null);
     }
 
+    //상대 리뷰 조회
+    @GetMapping("api/permit/review/{userId}")
+    public ApiResponse<ReviewWithAverageDTO> getReviewsByUserId(@PathVariable Long userId) {
+
+        ReviewWithAverageDTO reviews = reviewService.getReviewsByUserId(userId);
+
+        return ApiResponse.of(SuccessStatus._OK, reviews);
+    }
+
 }
 
