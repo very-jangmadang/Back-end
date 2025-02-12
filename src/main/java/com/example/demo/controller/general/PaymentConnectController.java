@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -92,10 +93,8 @@ public class PaymentConnectController {
         cookie.setDomain(domain);
         response.addCookie(cookie);
 
-        // 리다이렉트 응답 반환
-        return ResponseEntity.status(302)
-                .header("Location", url)
-                .build();
+        // 직접 302 리다이렉트 반환
+        return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
     }
 
 }
