@@ -116,6 +116,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // JSON 형식으로 응답
     private void sendJsonErrorResponse(HttpServletResponse response, ErrorStatus errorStatus) throws IOException {
+        // CORS 헤더 추가
+        response.setHeader("Access-Control-Allow-Origin", "https://www.jangmadang.site");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+
         ErrorReasonDTO errorReason = errorStatus.getReason();
 
         response.setContentType("application/json");

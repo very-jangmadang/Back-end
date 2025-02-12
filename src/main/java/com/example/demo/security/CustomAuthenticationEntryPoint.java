@@ -21,6 +21,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException {
+        response.setHeader("Access-Control-Allow-Origin", "https://www.jangmadang.site");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
 
         // JSON 응답을 위한 Map 생성∑
         Map<String, Object> responseData = new HashMap<>();
