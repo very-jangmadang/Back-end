@@ -98,8 +98,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 
             // 유저 티켓 수 업데이트 (배송비가 아닌 경우)
             if (!payment.getItemId().equals("배송비")) {
-                int tickets = payment.getAmount()/100;
-                int updatedTickets = userPayment.getUserTicket() + tickets;
+                int updatedTickets = userPayment.getUserTicket() + payment.getAmount();
                 userPayment.setUserTicket(updatedTickets);
                 userPayment.setUpdatedAt(LocalDateTime.now());
             }
