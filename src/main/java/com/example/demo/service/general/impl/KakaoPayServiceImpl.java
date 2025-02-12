@@ -92,6 +92,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         Optional.ofNullable(approveResponse).ifPresent(response -> {
             payment.setStatus("APPROVED");
             payment.setApprovedAt(LocalDateTime.now());
+            payment.setAmount(payment.getAmount()/100);
             savePaymentEntity(payment);
 
             UserPayment userPayment = findOrCreateUser(payment.getUserId());
