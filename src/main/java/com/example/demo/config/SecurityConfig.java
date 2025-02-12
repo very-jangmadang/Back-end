@@ -56,6 +56,9 @@ public class SecurityConfig {
 
                 .oauth2Login(oauth -> {
                     oauth
+                            .authorizationEndpoint(authorizationEndpoint ->
+                                    authorizationEndpoint.baseUri("/login/oauth2/authorization")
+                            )
                             // 여기서 Spring Security가 DefaultOAuth2UserSerivce 사용해 자동으로 사용자 정보 처리.
                             // 처리한 정보는 SecurityContext에 OAuth2User로 기록되어있음
                             .successHandler(oAuthLoginSuccessHandler) // 로그인 성공시 수행
