@@ -71,19 +71,31 @@ public class PaymentConnectController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> createPayment(@RequestParam String itemId, @RequestParam String itemName, @RequestParam int totalAmount) {
+    public ResponseEntity<Void> createPayment(@RequestParam String itemId, @RequestParam String itemName, @RequestParam int totalAmount, HttpServletResponse response) {
 
         // 사용자 email 가져오기
         String userId = baseController.getCurrentUserEmail();
 
+        // 카카오페이 결제 요청
         PaymentRequest paymentRequest = KakaoPayConverter.toPaymentRequest(userId, itemId, itemName, totalAmount);
         ReadyResponse readyResponse = kakaoPayService.preparePayment(paymentRequest).getResult();
         String tid = readyResponse.getTid();
         String url = readyResponse.getNextRedirectPcUrl();
-        logger.info("KakaoPay ReadyResponse - TID: {}, Redirect URL: {}", tid, url);
-        Map<String, String> response = new HashMap<>();
-        response.put("redirectUrl", "/api/payment/redirect?tid=" + tid + "&url=" + url);
 
-        return ResponseEntity.ok(response);
+        logger.info("KakaoPay ReadyResponse - TID: {}, Redirect URL: {}", tid, url);
+
+        // TID를 쿠키에 저장
+        Cookie cookie = new Cookie("tid", tid);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60);
+        cookie.setDomain(domain);
+        response.addCookie(cookie);
+
+        // 리다이렉트 응답 반환
+        return ResponseEntity.status(302)
+                .header("Location", url)
+                .build();
     }
+
 }

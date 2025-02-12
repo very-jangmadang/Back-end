@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1>Payment Form</h1>
-<form id="payment-form">
+<form id="payment-form" method="POST" action="/api/payment/create">
     <label for="itemId">Item ID:</label>
     <input type="text" id="itemId" name="itemId" required><br><br>
 
@@ -20,32 +20,5 @@
     <button type="submit">Submit</button>
 </form>
 
-<script>
-    document.getElementById("payment-form").onsubmit = function (event) {
-        event.preventDefault();
-        var itemId = document.getElementById("itemId").value;
-        var itemName = document.getElementById("itemName").value;
-        var totalAmount = document.getElementById("totalAmount").value;
-        fetch("/api/payment/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "itemId=" + encodeURIComponent(itemId) +
-                "&itemName=" + encodeURIComponent(itemName) +
-                "&totalAmount=" + encodeURIComponent(totalAmount)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.redirectUrl) {
-                    console.log("Redirecting to:", data.redirectUrl);
-                    window.location.href = data.redirectUrl;
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-            });
-    };
-</script>
 </body>
 </html>
