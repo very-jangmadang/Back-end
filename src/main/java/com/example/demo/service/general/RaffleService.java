@@ -12,5 +12,5 @@ public interface RaffleService {
     RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long id);
 
     // 래플 응모
-    RaffleResponseDTO.ApplyDTO apply(Long raffleId);
+    RaffleResponseDTO.ApplyResultDTO apply(Long raffleId);
 }
