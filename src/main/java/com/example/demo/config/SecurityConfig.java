@@ -30,6 +30,7 @@ public class SecurityConfig {
     // 소셜 로그인
     private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
     private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -63,9 +64,9 @@ public class SecurityConfig {
                             // 처리한 정보는 SecurityContext에 OAuth2User로 기록되어있음
                             .successHandler(oAuthLoginSuccessHandler) // 로그인 성공시 수행
                             .failureHandler(oAuthLoginFailureHandler); // 로그인 실패시 수행
-                });
-//                .exceptionHandling(exception -> exception
-//                        .authenticationEntryPoint(customAuthenticationEntryPoint));
+                })
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint));
         return httpSecurity.build();
     }
 
