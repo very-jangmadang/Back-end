@@ -164,7 +164,7 @@ public class RaffleServiceImpl implements RaffleService {
 
     @Override
     @Transactional
-    public RaffleResponseDTO.ApplyDTO apply(Long raffleId) {
+    public RaffleResponseDTO.ApplyResultDTO apply(Long raffleId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -189,8 +189,16 @@ public class RaffleServiceImpl implements RaffleService {
         if (applyRepository.existsByRaffleAndUser(raffle, user))
             throw new CustomException(ErrorStatus.APPLY_ALREADY_APPLIED);
 
-        if (userTicket < raffleTicket)
-            throw new CustomException(ErrorStatus.APPLY_INSUFFICIENT_TICKET);
+        if (userTicket < raffleTicket) {
+            RaffleResponseDTO.FailedApplyDTO failedApplyDTO = RaffleResponseDTO.FailedApplyDTO.builder()
+                    .missingTickets(raffleTicket - userTicket)
+                    .build();
+
+            return RaffleResponseDTO.ApplyResultDTO.builder()
+                    .applyDTO(null)
+                    .failedApplyDTO(failedApplyDTO)
+                    .build();
+        }
 
         user.setTicket_num(userTicket - raffleTicket);
         userRepository.save(user);
@@ -201,6 +209,9 @@ public class RaffleServiceImpl implements RaffleService {
                 .build();
         applyRepository.save(apply);
 
-        return toApplyDto(apply);
+        return RaffleResponseDTO.ApplyResultDTO.builder()
+                .applyDTO(toApplyDto(apply))
+                .failedApplyDTO(null)
+                .build();
     }
 }
