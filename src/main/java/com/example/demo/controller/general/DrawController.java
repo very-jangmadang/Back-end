@@ -1,7 +1,7 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.domain.dto.DrawResponseDTO;
+import com.example.demo.domain.dto.Draw.DrawResponseDTO;
 import com.example.demo.service.general.DrawService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,6 +1,6 @@
 package com.example.demo.service.general;
 
-import com.example.demo.domain.dto.DrawResponseDTO;
+import com.example.demo.domain.dto.Draw.DrawResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
