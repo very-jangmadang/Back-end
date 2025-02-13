@@ -111,12 +111,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String extractTokenFromCookies(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                log.info("쿠키 이름: {}, 값: {}", cookie.getName(), cookie.getValue());
                 if ("access".equals(cookie.getName())) {
+                    log.info("쿠키 이름: {}, 값: {}", cookie.getName(), cookie.getValue());
                     return cookie.getValue();
                 }
             }
-        } else {log.info("요청에 쿠키가 없음");}
+            log.info("요청에 쿠키가 없음");
+        }
         return null;
     }
 
@@ -125,6 +126,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         log.info("Authorization 헤더 값: {}", header);
         if (header != null && header.startsWith("Bearer ")) {
+            log.info("추출한 헤더 값: {}",header.startsWith("Bearer "));
             return header.substring(7);
         }
         return null;
