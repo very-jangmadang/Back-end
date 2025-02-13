@@ -1,6 +1,7 @@
 package com.example.demo.security.jwt;
 
 import com.example.demo.base.code.ErrorReasonDTO;
+import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -28,14 +29,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         log.info("요청된 URI: {}", requestURI);
+
         // 게스트, 유저 둘다 이용가능한 uri
         if (isPermittedRequest(requestURI)) {
             log.info("있으면 저장, 없으면 통과 URI");
             String accessToken = extractTokenFromCookies(request);
+
             if (accessToken == null) {
                 accessToken = extractTokenFromHeader(request);
             }
-            if (accessToken != null && !jwtUtil.isExpired(accessToken)) {
+
+            if (accessToken != null) {
+                if(jwtUtil.isExpired(accessToken)) {
+                    sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
+                    log.info("엑세스 토큰 만료");
+                    return;
+                }
+
                 log.info("로그인 한 경우");
                 Authentication authentication = jwtUtil.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -98,16 +108,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String extractTokenFromCookies(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
+                log.info("쿠키 이름: {}, 값: {}", cookie.getName(), cookie.getValue());
                 if ("access".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
-        }
+        } else {log.info("요청에 쿠키가 없음");}
         return null;
     }
 
+    // 헤더에서 토큰 추출
     private String extractTokenFromHeader(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
+        log.info("Authorization 헤더 값: {}", header);
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7);
         }

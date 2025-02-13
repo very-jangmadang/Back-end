@@ -1,6 +1,7 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.Raffle.RaffleRequestDTO;
 import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
@@ -43,9 +44,14 @@ public class RaffleController {
 
     @Operation(summary = "래플 응모하기")
     @PostMapping("/api/member/raffles/{raffleId}/apply")
-    public ApiResponse<RaffleResponseDTO.ApplyDTO> apply(@PathVariable Long raffleId) {
+    public ApiResponse<?> apply(@PathVariable Long raffleId) {
 
-        return ApiResponse.of(_OK, raffleService.apply(raffleId));
+        RaffleResponseDTO.ApplyResultDTO resultDTO = raffleService.apply(raffleId);
+
+        if (resultDTO.getApplyDTO() == null)
+            return ApiResponse.onFailure(ErrorStatus.APPLY_INSUFFICIENT_TICKET, resultDTO.getFailedApplyDTO());
+
+        return ApiResponse.of(_OK, resultDTO.getApplyDTO());
     }
 }
 

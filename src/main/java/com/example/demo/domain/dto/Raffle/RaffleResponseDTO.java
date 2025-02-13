@@ -56,4 +56,21 @@ public class RaffleResponseDTO {
         private String raffleImage;
         private LocalDateTime endAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FailedApplyDTO{
+        private int missingTickets;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ApplyResultDTO{
+        private ApplyDTO applyDTO;
+        private FailedApplyDTO failedApplyDTO;
+    }
 }
