@@ -267,6 +267,33 @@ public class MypageServiceImpl implements MypageService {
             raffleDtoList.add(raffleDto);
         }
 
+            return MypageResponseDTO.MyPageInfoDto
+                .builder()
+                .nickname(user.getNickname())
+                .followerNum(user.getFollowers().size())
+                .reviewNum(myReviews.size())
+                .profileImageUrl(user.getProfileImageUrl())
+                .raffles(raffleDtoList)
+                .build();
+    }
+
+
+    @Override
+    public MypageResponseDTO.ProfileInfoDto getProfileHostRaffles(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        List<Review> myReviews = reviewRepository.findAllByUser(user);
+        List<Raffle> myHostRaffles = raffleRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId());
+
+        List<MypageResponseDTO.RaffleDto> raffleDtoList = new ArrayList<>();
+
+        for (Raffle myHostRaffle : myHostRaffles) {
+            boolean likeStatus = likeRepository.findByUserIdAndRaffleId(userId, myHostRaffle.getId()).isPresent();
+            MypageResponseDTO.RaffleDto raffleDto = MypageConverter.toRaffleDto(myHostRaffle, myHostRaffle.getApplyList().size(), likeStatus);
+            raffleDtoList.add(raffleDto);
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean followStatus = false;
 
@@ -277,19 +304,19 @@ public class MypageServiceImpl implements MypageService {
                     .anyMatch(follow -> follow.getFollower() != null && follow.getFollower().getId().equals(loginId));
         }
 
-            return MypageResponseDTO.MyPageInfoDto
+        return MypageResponseDTO.ProfileInfoDto
                 .builder()
                 .nickname(user.getNickname())
                 .followerNum(user.getFollowers().size())
-                .followStatus(followStatus)
                 .reviewNum(myReviews.size())
+                .followStatus(followStatus)
                 .profileImageUrl(user.getProfileImageUrl())
                 .raffles(raffleDtoList)
                 .build();
     }
 
     @Override
-    public MypageResponseDTO.MyPageInfoWithReviewsDto getProfileMyReviews(Long userId) {
+    public MypageResponseDTO.ProfileInfoWithReviewsDto getProfileReviews(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
         List<Review> reviews = reviewRepository.findAllByUser(user);
@@ -307,7 +334,7 @@ public class MypageServiceImpl implements MypageService {
         }
 
 
-        return MypageResponseDTO.MyPageInfoWithReviewsDto.builder()
+        return MypageResponseDTO.ProfileInfoWithReviewsDto.builder()
                 .reviews(reviewResponseDTO)
                 .reviewNum(reviews.size())
                 .nickname(user.getNickname())

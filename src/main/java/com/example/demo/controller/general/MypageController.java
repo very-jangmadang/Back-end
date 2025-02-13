@@ -41,15 +41,15 @@ public class MypageController {
 
     @Operation(summary = "상대 프로필 조회(상대방이 주최한 래플 조회)")
     @GetMapping("/api/permit/mypage/{userId}/myRaffles")
-    public ApiResponse<MypageResponseDTO.MyPageInfoDto> getProfileHostRaffles(@PathVariable("userId") Long userId){
-        MypageResponseDTO.MyPageInfoDto result = mypageService.getMyPageMyHostRaffles(userId);
+    public ApiResponse<MypageResponseDTO.ProfileInfoDto> getProfileHostRaffles(@PathVariable("userId") Long userId){
+        MypageResponseDTO.ProfileInfoDto result = mypageService.getProfileHostRaffles(userId);
         return ApiResponse.of(_OK, result);
     }
 
     @Operation(summary = "상대 프로필 조회(상점 후기 조회)")
     @GetMapping("/api/permit/mypage/{userId}")
-    public ApiResponse<MypageResponseDTO.MyPageInfoWithReviewsDto> getProfileMyReviews(@PathVariable("userId") Long userId) {
-        MypageResponseDTO.MyPageInfoWithReviewsDto reviews = mypageService.getProfileMyReviews(userId);
+    public ApiResponse<MypageResponseDTO.ProfileInfoWithReviewsDto> getProfileReviews(@PathVariable("userId") Long userId) {
+        MypageResponseDTO.ProfileInfoWithReviewsDto reviews = mypageService.getProfileReviews(userId);
         return ApiResponse.of(SuccessStatus._OK, reviews);
     }
 

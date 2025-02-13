@@ -63,6 +63,18 @@ public class MypageResponseDTO {
         private int followerNum;
         private int reviewNum;
         private String profileImageUrl;
+        List<RaffleDto> raffles;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProfileInfoDto {
+        private String nickname;
+        private int followerNum;
+        private int reviewNum;
+        private String profileImageUrl;
         private boolean followStatus;
         List<RaffleDto> raffles;
     }
@@ -71,7 +83,7 @@ public class MypageResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MyPageInfoWithReviewsDto{
+    public static class ProfileInfoWithReviewsDto{
         private String nickname;
         private int followerNum;
         private int reviewNum;
