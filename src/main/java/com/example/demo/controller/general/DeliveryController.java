@@ -23,19 +23,6 @@ public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
-    // Yoon - 시작
-
-    private final KakaoPayService kakaoPayService;
-    private final BaseController baseController;
-    // 결제 취소 API
-    @PostMapping("/cancel")
-    public ApiResponse<CancelResponse> cancelPayment() {
-        String userId = baseController.getCurrentUserEmail();
-        return kakaoPayService.cancelPayment(userId);
-    }
-
-    // Yoon - 끝
-
     @Operation(summary = "당첨자 - 배송 정보 확인하기")
     @GetMapping("/{deliveryId}/winner")
     public ApiResponse<DeliveryResponseDTO.DeliveryDto> getDelivery(@PathVariable Long deliveryId) {

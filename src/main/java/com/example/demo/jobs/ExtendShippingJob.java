@@ -2,12 +2,14 @@ package com.example.demo.jobs;
 
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
+import com.example.demo.controller.BaseController;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.repository.DeliveryRepository;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
+import com.example.demo.service.general.KakaoPayService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -21,6 +23,8 @@ public class ExtendShippingJob implements Job {
     private final DeliveryRepository deliveryRepository;
     private final DrawService drawService;
     private final EmailService emailService;
+    private final KakaoPayService kakaoPayService;
+    private final BaseController baseController;
 
     @Override
     @Transactional
@@ -30,7 +34,12 @@ public class ExtendShippingJob implements Job {
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
 
-        // Todo: 배송비 환불
+        // Todo: Yoon 시작 - 배송비 환불
+
+        String userId = baseController.getCurrentUserEmail();
+        kakaoPayService.cancelPayment(userId);
+
+        // Todo: Yoon 완료
 
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
