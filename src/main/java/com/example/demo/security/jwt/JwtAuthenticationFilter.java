@@ -28,7 +28,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        log.info("요청된 URI: {}", requestURI);
+        log.info("요청된 URI: {}", request.getRequestURI());
+        log.info("요청된 메서드: {}", request.getMethod());
+        log.info("Referer: {}", request.getHeader("Referer"));
+        log.info("Origin: {}", request.getHeader("Origin"));
 
         // 게스트, 유저 둘다 이용가능한 uri
         if (isPermittedRequest(requestURI)) {
