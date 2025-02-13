@@ -21,7 +21,7 @@ public interface MypageService {
 
     void addAddress(MypageRequestDTO.AddressAddDto addressAddDto);
 
-    void deleteAddress(MypageRequestDTO.AddressDto addressDto);
+    void deleteAddress(MypageRequestDTO.AddressDeleteDto addressDeleteDto);
 
     MypageResponseDTO.MyPageInfoDto getMyPageMyApplyRaffles(Long userId);
 

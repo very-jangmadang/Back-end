@@ -7,6 +7,7 @@ import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.converter.KakaoPayConverter;
 import com.example.demo.domain.converter.UserPaymentConverter;
 import com.example.demo.domain.dto.Payment.ApproveResponse;
+import com.example.demo.domain.dto.Payment.CancelResponse;
 import com.example.demo.domain.dto.Payment.PaymentRequest;
 import com.example.demo.domain.dto.Payment.ReadyResponse;
 import com.example.demo.entity.Payment.Payment;
@@ -91,6 +92,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         Optional.ofNullable(approveResponse).ifPresent(response -> {
             payment.setStatus("APPROVED");
             payment.setApprovedAt(LocalDateTime.now());
+            payment.setAmount(payment.getAmount()/100);
             savePaymentEntity(payment);
 
             UserPayment userPayment = findOrCreateUser(payment.getUserId());
@@ -151,4 +153,23 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         }
     }
 
+    // 결제 취소
+    @Override
+    public ApiResponse<CancelResponse> cancelPayment(String userId) {
+        Payment payment = paymentRepository.findTopByUserIdAndStatusAndItemIdOrderByApprovedAtDesc(userId, "APPROVED", "배송비");
+        if (payment == null) {
+            throw new CustomException(ErrorStatus.PAYMENT_NOT_FOUND);
+        }
+
+        CancelResponse cancelResponse = sendRequest(
+                "https://open-api.kakaopay.com/online/v1/payment/cancel",
+                kakaoPayConverter.toCancelParameters(payment),
+                CancelResponse.class
+        );
+        payment.setStatus("CANCELLED");
+        savePaymentEntity(payment);
+
+        return ApiResponse.of(SuccessStatus.PAYMENT_CANCEL_SUCCESS, cancelResponse);
+
+    }
 }

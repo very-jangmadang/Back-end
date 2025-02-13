@@ -18,7 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebFilter("/*")
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -28,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-
+        log.info("요청된 URI: {}", requestURI);
         // 게스트, 유저 둘다 이용가능한 uri
         if (isPermittedRequest(requestURI)) {
             log.info("있으면 저장, 없으면 통과 URI");
@@ -117,6 +116,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // JSON 형식으로 응답
     private void sendJsonErrorResponse(HttpServletResponse response, ErrorStatus errorStatus) throws IOException {
+        // CORS 헤더 추가
+        response.setHeader("Access-Control-Allow-Origin", "https://www.jangmadang.site");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+
         ErrorReasonDTO errorReason = errorStatus.getReason();
 
         response.setContentType("application/json");

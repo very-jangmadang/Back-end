@@ -83,4 +83,13 @@ public class KakaoPayConverter {
         paymentRequest.setTaxFreeAmount(0);
         return paymentRequest;
     }
+
+    public Map<String, Object> toCancelParameters(Payment payment) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("cid", this.cid);
+        parameters.put("tid", payment.getTid());
+        parameters.put("cancel_amount", payment.getAmount());
+        parameters.put("cancel_tax_free_amount", 0);
+        return parameters;
+    }
 }

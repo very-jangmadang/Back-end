@@ -1,9 +1,12 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.controller.BaseController;
 import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
+import com.example.demo.domain.dto.Payment.CancelResponse;
 import com.example.demo.service.general.DeliveryService;
+import com.example.demo.service.general.KakaoPayService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,19 @@ import static com.example.demo.base.status.SuccessStatus._OK;
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
+
+    // Yoon - 시작
+
+    private final KakaoPayService kakaoPayService;
+    private final BaseController baseController;
+    // 결제 취소 API
+    @PostMapping("/cancel")
+    public ApiResponse<CancelResponse> cancelPayment() {
+        String userId = baseController.getCurrentUserEmail();
+        return kakaoPayService.cancelPayment(userId);
+    }
+
+    // Yoon - 끝
 
     @Operation(summary = "당첨자 - 배송 정보 확인하기")
     @GetMapping("/{deliveryId}/winner")
