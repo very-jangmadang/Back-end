@@ -62,6 +62,8 @@ public class MypageResponseDTO {
         private String nickname;
         private int followerNum;
         private int reviewNum;
+        private String profileImageUrl;
+        private boolean followStatus;
         List<RaffleDto> raffles;
     }
 
@@ -73,6 +75,8 @@ public class MypageResponseDTO {
         private String nickname;
         private int followerNum;
         private int reviewNum;
+        private String profileImageUrl;
+        private boolean followStatus;
         private double avgScore;
         List<ReviewResponseDTO> reviews;
     }
