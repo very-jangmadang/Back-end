@@ -17,4 +17,7 @@ public interface UserService {
     void addRefreshToken(Long userId, String token);
 
     UserResponseDTO.SignUpResponseDTO randomNickname();
+
+    // 로그인 정보 확인
+    String isLogin();
 }

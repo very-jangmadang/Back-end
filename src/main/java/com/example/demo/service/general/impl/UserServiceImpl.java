@@ -11,9 +11,13 @@ import com.example.demo.service.general.UserService;
 import com.example.demo.service.handler.NicknameGenerator;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -64,5 +68,18 @@ public class UserServiceImpl implements UserService {
         } while (userRepository.existsByNickname(nickname)); // 중복 확인
 
         return UserConverter.toSignUpResponseDTO(nickname);
+    }
+
+    @Override
+    public String isLogin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())){
+            log.info("비회원");
+            return "guest";
+        }
+        log.info("사용자 아이디: {}", authentication.getName());
+        log.info("유저");
+        return "user";
     }
 }

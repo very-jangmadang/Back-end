@@ -31,12 +31,11 @@ public class UserController {
     private final JWTUtil jwtUtil;
 
     @Operation(summary = "로그인 확인")
-    @GetMapping("api/member/user-info")
-    public ApiResponse<String> isLogin(Authentication authentication) {
-        String username = authentication.getName(); // username은 user_id입니다
-        log.info("현재 사용자 ID: {}", username);
-        log.info("Authentication Object: {}", authentication);
-        return ApiResponse.of(SuccessStatus._OK, username);
+    @GetMapping("api/permit/user-info")
+    public ApiResponse<String> isLogin() {
+        String result = userService.isLogin();
+
+        return ApiResponse.of(SuccessStatus._OK, result);
     }
 
     @Operation(summary = "로그아웃")
