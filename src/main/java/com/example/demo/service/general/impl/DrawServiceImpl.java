@@ -3,7 +3,7 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.domain.dto.DrawResponseDTO;
+import com.example.demo.domain.dto.Draw.DrawResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
