@@ -109,15 +109,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 쿠키에서 토큰 추출
     private String extractTokenFromCookies(HttpServletRequest request) {
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("access".equals(cookie.getName())) {
-                    log.info("쿠키 이름: {}, 값: {}", cookie.getName(), cookie.getValue());
-                    return cookie.getValue();
-                }
-            }
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies == null){
             log.info("요청에 쿠키가 없음");
+            return null;
         }
+
+        for (Cookie cookie : cookies) {
+            if ("access".equals(cookie.getName())) {
+                log.info("쿠키 이름: {}, 값: {}", cookie.getName(), cookie.getValue());
+                return cookie.getValue();
+            }
+        }
+
+        log.info("쿠키중 access 쿠키는 없음");
         return null;
     }
 
@@ -125,10 +131,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String extractTokenFromHeader(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         log.info("Authorization 헤더 값: {}", header);
-        if (header != null && header.startsWith("Bearer ")) {
-            log.info("추출한 헤더 값: {}",header.startsWith("Bearer "));
-            return header.substring(7);
+
+        if (header == null) {
+            log.info("Autoriation 헤더 값이 null");
+            return null;
         }
+
+        if (header.startsWith("Bearer ")) {
+            String token = header.substring(7).trim();
+
+            if (token.isEmpty()) {
+                log.info("Bearer 뒤에 토큰값 없음");
+                return null;
+            }
+
+            log.info("헤더에서 반환할 값 {}", token);
+            return token;
+        }
+
+        log.info("Authorization 헤더가 'Bearer '로 시작하지 않음");
         return null;
     }
 
