@@ -140,8 +140,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header.startsWith("Bearer ")) {
             String token = header.substring(7).trim();
 
-            if (token.isEmpty()) {
-                log.info("Bearer 뒤에 토큰값 없음");
+            if (token.isEmpty() || "undefined".equals(token) || "null".equals(token)) {
+                log.info("Bearer 뒤 잘못된 토큰값");
                 return null;
             }
 
