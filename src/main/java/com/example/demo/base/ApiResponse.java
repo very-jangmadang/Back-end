@@ -29,7 +29,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> onFailure(BaseErrorCode code, T result) {
-        throw new CustomException((ErrorStatus) code, result);
+        throw new CustomException((ErrorStatus) code);
     }
 
 }
