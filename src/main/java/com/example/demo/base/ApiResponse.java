@@ -29,7 +29,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> onFailure(BaseErrorCode code, T result) {
-        return new ApiResponse<>(false, code.getReasonHttpStatus().getCode(), code.getReasonHttpStatus().getMessage(), result);
+        throw new CustomException(ErrorStatus.COMMON_UNAUTHORIZED);
     }
 
 }
