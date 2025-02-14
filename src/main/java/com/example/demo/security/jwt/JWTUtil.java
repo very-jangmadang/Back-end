@@ -114,9 +114,9 @@ public class JWTUtil {
                 .before(new Date());
     }
 
-    public Cookie createCookie(String name, String value) {
+    public Cookie createCookie(String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(60*60); // 1시간
+        cookie.setMaxAge(maxAge); // 1시간
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setDomain("jangmadang.site");

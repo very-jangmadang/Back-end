@@ -71,8 +71,8 @@ public class RefreshController {
         String newRefreshToken = jwtUtil.createRefreshToken("refresh", Long.parseLong(userId), email);
 
         // 응답
-        response.addCookie(jwtUtil.createCookie("access", newAccessToken));
-        response.addCookie(jwtUtil.createCookie("refresh", newRefreshToken));
+        response.addCookie(jwtUtil.createCookie("access", newAccessToken, 60 * 60));
+        response.addCookie(jwtUtil.createCookie("refresh", newRefreshToken, 3 * 60 * 60));
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }

@@ -41,14 +41,8 @@ public class UserController {
     @Operation(summary = "로그아웃")
     @PostMapping("api/permit/logout")
     public ApiResponse<?> logout(HttpServletResponse response) {
-        Cookie cookie1 = new Cookie("access", null);
-        Cookie cookie2 = new Cookie("refresh", null);
-
-        cookie1.setPath("/");
-        cookie2.setPath("/");
-
-        cookie1.setMaxAge(0);
-        cookie2.setMaxAge(0);
+        Cookie cookie1 = jwtUtil.createCookie("access", null, 0);
+        Cookie cookie2 = jwtUtil.createCookie("refresh", null, 0);
 
         response.addCookie(cookie1);
         response.addCookie(cookie2);
@@ -78,8 +72,8 @@ public class UserController {
 
         userService.addRefreshToken(userId, refreshToken); // 리프레시 토큰 저장
 
-        httpServletResponse.addCookie(jwtUtil.createCookie("access", accessToken)); // 쿠키로 전달
-        httpServletResponse.addCookie(jwtUtil.createCookie("refresh", refreshToken)); // 쿠키로 전달
+        httpServletResponse.addCookie(jwtUtil.createCookie("access", accessToken, 60 * 60)); // 쿠키로 전달
+        httpServletResponse.addCookie(jwtUtil.createCookie("refresh", refreshToken, 3 * 60 * 60)); // 쿠키로 전달
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }
