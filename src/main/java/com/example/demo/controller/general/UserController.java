@@ -41,11 +41,17 @@ public class UserController {
     @Operation(summary = "로그아웃")
     @PostMapping("api/permit/logout")
     public ApiResponse<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("access", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
+        Cookie cookie1 = new Cookie("access", null);
+        Cookie cookie2 = new Cookie("refresh", null);
 
-        response.addCookie(cookie);
+        cookie1.setPath("/");
+        cookie2.setPath("/");
+
+        cookie1.setMaxAge(0);
+        cookie2.setMaxAge(0);
+
+        response.addCookie(cookie1);
+        response.addCookie(cookie2);
         log.info("브라우저 쿠키 삭제 완료");
 
         return ApiResponse.of(SuccessStatus.USER_LOGOUT_SUCCESS, null);
