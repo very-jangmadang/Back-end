@@ -246,12 +246,14 @@ public class MypageServiceImpl implements MypageService {
                 .nickname(user.getNickname())
                 .reviewNum(myReviews.size())
                 .followerNum(user.getFollowers().size())
+                .profileImageUrl(user.getProfileImageUrl())
                 .raffles(applyListDtos)
                 .build();
     }
 
     @Override
     public MypageResponseDTO.MyPageInfoDto getMyPageMyHostRaffles(Long userId) {
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
         List<Review> myReviews = reviewRepository.findAllByUser(user);
@@ -265,12 +267,81 @@ public class MypageServiceImpl implements MypageService {
             raffleDtoList.add(raffleDto);
         }
 
-        return MypageResponseDTO.MyPageInfoDto
+            return MypageResponseDTO.MyPageInfoDto
                 .builder()
                 .nickname(user.getNickname())
                 .followerNum(user.getFollowers().size())
                 .reviewNum(myReviews.size())
+                .profileImageUrl(user.getProfileImageUrl())
                 .raffles(raffleDtoList)
+                .build();
+    }
+
+
+    @Override
+    public MypageResponseDTO.ProfileInfoDto getProfileHostRaffles(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        List<Review> myReviews = reviewRepository.findAllByUser(user);
+        List<Raffle> myHostRaffles = raffleRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId());
+
+        List<MypageResponseDTO.RaffleDto> raffleDtoList = new ArrayList<>();
+
+        for (Raffle myHostRaffle : myHostRaffles) {
+            boolean likeStatus = likeRepository.findByUserIdAndRaffleId(userId, myHostRaffle.getId()).isPresent();
+            MypageResponseDTO.RaffleDto raffleDto = MypageConverter.toRaffleDto(myHostRaffle, myHostRaffle.getApplyList().size(), likeStatus);
+            raffleDtoList.add(raffleDto);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean followStatus = false;
+
+        // 회원인 경우 ( 팔로우 여부 전달을 위해 확인 )
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
+            Long loginId = Long.parseLong(authentication.getName());
+            followStatus = user.getFollowers().stream()
+                    .anyMatch(follow -> follow.getFollower() != null && follow.getFollower().getId().equals(loginId));
+        }
+
+        return MypageResponseDTO.ProfileInfoDto
+                .builder()
+                .nickname(user.getNickname())
+                .followerNum(user.getFollowers().size())
+                .reviewNum(myReviews.size())
+                .followStatus(followStatus)
+                .profileImageUrl(user.getProfileImageUrl())
+                .raffles(raffleDtoList)
+                .build();
+    }
+
+    @Override
+    public MypageResponseDTO.ProfileInfoWithReviewsDto getProfileReviews(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+
+        List<ReviewResponseDTO> reviewResponseDTO = ReviewConverter.toReviewResponseDTOList(reviews);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean followStatus = false;
+
+        // 회원인 경우 ( 팔로우 여부 전달을 위해 확인 )
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
+            Long loginId = Long.parseLong(authentication.getName());
+            followStatus = user.getFollowers().stream()
+                    .anyMatch(follow -> follow.getFollower() != null && follow.getFollower().getId().equals(loginId));
+        }
+
+
+        return MypageResponseDTO.ProfileInfoWithReviewsDto.builder()
+                .reviews(reviewResponseDTO)
+                .reviewNum(reviews.size())
+                .nickname(user.getNickname())
+                .profileImageUrl(user.getProfileImageUrl())
+                .followStatus(followStatus)
+                .avgScore(user.getAverageScore())
+                .followerNum(user.getFollowers().size())
                 .build();
     }
 

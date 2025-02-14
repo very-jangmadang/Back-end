@@ -26,4 +26,8 @@ public interface MypageService {
     MypageResponseDTO.MyPageInfoDto getMyPageMyApplyRaffles(Long userId);
 
     MypageResponseDTO.MyPageInfoDto getMyPageMyHostRaffles(Long userId);
+
+    MypageResponseDTO.ProfileInfoDto getProfileHostRaffles(Long userId);
+
+    MypageResponseDTO.ProfileInfoWithReviewsDto getProfileReviews(Long userId);
 }

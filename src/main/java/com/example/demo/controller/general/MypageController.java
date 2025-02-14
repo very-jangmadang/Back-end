@@ -17,14 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 import static com.example.demo.base.status.SuccessStatus._OK;
 
 @RestController
-@RequestMapping("/api/member/mypage")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class MypageController {
 
     private final MypageService mypageService;
 
     @Operation(summary = "마이페이지 프로필(내가 응모한 래플 조회)")
-    @GetMapping("")
+    @GetMapping("/api/member/mypage")
     public ApiResponse<MypageResponseDTO.MyPageInfoDto> getMyPageMyApply(Authentication authentication){
         Long userId = Long.parseLong(authentication.getName());
         MypageResponseDTO.MyPageInfoDto result = mypageService.getMyPageMyApplyRaffles(userId);
@@ -32,15 +32,30 @@ public class MypageController {
     }
 
     @Operation(summary = "마이페이지 프로필(내가 주최한 래플 조회)")
-    @GetMapping("/myRaffles")
+    @GetMapping("/api/member/mypage/myRaffles")
     public ApiResponse<MypageResponseDTO.MyPageInfoDto> getMyPageMyHost(Authentication authentication){
         Long userId = Long.parseLong(authentication.getName());
         MypageResponseDTO.MyPageInfoDto result = mypageService.getMyPageMyHostRaffles(userId);
         return ApiResponse.of(_OK, result);
     }
 
+    @Operation(summary = "상대 프로필 조회(상대방이 주최한 래플 조회)")
+    @GetMapping("/api/permit/mypage/{userId}/myRaffles")
+    public ApiResponse<MypageResponseDTO.ProfileInfoDto> getProfileHostRaffles(@PathVariable("userId") Long userId){
+        MypageResponseDTO.ProfileInfoDto result = mypageService.getProfileHostRaffles(userId);
+        return ApiResponse.of(_OK, result);
+    }
+
+    @Operation(summary = "상대 프로필 조회(상점 후기 조회)")
+    @GetMapping("/api/permit/mypage/{userId}")
+    public ApiResponse<MypageResponseDTO.ProfileInfoWithReviewsDto> getProfileReviews(@PathVariable("userId") Long userId) {
+        MypageResponseDTO.ProfileInfoWithReviewsDto reviews = mypageService.getProfileReviews(userId);
+        return ApiResponse.of(SuccessStatus._OK, reviews);
+    }
+
+
     @Operation(summary = "프로필 이미지 변경하기")
-    @PatchMapping(value="/profile-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value="/api/member/mypage/profile-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> uploadProfileImage(Authentication authentication, @RequestPart MultipartFile profile) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -55,7 +70,7 @@ public class MypageController {
 
     // 닉네임 변경
     @Operation(summary = "닉네임 변경하기")
-    @PatchMapping("/nickname")
+    @PatchMapping("/api/member/mypage/nickname")
     public ApiResponse<String> changeNickname(Authentication authentication, @RequestParam String nickname) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -71,7 +86,7 @@ public class MypageController {
 
     //내 리뷰 조회
     @Operation(summary = "내 리뷰 조회하기")
-    @GetMapping("/review")
+    @GetMapping("/api/member/mypage/review")
     public ApiResponse<ReviewWithAverageDTO> getMyReviewsByUserId(Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -85,14 +100,14 @@ public class MypageController {
     }
 
     @Operation(summary = "등록된 주소 조회하기")
-    @GetMapping("/setting/addresses")
+    @GetMapping("/api/member/mypage/setting/addresses")
     public ApiResponse<MypageResponseDTO.AddressListDto> getAddresses(){
 
         return ApiResponse.of(_OK, mypageService.getAddresses());
     }
 
     @Operation(summary = "기본 배송지 설정하기")
-    @PostMapping("/setting/addresses")
+    @PostMapping("/api/member/mypage/setting/addresses")
     public ApiResponse<MypageResponseDTO.AddressListDto> setDefault(
             @RequestBody MypageRequestDTO.AddressDto addressDto){
 
@@ -100,7 +115,7 @@ public class MypageController {
     }
 
     @Operation(summary = "주소 추가하기")
-    @PostMapping("/setting/addresses/add")
+    @PostMapping("/api/member/mypage/setting/addresses/add")
     public ApiResponse<?> addAddress(
             @RequestBody MypageRequestDTO.AddressAddDto addressAddDto){
 
@@ -110,7 +125,7 @@ public class MypageController {
     }
 
     @Operation(summary = "주소 삭제하기")
-    @DeleteMapping("/setting/addresses")
+    @DeleteMapping("/api/member/mypage/setting/addresses")
     public ApiResponse<?> deleteAddress(
             @RequestBody MypageRequestDTO.AddressDeleteDto addressDeleteDto){
 

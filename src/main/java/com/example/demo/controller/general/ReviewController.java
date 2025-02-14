@@ -9,19 +9,12 @@ import com.example.demo.domain.dto.Review.ReviewResponseDTO;
 import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
 import com.example.demo.service.general.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Mod10Check;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.beans.PropertyEditorSupport;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

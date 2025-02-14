@@ -118,7 +118,6 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
 
-
     private void updateAverageScore(User user, double score, boolean isAdd) {
         int currentReviewCount = user.getReviewCount();
         double currentAverageScore = user.getAverageScore();
