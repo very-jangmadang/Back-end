@@ -2,6 +2,8 @@ package com.example.demo.base;
 
 import com.example.demo.base.code.BaseCode;
 import com.example.demo.base.code.BaseErrorCode;
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -27,7 +29,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> onFailure(BaseErrorCode code, T result) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, code.getReasonHttpStatus().getMessage());
+        throw new CustomException((ErrorStatus) code, result);
     }
-   
+
 }
