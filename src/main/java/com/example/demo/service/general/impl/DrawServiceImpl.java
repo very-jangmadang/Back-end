@@ -3,7 +3,7 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.domain.dto.DrawResponseDTO;
+import com.example.demo.domain.dto.Draw.DrawResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
@@ -117,23 +117,25 @@ public class DrawServiceImpl implements DrawService {
         if (applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
-        Set<String> nicknameSet;
+        Set<String> nicknameSet = new LinkedHashSet<>();
+
         if (raffle.getWinner().equals(user)) {
-            nicknameSet = applyList.stream()
+            nicknameSet.addAll(applyList.stream()
                     .map(apply -> apply.getUser().getNickname())
                     .filter(nickname -> !nickname.equals(user.getNickname()))
                     .limit(Constants.MAX_NICKNAMES - 1)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
         } else {
-            nicknameSet = applyList.stream()
+            nicknameSet.add(user.getNickname());
+            nicknameSet.addAll(applyList.stream()
                     .map(apply -> apply.getUser().getNickname())
                     .filter(nickname -> !nickname.equals(user.getNickname()) &&
                             !nickname.equals(raffle.getWinner().getNickname()))
                     .limit(Constants.MAX_NICKNAMES - 2)
-                    .collect(Collectors.toSet());
-            nicknameSet.add(raffle.getWinner().getNickname());
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
         }
-        nicknameSet.add(user.getNickname());
+        nicknameSet.add(raffle.getWinner().getNickname());
+
         boolean isWin = raffle.getWinner().equals(user);
 
         return toDrawDto(delivery, nicknameSet, isWin);

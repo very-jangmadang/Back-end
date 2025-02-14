@@ -38,6 +38,7 @@ public class RaffleResponseDTO {
         private int likeCount;
         private int applyCount;
         private String nickname;
+        private Long storeId;
         private int followCount;
         private int reviewCount;
         private String userStatus;

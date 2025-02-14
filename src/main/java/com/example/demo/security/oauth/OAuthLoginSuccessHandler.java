@@ -60,8 +60,8 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
         userService.addRefreshToken(userId, refreshToken); // 리프레시 토큰 저장
 
-        response.addCookie(jwtUtil.createCookie("access", accessToken)); // 쿠키로 전달
-        response.addCookie(jwtUtil.createCookie("refresh", refreshToken)); // 쿠키로 전달
+        response.addCookie(jwtUtil.createCookie("access", accessToken, 60 * 60)); // 쿠키로 전달
+        response.addCookie(jwtUtil.createCookie("refresh", refreshToken, 3 * 60 * 60)); // 쿠키로 전달
         log.info("쿠키 전달 완료");
 
         response.sendRedirect("https://www.jangmadang.site");

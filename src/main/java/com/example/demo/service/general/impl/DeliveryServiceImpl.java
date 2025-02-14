@@ -3,6 +3,7 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
+import com.example.demo.controller.BaseController;
 import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Mypage.MypageResponseDTO;
@@ -10,10 +11,7 @@ import com.example.demo.entity.*;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.*;
-import com.example.demo.service.general.DeliverySchedulerService;
-import com.example.demo.service.general.DeliveryService;
-import com.example.demo.service.general.DrawService;
-import com.example.demo.service.general.EmailService;
+import com.example.demo.service.general.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +35,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final DeliverySchedulerService deliverySchedulerService;
     private final EmailService emailService;
     private final RaffleRepository raffleRepository;
+    private final KakaoPayService kakaoPayService;
+    private final BaseController baseController;
 
     @Override
     public DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId) {
@@ -228,7 +228,12 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
 
-        // Todo: 배송비 환불
+        // Todo: Yoon 시작 - 배송비 환불
+
+        String userId = baseController.getCurrentUserEmail();
+        kakaoPayService.cancelPayment(userId);
+
+        // Todo: Yoon 완료
 
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
