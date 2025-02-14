@@ -53,7 +53,8 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         // API 응답 반환
         ExchangeResponse exchangeResponse = new ExchangeResponse("환전 성공!!");
-        return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, exchangeResponse);
+        return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null); // -> 확인코드
+        // return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, exchangeResponse);
     }
 
     private UserPayment findUserPayment(String userId) {
