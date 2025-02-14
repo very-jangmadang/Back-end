@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Getter
 @AllArgsConstructor
@@ -27,4 +29,5 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> onFailure(BaseErrorCode code, T result) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, code.getReasonHttpStatus().getMessage());
     }
+   
 }
