@@ -48,6 +48,7 @@ public class RaffleConverter {
                 .applyCount(applyCount) // 응모 수
                 .minUser(Math.round((float)raffle.getMinTicket() / raffle.getTicketNum())) // 판매자 희망 최소 참여자 수
                 .nickname(raffle.getUser().getNickname()) // 판매자 닉네임
+                .storeId(raffle.getUser().getId())
                 .followCount(followCount) // 팔로우 수
                 .reviewCount(reviewCount) // 리뷰 수
                 .userStatus(state) // 사용자 응모 상태
