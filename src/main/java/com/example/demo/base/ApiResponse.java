@@ -2,15 +2,11 @@ package com.example.demo.base;
 
 import com.example.demo.base.code.BaseCode;
 import com.example.demo.base.code.BaseErrorCode;
-import com.example.demo.base.code.exception.CustomException;
-import com.example.demo.base.status.ErrorStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @Getter
 @AllArgsConstructor
@@ -29,7 +25,6 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> onFailure(BaseErrorCode code, T result) {
-        throw new CustomException(ErrorStatus.COMMON_UNAUTHORIZED);
+        return new ApiResponse<>(false, code.getReasonHttpStatus().getCode(), code.getReasonHttpStatus().getMessage(), result);
     }
-
 }
