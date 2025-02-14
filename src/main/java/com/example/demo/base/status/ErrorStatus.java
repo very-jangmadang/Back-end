@@ -177,7 +177,7 @@ public enum ErrorStatus implements BaseErrorCode {
                 .httpStatus(httpStatus)
                 .code(code)
                 .message(message)
-                .isSuccess(false)
+                .isError(true)
                 .build();
     }
 
