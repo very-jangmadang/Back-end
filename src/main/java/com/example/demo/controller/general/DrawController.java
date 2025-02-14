@@ -52,7 +52,7 @@ public class DrawController {
     }
 
     @Operation(summary = "개최자 - 래플 종료하기")
-    @GetMapping("/{raffleId}/cancel")
+    @PostMapping("/{raffleId}/cancel")
     public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(@PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, drawService.forceCancel(raffleId));
