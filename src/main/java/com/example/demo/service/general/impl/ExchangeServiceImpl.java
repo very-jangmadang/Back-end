@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     private final UserPaymentRepository userPaymentRepository;
     private final ExchangeConverter exchangeConverter;
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @Override
     public ApiResponse<ExchangeResponse> exchange(String userId, ExchangeRequest request) {
         // 유저 결제 정보 조회 (없으면 예외 발생)
