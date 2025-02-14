@@ -33,6 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("Referer: {}", request.getHeader("Referer"));
         log.info("Origin: {}", request.getHeader("Origin"));
 
+        // 리프레시 토큰 발급 uri
+        if (requestURI.equals("/api/permit/refresh")){
+            log.info("리프레시 토큰 요청");
+            filterChain.doFilter(request,response);
+            return;
+        }
+
         // 게스트, 유저 둘다 이용가능한 uri
         if (isPermittedRequest(requestURI)) {
             log.info("있으면 저장, 없으면 통과 URI");
@@ -43,9 +50,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             if (accessToken != null) {
-                if(jwtUtil.isExpired(accessToken)) {
-                    sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
+                try {
+                    jwtUtil.isExpired(accessToken);
+                } catch (ExpiredJwtException e) {
                     log.info("엑세스 토큰 만료");
+                    sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
                     return;
                 }
 
@@ -75,8 +84,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
             log.info("엑세스 토큰 만료");
+            sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
             return;
         }
 
