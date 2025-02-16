@@ -5,6 +5,9 @@ public class Constants {
     // 최대 주소 갯수
     public static final int MAX_ADDRESS_COUNT = 6;
 
+    // 수동 추첨 가능 기한 (시간 단위)
+    public static final int DRAW_DEADLINE = 24;
+
     // 배송지 입력 기한 (시간 단위)
     public static final int ADDRESS_DEADLINE = 72;
 
