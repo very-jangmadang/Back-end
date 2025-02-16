@@ -89,8 +89,8 @@ public class DeliverySchedulerServiceImpl implements DeliverySchedulerService {
                 scheduler.unscheduleJob(triggerKey);
                 scheduler.deleteJob(jobKey);
             }
-            else
-                throw new CustomException(ErrorStatus.JOB_NOT_FOUND);
+//            else
+//                throw new CustomException(ErrorStatus.JOB_NOT_FOUND);
 
         } catch (SchedulerException e) {
             throw new CustomException(ErrorStatus.JOB_CANCEL_FAILED);
