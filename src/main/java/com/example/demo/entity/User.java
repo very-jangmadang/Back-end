@@ -52,10 +52,10 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes;
 
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "user")
     private List<Follow> followings;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "follower")
     private List<Follow> followers;
 
     @Column(name = "profile_image_url")
