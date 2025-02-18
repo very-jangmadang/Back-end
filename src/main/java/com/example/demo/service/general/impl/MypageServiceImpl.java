@@ -108,6 +108,18 @@ public class MypageServiceImpl implements MypageService {
 
         return new ReviewWithAverageDTO(reviewResponseDTO, averageScore, reviewCount);
     }
+
+    @Transactional
+    public boolean updateFollowerVisibility(Long userId, boolean isVisible) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        // 팔로워 수 공개 여부 설정
+        user.setFollowerVisible(isVisible);
+        userRepository.updateFollowerVisibility(userId, isVisible);
+
+        return isVisible;
+    }
   
     @Override
     public MypageResponseDTO.AddressListDto getAddresses() {
@@ -304,10 +316,12 @@ public class MypageServiceImpl implements MypageService {
                     .anyMatch(follow -> follow.getFollower() != null && follow.getFollower().getId().equals(loginId));
         }
 
+        Integer followerNum = user.isFollowerVisible() ? user.getFollowers().size() : null;
+
         return MypageResponseDTO.ProfileInfoDto
                 .builder()
                 .nickname(user.getNickname())
-                .followerNum(user.getFollowers().size())
+                .followerNum(followerNum)
                 .reviewNum(myReviews.size())
                 .followStatus(followStatus)
                 .profileImageUrl(user.getProfileImageUrl())
@@ -333,6 +347,7 @@ public class MypageServiceImpl implements MypageService {
                     .anyMatch(follow -> follow.getFollower() != null && follow.getFollower().getId().equals(loginId));
         }
 
+        Integer followerNum = user.isFollowerVisible() ? user.getFollowers().size() : null;
 
         return MypageResponseDTO.ProfileInfoWithReviewsDto.builder()
                 .reviews(reviewResponseDTO)
@@ -341,7 +356,7 @@ public class MypageServiceImpl implements MypageService {
                 .profileImageUrl(user.getProfileImageUrl())
                 .followStatus(followStatus)
                 .avgScore(user.getAverageScore())
-                .followerNum(user.getFollowers().size())
+                .followerNum(followerNum)
                 .build();
     }
 
