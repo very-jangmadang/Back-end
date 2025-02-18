@@ -27,6 +27,7 @@ public class DeliveryResponseDTO {
         private boolean isShippingExtended;
         private String invoiceNumber;
         private MypageResponseDTO.AddressDto address;
+        private RaffleDTO raffleInfo;
     }
 
     @Getter
@@ -69,11 +70,11 @@ public class DeliveryResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ShippingDto {
-        private Long deliveryId;
-        private Long raffleId;
-        private Long winnerId;
-        private Long addressId;
+    public static class RaffleDTO {
+        private String raffleName;
+        private String raffleImage;
+        private LocalDateTime drawAt;
+        private long extendableMinutes;
     }
 
 }
