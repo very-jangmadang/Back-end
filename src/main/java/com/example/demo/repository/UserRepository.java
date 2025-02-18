@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.entity.Payment.UserPayment;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,4 +28,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT u.id FROM User u WHERE u.email = :email")
     Long findIdByEmail(String email);
 
+    Optional<User> findByEmail(String email);
 }

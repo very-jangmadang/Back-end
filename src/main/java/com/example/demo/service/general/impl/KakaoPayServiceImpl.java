@@ -12,8 +12,10 @@ import com.example.demo.domain.dto.Payment.PaymentRequest;
 import com.example.demo.domain.dto.Payment.ReadyResponse;
 import com.example.demo.entity.Payment.Payment;
 import com.example.demo.entity.Payment.UserPayment;
+import com.example.demo.entity.User;
 import com.example.demo.repository.PaymentRepository;
 import com.example.demo.repository.UserPaymentRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.KakaoPayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
     private final UserPaymentConverter userPaymentConverter;
     private final KakaoPayConverter kakaoPayConverter;
     private final String secretKey;
+    private final UserRepository userRepository;
 
     public KakaoPayServiceImpl(
             @Value("${kakao.pay.cid}") String cid,
@@ -48,10 +51,12 @@ public class KakaoPayServiceImpl implements KakaoPayService {
             @Value("${kakao.pay.failUrl}") String failUrl,
             PaymentRepository paymentRepository,
             UserPaymentRepository userPaymentRepository,
-            UserPaymentConverter userPaymentConverter
+            UserPaymentConverter userPaymentConverter,
+            UserRepository userRepository
     ) {
         this.secretKey = secretKey;
         this.paymentRepository = paymentRepository;
+        this.userRepository = userRepository;
         this.userPaymentRepository = userPaymentRepository;
         this.restTemplate = new RestTemplate();
         this.userPaymentConverter = userPaymentConverter;
@@ -96,11 +101,12 @@ public class KakaoPayServiceImpl implements KakaoPayService {
             savePaymentEntity(payment);
 
             UserPayment userPayment = findOrCreateUser(payment.getUserId());
+            User user = findUser(payment.getUserId());
 
             // 유저 티켓 수 업데이트 (배송비가 아닌 경우)
             if (!payment.getItemId().equals("배송비")) {
-                int updatedTickets = userPayment.getUserTicket() + payment.getAmount();
-                userPayment.setUserTicket(updatedTickets);
+                int updatedTickets = user.getTicket_num() + payment.getAmount();
+                user.setTicket_num(updatedTickets);
                 userPayment.setUpdatedAt(LocalDateTime.now());
             }
 
@@ -109,6 +115,11 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         });
 
         return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, approveResponse);
+    }
+
+    private User findUser(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
     private UserPayment findOrCreateUser(String userId) {

@@ -29,7 +29,4 @@ public class UserPayment extends BaseEntity {
     @Column(nullable = false)
     private String bankNumber;
 
-    @NotNull
-    @Column(nullable = false)
-    private int userTicket;
 }

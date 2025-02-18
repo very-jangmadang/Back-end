@@ -10,8 +10,10 @@ import com.example.demo.domain.dto.Payment.ExchangeRequest;
 import com.example.demo.domain.dto.Payment.ExchangeResponse;
 import com.example.demo.entity.Payment.Exchange;
 import com.example.demo.entity.Payment.UserPayment;
+import com.example.demo.entity.User;
 import com.example.demo.repository.ExchangeRepository;
 import com.example.demo.repository.UserPaymentRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.ExchangeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,22 +33,22 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserPaymentServiceImpl.class);
     private final ExchangeRepository exchangeRepository;
-    private final UserPaymentRepository userPaymentRepository;
     private final ExchangeConverter exchangeConverter;
+    private final UserRepository userRepository;
 
     @Override
     public ApiResponse<ExchangeResponse> exchange(String userId, ExchangeRequest request) {
         // 유저 결제 정보 조회 (없으면 예외 발생)
-        UserPayment userPayment = findUserPayment(userId);
+        User user = findUser(userId);
 
         // 환전 가능 여부 체크 (잔액 부족 시 오류)
-        if (userPayment.getUserTicket() < request.getAmount() ) {
+        if (user.getTicket_num() < request.getAmount() ) {
             throw new CustomException(ErrorStatus.USER_INSUFFICIENT_BALANCE);
         }
 
         // 환전 처리 (아직 실제 로직 구현 안함. 티켓만 차감됩니다.)
-        userPayment.setUserTicket(userPayment.getUserTicket() - request.getAmount());
-        userPaymentRepository.save(userPayment);
+        user.setTicket_num(user.getTicket_num() - request.getAmount());
+        userRepository.save(user);
 
         Exchange exchange = exchangeConverter.toEntity(userId, request);
         exchangeRepository.save(exchange);
@@ -57,8 +59,8 @@ public class ExchangeServiceImpl implements ExchangeService {
         return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, exchangeResponse);
     }
 
-    private UserPayment findUserPayment(String userId) {
-        return userPaymentRepository.findByUserId(userId)
+    private User findUser(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
@@ -80,9 +82,10 @@ public class ExchangeServiceImpl implements ExchangeService {
             Page<Exchange> exchanges = exchangeRepository.findByUserIdAndExchangedAtAfterOrderByExchangedAtDesc(
                     userId, startDate, pageable);
 
+            User user = findUser(userId);
             List<ExchangeHistoryResponse> exchangeHistory = exchanges.stream()
                     .map(exchange -> exchangeConverter.toExchangeHistoryResponse(
-                            exchange, userPaymentRepository.findByUserId(userId).get()))
+                            exchange, user))
                     .collect(Collectors.toList());
 
             return ApiResponse.of(SuccessStatus.PAYMENT_HISTORY_SUCCESS, exchangeHistory);

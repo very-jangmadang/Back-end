@@ -8,8 +8,10 @@ import com.example.demo.domain.converter.UserPaymentConverter;
 import com.example.demo.domain.dto.Payment.*;
 import com.example.demo.entity.Payment.Payment;
 import com.example.demo.entity.Payment.UserPayment;
+import com.example.demo.entity.User;
 import com.example.demo.repository.PaymentRepository;
 import com.example.demo.repository.UserPaymentRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.UserPaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +31,11 @@ public class UserPaymentServiceImpl implements UserPaymentService {
     private final UserPaymentRepository userPaymentRepository;
     private final PaymentRepository paymentRepository;
     private final UserPaymentConverter userPaymentConverter;
+    private final UserRepository userRepository;
 
-    public UserPaymentServiceImpl (UserPaymentRepository userPaymentRepository, PaymentRepository paymentRepository, UserPaymentConverter userPaymentConverter) {
+    public UserPaymentServiceImpl (UserRepository userRepository, UserPaymentRepository userPaymentRepository, PaymentRepository paymentRepository, UserPaymentConverter userPaymentConverter) {
         this.userPaymentRepository = userPaymentRepository;
+        this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
         this.userPaymentConverter = userPaymentConverter;
     }
@@ -39,13 +43,18 @@ public class UserPaymentServiceImpl implements UserPaymentService {
 
     @Override
     public ApiResponse<UserTicketResponse> getUserTickets(String userId) {
-        UserPayment userPayment = findOrCreateUserPayment(userId);
+        User user = findUser(userId);
 
         UserTicketResponse response = new UserTicketResponse();
-        response.setTicket(userPayment.getUserTicket());
-        response.setUpdatedAt(userPayment.getUpdatedAt());
+        response.setTicket(user.getTicket_num());
+        response.setUpdatedAt(user.getUpdatedAt());
 
         return ApiResponse.of(SuccessStatus.USER_PAYMENT_GET_TICKET, response);
+    }
+
+    private User findUser(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
     @Override
@@ -90,9 +99,10 @@ public class UserPaymentServiceImpl implements UserPaymentService {
             Page<Payment> payments = paymentRepository.findByUserIdAndApprovedAtAfterOrderByApprovedAtDesc(
                     userId, startDate, pageable);
 
+            User user = findUser(userId);
             List<PaymentResponse> paymentHistory = payments.stream()
                     .map(payment -> userPaymentConverter.toPaymentResponse(
-                            payment, userPaymentRepository.findByUserId(userId).get()))
+                            payment, user))
                     .collect(Collectors.toList());
 
             return ApiResponse.of(SuccessStatus.PAYMENT_HISTORY_SUCCESS, paymentHistory);
@@ -109,17 +119,18 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         }
 
         UserPayment userPayment = findOrCreateUserPayment(userId);
+        User user = findUser(userId);
 
         switch (role) {
             case "구매자":
-                if (userPayment.getUserTicket() < ticketCount) {
+                if (user.getTicket_num() < ticketCount) {
                     throw new CustomException(ErrorStatus.TRADE_INSUFFICIENT_TICKETS);
                 }
-                userPayment.setUserTicket(userPayment.getUserTicket() - ticketCount);
+                user.setTicket_num(user.getTicket_num() - ticketCount);
                 break;
 
             case "판매자":
-                userPayment.setUserTicket(userPayment.getUserTicket() + ticketCount);
+                user.setTicket_num(user.getTicket_num() + ticketCount);
                 break;
 
             default:
