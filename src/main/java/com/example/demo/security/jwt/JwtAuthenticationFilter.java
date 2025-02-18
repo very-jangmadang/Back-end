@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -54,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     jwtUtil.isExpired(accessToken);
                 } catch (ExpiredJwtException e) {
                     log.info("엑세스 토큰 만료");
-                    sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
+                    sendJsonErrorResponse(request, response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
                     return;
                 }
 
@@ -75,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (accessToken == null) {
-            sendJsonErrorResponse(response, ErrorStatus.TOKEN_NOT_FOUND);
+            sendJsonErrorResponse(request, response, ErrorStatus.TOKEN_NOT_FOUND);
             log.info("쿠키와 헤더에 토큰없음");
             return;
         }
@@ -85,7 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
             log.info("엑세스 토큰 만료");
-            sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
+            sendJsonErrorResponse(request, response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
             return;
         }
 
@@ -93,7 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String category = jwtUtil.getCategory(accessToken);
 
         if (!category.equals("access")) {
-            sendJsonErrorResponse(response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
+            sendJsonErrorResponse(request, response, ErrorStatus.TOKEN_INVALID_ACCESS_TOKEN);
             log.info("엑세스 토큰이 아님");
             return;
         }
@@ -163,9 +164,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // JSON 형식으로 응답
-    private void sendJsonErrorResponse(HttpServletResponse response, ErrorStatus errorStatus) throws IOException {
-        // CORS 헤더 추가
-        response.setHeader("Access-Control-Allow-Origin", "https://www.jangmadang.site");
+    private void sendJsonErrorResponse(HttpServletRequest request, HttpServletResponse response, ErrorStatus errorStatus) throws IOException {
+        // 요청한 Origin 가져오기
+        String origin = request.getHeader("Origin");
+
+        // 허용할 Origin 목록
+        List<String> allowedOrigins = List.of("https://www.jangmadang.site", "http://localhost:8080");
+
+        // 요청한 Origin이 허용된 경우에만 응답 헤더 추가
+        if (allowedOrigins.contains(origin)) {
+            response.setHeader("Access-Control-Allow-Origin", origin);
+        }
         response.setHeader("Access-Control-Allow-Credentials", "true");
 
         ErrorReasonDTO errorReason = errorStatus.getReason();
@@ -183,6 +192,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         writer.write(jsonResponse);
         writer.flush();
     }
-
-
 }
