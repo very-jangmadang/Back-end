@@ -67,7 +67,7 @@ public class User extends BaseEntity{
     private String refreshToken;
 
     @Column(name="follower_visible")
-    private boolean followerVisible=true;
+    private Boolean followerVisible=true;
 
     public void addAddress(Address address) {
         addresses.add(address);
