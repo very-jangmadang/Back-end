@@ -20,7 +20,7 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     int countApplyByRaffleId(Long raffleId);
 
     // 팔로우 수
-    @Query("SELECT COUNT(f) FROM Follow f WHERE f.user.id = :userId")
+    @Query("SELECT COUNT(f) FROM Follow f WHERE f.storeId = :userId")
     int countFollowsByUserId(Long userId);
 
     // 리뷰 수
