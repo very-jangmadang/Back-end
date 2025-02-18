@@ -15,6 +15,7 @@ public class FollowConverter {
 
         return new FollowResponse(
                 follow.getStoreId(),
+                (store != null) ? store.getNickname() : null, // store의 닉네임 반환
                 (store != null) ? store.getProfileImageUrl() : null // store의 프로필 이미지 반환
         );
     }
