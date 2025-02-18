@@ -36,6 +36,7 @@ public class RaffleServiceImpl implements RaffleService {
     private final ImageService imageService;
     private final ApplyRepository applyRepository;
     private final DeliveryRepository deliveryRepository;
+    private final FollowRepository followRepository;
 
     @Override
     @Transactional
@@ -92,6 +93,8 @@ public class RaffleServiceImpl implements RaffleService {
         String state;
         String isWinner = "no";
         Long deliveryId = null;
+        boolean followStatus = false;
+
         likeCount = raffleRepository.countLikeByRaffleId(raffleId);
         applyCount = raffleRepository.countApplyByRaffleId(raffleId);
         followCount = raffleRepository.countFollowsByUserId(raffleUserId);
@@ -151,15 +154,18 @@ public class RaffleServiceImpl implements RaffleService {
                     isWinner = "no";
                 }
             }
+
+            followStatus = followRepository.existsByUserIdAndStoreId(currentUserid, raffleUserId);
         }
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
+
 
         // 3. 조회 수 증가
         raffle.addView();
 
         // 4. DTO 변환 및 반환
-        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount, state, isWinner, raffleStatus, deliveryId);
+        return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount, state, isWinner, raffleStatus, deliveryId, followStatus);
     }
 
     @Override

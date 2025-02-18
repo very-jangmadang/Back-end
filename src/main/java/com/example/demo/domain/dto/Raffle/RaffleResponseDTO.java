@@ -45,6 +45,8 @@ public class RaffleResponseDTO {
         private String isWinner;
         private RaffleStatus raffleStatus;
         private Long deliveryId;
+        private boolean followStatus;
+        private String storeImageUrl;
     }
 
     @Getter
