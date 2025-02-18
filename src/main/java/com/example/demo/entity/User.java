@@ -66,6 +66,7 @@ public class User extends BaseEntity{
 
     private String refreshToken;
 
+    @Builder.Default
     @Column(name="follower_visible")
     private Boolean followerVisible=true;
 
