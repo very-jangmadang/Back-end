@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +52,21 @@ public class MypageController {
     public ApiResponse<MypageResponseDTO.ProfileInfoWithReviewsDto> getProfileReviews(@PathVariable("userId") Long userId) {
         MypageResponseDTO.ProfileInfoWithReviewsDto reviews = mypageService.getProfileReviews(userId);
         return ApiResponse.of(SuccessStatus._OK, reviews);
+    }
+
+    @Transactional
+    @Operation(summary = "내 팔로워 수 공개/비공개 설정")
+    @PatchMapping("/api/member/mypage/secretInfo")
+    public ApiResponse<Boolean> secretInfo(Authentication authentication, @RequestBody Boolean isVisible) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+
+        boolean updatedVisibility = mypageService.updateFollowerVisibility(userId, isVisible);
+
+        return ApiResponse.of(SuccessStatus._OK, updatedVisibility);
     }
 
 

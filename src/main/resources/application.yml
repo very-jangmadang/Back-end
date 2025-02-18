@@ -2,7 +2,7 @@ base-url: "https://${DOMAIN}"
 redirect-url: "https://${DOMAIN}/swagger-ui/index.html"
 
 server:
-  port: 8080 
+  port: 8080
 
 spring:
   datasource:

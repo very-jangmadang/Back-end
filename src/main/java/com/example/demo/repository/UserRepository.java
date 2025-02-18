@@ -20,6 +20,9 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("UPDATE User u SET u.ticket_num = u.ticket_num + :refundTicket WHERE u.id IN :userIds")
     void batchUpdateTicketNum(@Param("refundTicket") int refundTicket, @Param("userIds") List<Long> userIds);
 
+    @Modifying
+    @Query("UPDATE User u SET u.followerVisible = :isVisible WHERE u.id = :userId")
+    void updateFollowerVisibility(@Param("userId") Long userId, @Param("isVisible") boolean isVisible);
 
     boolean existsByEmail(String email);
 

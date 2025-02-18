@@ -13,6 +13,8 @@ public interface MypageService {
     //내 리뷰 조회
     ReviewWithAverageDTO getMyReviewsByUserId(Long userId);
 
+    boolean updateFollowerVisibility(Long userId, boolean isVisible);
+
     String changeNickname(Long userId, String nickname);
 
     MypageResponseDTO.AddressListDto getAddresses();

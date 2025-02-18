@@ -66,6 +66,10 @@ public class User extends BaseEntity{
 
     private String refreshToken;
 
+    @Builder.Default
+    @Column(name="follower_visible")
+    private Boolean followerVisible=true;
+
     public void addAddress(Address address) {
         addresses.add(address);
         address.setUser(this);
@@ -80,4 +84,9 @@ public class User extends BaseEntity{
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public void setFollowerVisible(boolean followerVisible) {
+        this.followerVisible = followerVisible;
+    }
+
 }
