@@ -8,6 +8,8 @@ import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class DeliveryConverter {
 
@@ -23,7 +25,7 @@ public class DeliveryConverter {
     }
 
     public static DeliveryResponseDTO.DeliveryDto toDeliveryDto(
-            Delivery delivery, MypageResponseDTO.AddressDto addressDto) {
+            Delivery delivery, MypageResponseDTO.AddressDto addressDto, DeliveryResponseDTO.RaffleDTO raffleDto) {
 
         return DeliveryResponseDTO.DeliveryDto.builder()
                 .raffleId(delivery.getRaffle().getId())
@@ -35,6 +37,7 @@ public class DeliveryConverter {
                 .isShippingExtended(delivery.isShippingExtended())
                 .invoiceNumber(delivery.getInvoiceNumber())
                 .address(addressDto)
+                .raffleInfo(raffleDto)
                 .build();
     }
 
@@ -66,6 +69,17 @@ public class DeliveryConverter {
     public static DeliveryResponseDTO.ResponseDto toResponseDto(Long deliveryId) {
         return DeliveryResponseDTO.ResponseDto.builder()
                 .deliveryId(deliveryId)
+                .build();
+    }
+
+    public static DeliveryResponseDTO.RaffleDTO toRaffleDto(Delivery delivery) {
+        Duration duration = Duration.between(LocalDateTime.now(), delivery.getShippingDeadline().plusHours(Constants.WAIT));
+
+        return DeliveryResponseDTO.RaffleDTO.builder()
+                .raffleName(delivery.getRaffle().getName())
+                .raffleImage(delivery.getRaffle().getImages().get(0).getImageUrl())
+                .drawAt(delivery.getCreatedAt())
+                .extendableMinutes(duration.toMinutes())
                 .build();
     }
 

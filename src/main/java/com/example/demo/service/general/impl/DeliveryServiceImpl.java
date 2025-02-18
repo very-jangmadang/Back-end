@@ -62,7 +62,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         } else
             addressDto = toAddressDto(delivery.getAddress());
 
-        return toDeliveryDto(delivery, addressDto);
+        DeliveryResponseDTO.RaffleDTO raffleDto = null;
+        if (deliveryStatus == DeliveryStatus.SHIPPING_EXPIRED)
+            raffleDto = toRaffleDto(delivery);
+
+        return toDeliveryDto(delivery, addressDto, raffleDto);
     }
 
     @Override
