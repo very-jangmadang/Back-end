@@ -32,6 +32,7 @@ public class DrawResponseDTO {
         private int minTicket;
         private int applyTicket;
         private BigDecimal totalAmount;
+        private long remainedMinutes;
     }
 
     @Getter
