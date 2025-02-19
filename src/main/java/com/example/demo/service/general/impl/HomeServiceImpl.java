@@ -80,8 +80,10 @@ public class HomeServiceImpl implements HomeService {
 
 
         for (Follow following : followings) {
-            List<Raffle> followingRaffles = following.getUser().getRaffles();
-            followingAllRaffles.addAll(followingRaffles);
+            if (following.getStoreId() != null) {
+                List<Raffle> storeRaffles = raffleRepository.findAllByUserId(following.getStoreId());
+                followingAllRaffles.addAll(storeRaffles);
+            }
         }
 
         List<Raffle> myFollowRaffles = sortRafflesByEndAt(followingAllRaffles, 5);
@@ -175,8 +177,10 @@ public class HomeServiceImpl implements HomeService {
 
 
         for (Follow following : followings) {
-            List<Raffle> followingRaffles = following.getUser().getRaffles();
-            followingAllRaffles.addAll(followingRaffles);
+            if (following.getStoreId() != null) {
+                List<Raffle> storeRaffles = raffleRepository.findAllByUserId(following.getStoreId());
+                followingAllRaffles.addAll(storeRaffles);
+            }
         }
 
         List<Raffle> myFollowRaffles = sortRafflesByEndAt(followingAllRaffles, 5);
