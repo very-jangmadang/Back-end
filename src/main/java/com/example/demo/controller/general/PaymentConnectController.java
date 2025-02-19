@@ -1,10 +1,14 @@
 package com.example.demo.controller.general;
 
+import com.example.demo.base.code.exception.CustomException;
+import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.controller.BaseController;
 import com.example.demo.domain.converter.KakaoPayConverter;
 import com.example.demo.domain.dto.Payment.ApproveResponse;
 import com.example.demo.domain.dto.Payment.PaymentRequest;
 import com.example.demo.domain.dto.Payment.ReadyResponse;
+import com.example.demo.entity.Payment.Payment;
+import com.example.demo.repository.PaymentRepository;
 import com.example.demo.service.general.KakaoPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Cookie;
@@ -29,6 +33,7 @@ public class PaymentConnectController {
 
     private final KakaoPayService kakaoPayService;
     private final BaseController baseController;
+    private final PaymentRepository paymentRepository;
 
     @Value("${kakao.redirect-url}")
     private String redirectUrl;
@@ -56,31 +61,21 @@ public class PaymentConnectController {
         logger.info("tid: {}", tid);
 
         ApproveResponse approveResponse = kakaoPayService.approvePayment(pg_token, tid).getResult();
+
         String redirectTarget = redirectUrl + "/?approvedAt=" + approveResponse.getApprovedAt().toString();
+
+        // 배송비는 다른 경로로 리다이렉트
+        Payment payment = findPaymentByTid(tid);
+        if (payment.getItemId().equals("배송비")) {
+            redirectTarget = redirectUrlDelivery + "/?approvedAt=" + approveResponse.getApprovedAt().toString();
+        }
 
         return "redirect:" + redirectTarget;
     }
 
-    @GetMapping("/approve/delivery")
-    public String approveDeliveryPayment(@RequestParam String pg_token, HttpServletRequest request) {
-
-        String tid = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("tid".equals(cookie.getName())) {
-                    tid = cookie.getValue();
-                    break;
-                }
-            }
-        }
-        logger.info("pg_token: {}", pg_token);
-        logger.info("tid: {}", tid);
-
-        ApproveResponse approveResponse = kakaoPayService.approvePayment(pg_token, tid).getResult();
-        String redirectTarget = redirectUrlDelivery + "/?approvedAt=" + approveResponse.getApprovedAt().toString();
-
-        return "redirect:" + redirectTarget;
+    private Payment findPaymentByTid(String tid) {
+        return paymentRepository.findByTid(tid)
+                .orElseThrow(() -> new CustomException(ErrorStatus.PAYMENT_NOT_FOUND));
     }
 
     @GetMapping("/redirect")
