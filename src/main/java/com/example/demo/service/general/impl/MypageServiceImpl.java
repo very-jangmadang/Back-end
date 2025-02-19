@@ -313,7 +313,7 @@ public class MypageServiceImpl implements MypageService {
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
             Long loginId = Long.parseLong(authentication.getName());
             followStatus = user.getFollowers().stream()
-                    .anyMatch(follow -> follow.getStoreId() != null && follow.getStoreId().equals(loginId));
+                    .anyMatch(follow -> follow.getUser() != null && follow.getUser().getId().equals(loginId));
         }
 
         Integer followerNum = Boolean.TRUE.equals(user.getFollowerVisible()) ? user.getFollowers().size() : -1;
@@ -344,7 +344,7 @@ public class MypageServiceImpl implements MypageService {
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
             Long loginId = Long.parseLong(authentication.getName());
             followStatus = user.getFollowers().stream()
-                    .anyMatch(follow -> follow.getStoreId() != null && follow.getStoreId().equals(loginId));
+                    .anyMatch(follow -> follow.getUser() != null && follow.getUser().getId().equals(loginId));
         }
 
         Integer followerNum = Boolean.TRUE.equals(user.getFollowerVisible()) ? user.getFollowers().size() : -1;
