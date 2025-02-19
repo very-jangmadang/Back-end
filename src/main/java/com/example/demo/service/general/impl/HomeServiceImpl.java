@@ -6,7 +6,6 @@ import com.example.demo.domain.converter.HomeConverter;
 import com.example.demo.domain.dto.Home.*;
 import com.example.demo.entity.*;
 import com.example.demo.repository.CategoryRepository;
-import com.example.demo.repository.LikeRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.HomeService;
@@ -80,8 +79,10 @@ public class HomeServiceImpl implements HomeService {
 
 
         for (Follow following : followings) {
-            List<Raffle> followingRaffles = following.getUser().getRaffles();
-            followingAllRaffles.addAll(followingRaffles);
+            if (following.getStoreId() != null) {
+                List<Raffle> storeRaffles = raffleRepository.findAllByUserId(following.getStoreId());
+                followingAllRaffles.addAll(storeRaffles);
+            }
         }
 
         List<Raffle> myFollowRaffles = sortRafflesByEndAt(followingAllRaffles, 5);
@@ -175,8 +176,10 @@ public class HomeServiceImpl implements HomeService {
 
 
         for (Follow following : followings) {
-            List<Raffle> followingRaffles = following.getUser().getRaffles();
-            followingAllRaffles.addAll(followingRaffles);
+            if (following.getStoreId() != null) {
+                List<Raffle> storeRaffles = raffleRepository.findAllByUserId(following.getStoreId());
+                followingAllRaffles.addAll(storeRaffles);
+            }
         }
 
         List<Raffle> myFollowRaffles = sortRafflesByEndAt(followingAllRaffles, 5);
