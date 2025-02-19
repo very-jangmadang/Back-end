@@ -72,8 +72,8 @@ public class UserController {
 
         userService.addRefreshToken(userId, refreshToken); // 리프레시 토큰 저장
 
-        httpServletResponse.addCookie(jwtUtil.createCookie("access", accessToken, 60 * 60)); // 쿠키로 전달
-        httpServletResponse.addCookie(jwtUtil.createCookie("refresh", refreshToken, 3 * 60 * 60)); // 쿠키로 전달
+        httpServletResponse.addCookie(jwtUtil.createCookie("access", accessToken, 24 * 60 * 60)); // 24시간(개발용)
+        httpServletResponse.addCookie(jwtUtil.createCookie("refresh", refreshToken, 7 * 24 * 60 * 60)); // 1주일(개발용)
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }

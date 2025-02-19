@@ -36,7 +36,7 @@ public class JWTUtil {
                 .claim("email", email)
                 .claim("role", "USER")
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 만료시간 60분
+                .expiration(new Date(System.currentTimeMillis() + 12 * 60 * 60 * 1000)) // 12시간(개발용)
                 .signWith(secretKey)
                 .compact();
     }
@@ -49,7 +49,7 @@ public class JWTUtil {
                 .claim("email", email)
                 .claim("role", "USER")
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 3 * 60 * 60 * 1000)) // 만료시간 3시간
+                .expiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // 1주일(개발용)
                 .signWith(secretKey)
                 .compact();
     }
@@ -116,7 +116,7 @@ public class JWTUtil {
 
     public Cookie createCookie(String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(maxAge); // 1시간
+        cookie.setMaxAge(maxAge); // 초 단위
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setDomain("jangmadang.site");
