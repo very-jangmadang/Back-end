@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface UserPaymentService {
     ApiResponse<UserTicketResponse> getUserTickets(String userId);
-    ApiResponse<UserBankInfoResponse> getUserPaymentInfo(String userId, UserBankInfoRequest userBankInfoRequest);
+    ApiResponse<UserBankInfoResponse> postUserPaymentInfo(String userId, UserBankInfoRequest userBankInfoRequest);
+    ApiResponse<UserBankInfoResponse> getUserPaymentInfo(String userId);
     ApiResponse<List<PaymentResponse>> getPaymentHistory(String userId, String period);
     ApiResponse<Void> tradeTickets(String userId, String role, int ticketCount);
 }

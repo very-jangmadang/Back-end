@@ -23,10 +23,16 @@ public class PaymentController {
         return userPaymentService.getUserTickets(userId);
     }
 
-    @PostMapping("/bankInfo")
-    public ApiResponse<UserBankInfoResponse> getUserPaymentInfo(@RequestBody UserBankInfoRequest userBankInfoRequest) {
+    @GetMapping("/bankInfo")
+    public ApiResponse<UserBankInfoResponse> getUserPaymentInfo() {
         String userId = baseController.getCurrentUserEmail();
-        return userPaymentService.getUserPaymentInfo(userId, userBankInfoRequest);
+        return userPaymentService.getUserPaymentInfo(userId);
+    }
+
+    @PostMapping("/bankInfo")
+    public ApiResponse<UserBankInfoResponse> postUserPaymentInfo(@RequestBody UserBankInfoRequest userBankInfoRequest) {
+        String userId = baseController.getCurrentUserEmail();
+        return userPaymentService.postUserPaymentInfo(userId, userBankInfoRequest);
     }
 
     @GetMapping("/history/charge")

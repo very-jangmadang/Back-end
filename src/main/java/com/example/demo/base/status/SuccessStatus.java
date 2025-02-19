@@ -44,6 +44,7 @@ public enum SuccessStatus implements BaseCode {
     // 7. Yoon - 유저 결제 관련 성공
     USER_PAYMENT_GET_TICKET(HttpStatus.OK, "USER_PAYMENT_2001", "유저의 현재 티켓 갯수가 성공적으로 조회되었습니다."),
     USER_PAYMENT_UPDATE_BANK_INFO(HttpStatus.OK, "USER_PAYMENT_2002", "유저의 은행 정보가 성공적으로 업데이트되었습니다."),
+    USER_PAYMENT_GET_BANK_INFO(HttpStatus.OK, "USER_PAYMENT_2003", "유저의 은행 정보가 성공적으로 조회되었습니다."),
 
     // 8. Yoon - 환전 관련 성공
     EXCHANGE_HISTORY_SUCCESS(HttpStatus.OK, "EXCHANGE_2001", "성공적으로 환전되었습니다."),

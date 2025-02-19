@@ -58,7 +58,7 @@ public class UserPaymentServiceImpl implements UserPaymentService {
     }
 
     @Override
-    public ApiResponse<UserBankInfoResponse> getUserPaymentInfo(String userId, UserBankInfoRequest request) {
+    public ApiResponse<UserBankInfoResponse> postUserPaymentInfo(String userId, UserBankInfoRequest request) {
         UserPayment userPayment = findOrCreateUserPayment(userId);
 
         // 유저 결제 정보 업데이트 후 저장
@@ -71,6 +71,18 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         response.setBankNumber(userPayment.getBankNumber());
 
         return ApiResponse.of(SuccessStatus.USER_PAYMENT_UPDATE_BANK_INFO, response);
+    }
+
+    @Override
+    public ApiResponse<UserBankInfoResponse> getUserPaymentInfo(String userId) {
+        UserPayment userPayment = findOrCreateUserPayment(userId);
+
+        // 응답 객체 생성
+        UserBankInfoResponse response = new UserBankInfoResponse();
+        response.setBankName(userPayment.getBankName());
+        response.setBankNumber(userPayment.getBankNumber());
+
+        return ApiResponse.of(SuccessStatus.USER_PAYMENT_GET_BANK_INFO, response);
     }
 
     private UserPayment findOrCreateUserPayment(String userId) {
