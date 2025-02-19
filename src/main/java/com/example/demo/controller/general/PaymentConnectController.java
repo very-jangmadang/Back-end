@@ -33,6 +33,9 @@ public class PaymentConnectController {
     @Value("${kakao.redirect-url}")
     private String redirectUrl;
 
+    @Value("${kakao.delivery-url}")
+    private String redirectUrlDelivery;
+
     @Value("${kakao.domain}")
     private String domain;
 
@@ -54,6 +57,28 @@ public class PaymentConnectController {
 
         ApproveResponse approveResponse = kakaoPayService.approvePayment(pg_token, tid).getResult();
         String redirectTarget = redirectUrl + "/?approvedAt=" + approveResponse.getApprovedAt().toString();
+
+        return "redirect:" + redirectTarget;
+    }
+
+    @GetMapping("/approve/delivery")
+    public String approveDeliveryPayment(@RequestParam String pg_token, HttpServletRequest request) {
+
+        String tid = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("tid".equals(cookie.getName())) {
+                    tid = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        logger.info("pg_token: {}", pg_token);
+        logger.info("tid: {}", tid);
+
+        ApproveResponse approveResponse = kakaoPayService.approvePayment(pg_token, tid).getResult();
+        String redirectTarget = redirectUrlDelivery + "/?approvedAt=" + approveResponse.getApprovedAt().toString();
 
         return "redirect:" + redirectTarget;
     }
