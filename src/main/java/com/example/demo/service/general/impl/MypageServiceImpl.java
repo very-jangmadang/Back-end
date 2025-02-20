@@ -120,6 +120,13 @@ public class MypageServiceImpl implements MypageService {
 
         return isVisible;
     }
+
+    public boolean getFollowerVisibility(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        return user.getFollowerVisible();
+    }
   
     @Override
     public MypageResponseDTO.AddressListDto getAddresses() {
