@@ -6,6 +6,8 @@ import com.example.demo.entity.*;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
+
 
 @RequiredArgsConstructor
 public class RaffleConverter {
@@ -24,6 +26,7 @@ public class RaffleConverter {
                 .startAt(request.getStartAt().withSecond(0).withNano(0))
                 .endAt(request.getEndAt().withSecond(0).withNano(0))
                 .raffleStatus(RaffleStatus.UNOPENED)
+                .shippingFee(BigDecimal.valueOf(request.getShippingFee()))
                 .build();
     }
 
@@ -46,7 +49,7 @@ public class RaffleConverter {
                 .view(raffle.getView()) // 조회 수
                 .likeCount(likeCount) // 찜 수
                 .applyCount(applyCount) // 응모 수
-                .minUser(Math.round((float)raffle.getMinTicket() / raffle.getTicketNum())) // 판매자 희망 최소 참여자 수
+                .minUser((int) Math.ceil((float)raffle.getMinTicket() / raffle.getTicketNum())) // 판매자 희망 최소 참여자 수
                 .nickname(raffle.getUser().getNickname()) // 판매자 닉네임
                 .storeId(raffle.getUser().getId())
                 .followCount(followCount) // 팔로우 수

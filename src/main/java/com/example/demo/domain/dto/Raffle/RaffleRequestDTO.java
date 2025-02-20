@@ -25,5 +25,6 @@ public class RaffleRequestDTO {
         int minTicket;
         LocalDateTime startAt;
         LocalDateTime endAt;
+        int shippingFee;
     }
 }
