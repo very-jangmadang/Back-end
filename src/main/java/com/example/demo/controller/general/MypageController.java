@@ -69,6 +69,19 @@ public class MypageController {
         return ApiResponse.of(SuccessStatus._OK, updatedVisibility);
     }
 
+    @Operation(summary = "내 팔로워 수 공개/비공개 설정")
+    @GetMapping("/api/member/mypage/secretInfo")
+    public ApiResponse<Boolean> getsecretInfo(Authentication authentication){
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+
+        boolean Visibility = mypageService.getFollowerVisibility(userId);
+
+        return ApiResponse.of(SuccessStatus._OK,Visibility);
+    }
+
 
     @Operation(summary = "프로필 이미지 변경하기")
     @PatchMapping(value="/api/member/mypage/profile-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
