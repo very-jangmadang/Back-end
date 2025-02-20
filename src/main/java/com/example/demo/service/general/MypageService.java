@@ -14,6 +14,7 @@ public interface MypageService {
     ReviewWithAverageDTO getMyReviewsByUserId(Long userId);
 
     boolean updateFollowerVisibility(Long userId, boolean isVisible);
+    boolean getFollowerVisibility(Long userId);
 
     String changeNickname(Long userId, String nickname);
 
