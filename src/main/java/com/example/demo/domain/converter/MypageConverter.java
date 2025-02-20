@@ -18,9 +18,8 @@ public class MypageConverter {
 
         Duration duration = Duration.between(now, endAt);
 
-        boolean isFinished =
-                (raffle.getRaffleStatus() == RaffleStatus.ENDED) ||
-                        (raffle.getRaffleStatus() == RaffleStatus.UNFULFILLED);
+        boolean isFinished = duration.isNegative();
+
 
         return MypageResponseDTO.RaffleDto.builder()
                 .raffleId(raffle.getId())
