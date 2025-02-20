@@ -323,7 +323,7 @@ public class MypageServiceImpl implements MypageService {
                     .anyMatch(follow -> follow.getUser() != null && follow.getUser().getId().equals(loginId));
         }
 
-        Integer followerNum = Boolean.TRUE.equals(user.getFollowerVisible()) ? user.getFollowers().size() : -1;
+        Integer followerNum = Boolean.TRUE.equals(user.getFollowerVisible()) ? user.getFollowers().size() : -2;
 
         return MypageResponseDTO.ProfileInfoDto
                 .builder()
@@ -354,7 +354,7 @@ public class MypageServiceImpl implements MypageService {
                     .anyMatch(follow -> follow.getUser() != null && follow.getUser().getId().equals(loginId));
         }
 
-        Integer followerNum = Boolean.TRUE.equals(user.getFollowerVisible()) ? user.getFollowers().size() : -1;
+        Integer followerNum = Boolean.TRUE.equals(user.getFollowerVisible()) ? user.getFollowers().size() : -2;
 
         return MypageResponseDTO.ProfileInfoWithReviewsDto.builder()
                 .reviews(reviewResponseDTO)
