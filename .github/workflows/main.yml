@@ -100,5 +100,6 @@ jobs:
             sudo docker run -d \
               --name jangmadang-app \
               -p 8080:8080 \
+              -e TZ=Asia/Seoul \
               --env-file ~/.env \
               ajwoong/jangmadang:latest
