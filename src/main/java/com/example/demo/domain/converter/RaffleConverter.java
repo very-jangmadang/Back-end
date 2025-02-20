@@ -26,7 +26,7 @@ public class RaffleConverter {
                 .startAt(request.getStartAt().withSecond(0).withNano(0))
                 .endAt(request.getEndAt().withSecond(0).withNano(0))
                 .raffleStatus(RaffleStatus.UNOPENED)
-                .shippingFee(BigDecimal.valueOf(request.getShippingFee()))
+                .shippingFee(BigDecimal.valueOf(request.getDeliveryFee()))
                 .build();
     }
 

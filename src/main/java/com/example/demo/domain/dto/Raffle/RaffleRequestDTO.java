@@ -3,7 +3,6 @@ import com.example.demo.entity.base.enums.ItemStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -25,6 +24,6 @@ public class RaffleRequestDTO {
         int minTicket;
         LocalDateTime startAt;
         LocalDateTime endAt;
-        int shippingFee;
+        int deliveryFee;
     }
 }
