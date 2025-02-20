@@ -35,7 +35,7 @@ public class HomeServiceImpl implements HomeService {
         List<Raffle> raffles = raffleRepository.findAll();
 
         // 마감임박인 래플 5개 조회 (로그인 안 했을 시)
-        List<Raffle> rafflesSortedByEndAt = sortRafflesByEndAt(raffles, 5);
+        List<Raffle> rafflesSortedByEndAt = sortRafflesByEndAt24(raffles, 5);
 
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, null);
 
@@ -55,7 +55,7 @@ public class HomeServiceImpl implements HomeService {
         LocalDateTime now = LocalDateTime.now();
 
         // 마감임박인 래플 5개 조회 (로그인 했을 시, 본인이 찜한 여부까지 같이 전달)
-        List<Raffle> rafflesSortedByEndAt = sortRafflesByEndAt(raffles, 5);
+        List<Raffle> rafflesSortedByEndAt = sortRafflesByEndAt24(raffles, 5);
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, user);
 
 
@@ -139,7 +139,7 @@ public class HomeServiceImpl implements HomeService {
         List<Raffle> raffles = raffleRepository.findAll();
 
         // 마감임박인 래플 더보기 조회
-        List<Raffle> rafflesSortedByEndAt = sortRafflesByEndAt(raffles, null);
+        List<Raffle> rafflesSortedByEndAt = sortRafflesByEndAt24(raffles, null);
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, null);
 
         return HomeRaffleListDTO.builder()
@@ -156,7 +156,7 @@ public class HomeServiceImpl implements HomeService {
         List<Raffle> raffles = raffleRepository.findAll();
 
         // 마감임박인 래플 더보기 조회
-        List<Raffle> rafflesSortedByEndAt = sortRafflesByEndAt(raffles, null);
+        List<Raffle> rafflesSortedByEndAt = sortRafflesByEndAt24(raffles, null);
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, user);
 
         return HomeRaffleListDTO.builder()
@@ -307,6 +307,28 @@ public class HomeServiceImpl implements HomeService {
         else{
             return raffles.stream()
                     .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
+                    .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
+                    .toList();
+        }
+
+    }
+
+    private List<Raffle> sortRafflesByEndAt24(List<Raffle> raffles, Integer limit){
+        LocalDateTime now = LocalDateTime.now();
+
+        if(limit != null){
+            return raffles.stream()
+                    .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0 &&
+                            Duration.between(now, r.getEndAt()).toHours() <= 24)
+                    .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
+                    .limit(limit)
+                    .toList();
+        }
+
+        else{
+            return raffles.stream()
+                    .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0 &&
+                            Duration.between(now, r.getEndAt()).toHours() <= 24)
                     .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
                     .toList();
         }
