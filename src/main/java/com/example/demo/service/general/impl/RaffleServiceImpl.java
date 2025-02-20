@@ -99,8 +99,9 @@ public class RaffleServiceImpl implements RaffleService {
 
         likeCount = raffleRepository.countLikeByRaffleId(raffleId);
         applyCount = raffleRepository.countApplyByRaffleId(raffleId);
-        followCount = raffleRepository.countFollowsByUserId(raffleUserId);
         reviewCount = raffleRepository.countReviewsByUserId(raffleUserId);
+
+        followCount = Boolean.TRUE.equals(raffle.getUser().getFollowerVisible()) ? raffleRepository.countFollowsByUserId(raffleUserId) : -1;
 
         // 유저 정보 받아오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
