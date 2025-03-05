@@ -38,6 +38,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     @Override
     public ApiResponse<ExchangeResponse> exchange(String userId, ExchangeRequest request) {
+
         // 유저 결제 정보 조회 (없으면 예외 발생)
         User user = findUser(userId);
 
