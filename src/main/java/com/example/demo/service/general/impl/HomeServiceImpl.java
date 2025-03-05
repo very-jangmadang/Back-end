@@ -294,6 +294,7 @@ public class HomeServiceImpl implements HomeService {
     }
 
     private List<Raffle> sortRafflesByEndAt(List<Raffle> raffles, Integer limit){
+
         LocalDateTime now = LocalDateTime.now();
 
         if(limit != null){
