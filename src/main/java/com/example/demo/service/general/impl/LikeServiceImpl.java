@@ -38,7 +38,6 @@ public class LikeServiceImpl implements LikeService {
 
     // 찜하기
     public LikeResponseDTO addLike(Long raffleId, Long userId) {
-
             // Raffle과 User를 ID로 조회
             Raffle raffle = raffleRepository.findById(raffleId)
                     .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
