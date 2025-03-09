@@ -28,7 +28,7 @@ public class InquiryConverter {
                 .title(inquiry.getTitle())
                 .content(inquiry.getContent())
                 .nickname(inquiry.getUser().getNickname())
-                .timestamp(LocalDateTime.now())
+                .createdAt(inquiry.getCreatedAt())
                 .build();
     }
 

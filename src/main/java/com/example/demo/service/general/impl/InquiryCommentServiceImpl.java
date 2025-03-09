@@ -62,6 +62,12 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
 
         InquiryCommentResponseDTO commentResponse = InquiryCommentConverter.toCommentResponseDTO(comment);
 
+        // inquiryId도 포함하여 반환
+        commentResponse = commentResponse.toBuilder()
+                .inquiryId(inquiryId)  // inquiryId 추가
+                .build();
+
+
         return commentResponse;
     }
 

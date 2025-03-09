@@ -31,7 +31,7 @@ public class InquiryCommentConverter {
                 .title(comment.getTitle())
                 .content(comment.getContent())
                 .isHost(comment.isHost())
-                .timestamp(LocalDateTime.now())
+                .createdAt(comment.getCreatedAt())
                 .build();
     }
 
