@@ -15,7 +15,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     // 사용자 ID로 결제 내역을 조회하고, 승인 시간을 기준으로 내림차순 정렬하여 페이징 처리
     Page<Payment> findByUserIdAndApprovedAtAfterOrderByApprovedAtDesc(
-            String userId, LocalDateTime startDate, Pageable pageable);
+            Long userId, LocalDateTime startDate, Pageable pageable);
     // "배송비" 아이템에 대해 "APPROVED" 상태인 가장 최근 결제 정보를 조회
-    Payment findTopByUserIdAndStatusAndItemIdOrderByApprovedAtDesc(String userId, String status, String itemId);
+    Payment findTopByUserIdAndStatusAndItemIdOrderByApprovedAtDesc(
+            Long userId, String status, String itemId);
 }

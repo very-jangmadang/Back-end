@@ -234,7 +234,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         // Todo: Yoon 시작 - 배송비 환불
 
-        String userId = baseController.getCurrentUserEmail();
+        Long userId = baseController.getCurrentUserId();
         kakaoPayService.cancelPayment(userId);
 
         // Todo: Yoon 완료
