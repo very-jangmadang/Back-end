@@ -26,15 +26,20 @@ public class HomeController {
 
     @Operation(summary = "카테고리별 래플 조회")
     @GetMapping("/categories")
-    public ApiResponse<HomeRaffleListDTO> homeCategories(@RequestParam("categoryName") String categoryName){
-        HomeRaffleListDTO result = homeService.getHomeCategories(categoryName);
+    public ApiResponse<HomeRaffleListDTO> homeCategories(@RequestParam("categoryName") String categoryName,
+                                                         @RequestParam(defaultValue = "1") int page,
+                                                         @RequestParam(defaultValue = "16") int size){
+        HomeRaffleListDTO result = homeService.getHomeCategories(categoryName, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
     @Operation(summary = "마감임박 상품 더보기")
     @GetMapping("/approaching")
-    public ApiResponse<HomeRaffleListDTO> homeApproaching(){
-        HomeRaffleListDTO result = homeService.getHomeApproaching();
+    public ApiResponse<HomeRaffleListDTO> homeApproaching(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "16") int size
+    ){
+        HomeRaffleListDTO result = homeService.getHomeApproaching(page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 

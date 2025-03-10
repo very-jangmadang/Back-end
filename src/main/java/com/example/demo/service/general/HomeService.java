@@ -2,6 +2,8 @@ package com.example.demo.service.general;
 
 import com.example.demo.domain.dto.Home.HomeRaffleListDTO;
 import com.example.demo.domain.dto.Home.HomeResponseDTO;
+import com.example.demo.entity.Raffle;
+import org.springframework.data.domain.Page;
 
 public interface HomeService {
 
@@ -9,13 +11,13 @@ public interface HomeService {
 
     HomeResponseDTO getHomeLogin(Long userId);
 
-    HomeRaffleListDTO getHomeCategories(String categoryName);
+    HomeRaffleListDTO getHomeCategories(String categoryName, int page, int size);
 
-    HomeRaffleListDTO getHomeCategoriesLogin(String categoryName, Long userId);
+    HomeRaffleListDTO getHomeCategoriesLogin(String categoryName, Long userId, int page, int size);
 
-    HomeRaffleListDTO getHomeApproaching();
+    HomeRaffleListDTO getHomeApproaching(int page, int size);
 
-    HomeRaffleListDTO getHomeApproachingLogin(Long userId);
+    HomeRaffleListDTO getHomeApproachingLogin(Long userId, int page, int size);
 
     HomeRaffleListDTO getHomeFollowingRaffles(Long userId);
 
@@ -23,5 +25,9 @@ public interface HomeService {
 
     HomeRaffleListDTO getHomeMoreRafflesLogin(Long userId);
 
-    HomeRaffleListDTO getHomeLikeRaffles(Long userId);
+    HomeRaffleListDTO getHomeLikeRaffles(Long userId, int page, int size);
+
+    Page<Raffle> getApproachingRaffles(int page, int size);
+
+    Page<Raffle> getMoreRaffles(int page, int size);
 }
