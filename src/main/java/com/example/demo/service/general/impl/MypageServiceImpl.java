@@ -58,9 +58,6 @@ public class MypageServiceImpl implements MypageService {
         // 사용자 프로필 이미지 URL 업데이트
         user.setProfileImageUrl(imageUrl);
 
-        // 사용자 정보 저장
-        userRepository.save(user);
-
         return imageUrl;
     }
 
@@ -83,9 +80,6 @@ public class MypageServiceImpl implements MypageService {
 
         // 닉네임 업데이트
         user.setNickname(nickname);
-
-        // 사용자 정보 저장
-        userRepository.save(user);
 
         return nickname;
     }

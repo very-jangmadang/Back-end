@@ -54,7 +54,6 @@ public class InquiryCommentServiceImpl implements InquiryCommentService {
                 inquiry.setStatus(InquiryStatus.NOT_ANSWERED); // 주최자가 댓글 미작성
             }
         }
-        inquiryRepository.save(inquiry); // 상태 변경 저장
 
         // 댓글 작성
         InquiryComment comment = InquiryCommentConverter.toComment(commentRequest, user,isHost,inquiry);

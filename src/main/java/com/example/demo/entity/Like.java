@@ -23,7 +23,6 @@ public class Like extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-
     // 사용자 정의 생성자
     public Like(Raffle raffle, User user) {
         this.raffle = raffle;
