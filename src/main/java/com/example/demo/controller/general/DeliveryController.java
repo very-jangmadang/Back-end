@@ -1,18 +1,13 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.controller.BaseController;
 import com.example.demo.domain.dto.Delivery.DeliveryRequestDTO;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
-import com.example.demo.domain.dto.Payment.CancelResponse;
 import com.example.demo.service.general.DeliveryService;
-import com.example.demo.service.general.KakaoPayService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 
 import static com.example.demo.base.status.SuccessStatus._OK;
 
@@ -53,11 +48,9 @@ public class DeliveryController {
 
     @Operation(summary = "당첨자 - 당첨 취소하기")
     @PostMapping("{deliveryId}/winner/cancel")
-    public void cancel(
-            @PathVariable Long deliveryId, HttpServletResponse response) throws IOException {
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> cancel(@PathVariable Long deliveryId) {
 
-        String redirectUrl = deliveryService.cancel(deliveryId);
-        response.sendRedirect(redirectUrl);
+        return ApiResponse.of(_OK, deliveryService.cancel(deliveryId));
     }
 
     @Operation(summary = "당첨자 - 배송 완료 처리하기")
