@@ -47,8 +47,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         MypageResponseDTO.AddressDto addressDto = null;
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
-        if (deliveryStatus == DeliveryStatus.WAITING_ADDRESS
-                || deliveryStatus == DeliveryStatus.WAITING_PAYMENT) {
+        if (deliveryStatus == DeliveryStatus.WAITING_ADDRESS) {
 
             if (!user.getAddresses().isEmpty()) {
                 Address defaultAddress = user.getAddresses().stream()
@@ -84,8 +83,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
         }
 
-        if (deliveryStatus != DeliveryStatus.WAITING_ADDRESS
-                && deliveryStatus != DeliveryStatus.WAITING_PAYMENT)
+        if (deliveryStatus != DeliveryStatus.WAITING_ADDRESS)
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
 
         List<Address> addressList = user.getAddresses();
@@ -98,37 +96,11 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NO_DEFAULT_ADDRESS));
 
         delivery.setAddress(defaultAddress);
-        delivery.setDeliveryStatus(DeliveryStatus.WAITING_PAYMENT);
-        deliveryRepository.save(delivery);
-
-        return toResponseDto(deliveryId);
-    }
-
-    @Override
-    @Transactional
-    public DeliveryResponseDTO.ResponseDto complete(Long deliveryId) {
-        User user = getUser();
-        Delivery delivery = getDeliveryById(deliveryId);
-        validateWinner(delivery, user);
-
-        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
-        switch (deliveryStatus){
-            case CANCELLED:
-                throw new CustomException(ErrorStatus.DELIVERY_CANCELLED);
-            case ADDRESS_EXPIRED:
-                throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
-            case WAITING_ADDRESS:
-                throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
-        }
-
-        if (deliveryStatus != DeliveryStatus.WAITING_PAYMENT)
-            throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
-
-        deliverySchedulerService.cancelDeliveryJob(delivery, "Address");
-
         delivery.setDeliveryStatus(DeliveryStatus.READY);
         delivery.setShippingDeadline();
         deliveryRepository.save(delivery);
+
+        deliverySchedulerService.cancelDeliveryJob(delivery, "Address");
 
         emailService.sendOwnerReadyEmail(delivery);
 
@@ -147,7 +119,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         switch (deliveryStatus){
             case WAITING_ADDRESS:
-            case WAITING_PAYMENT:
                 throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
             case ADDRESS_EXPIRED:
                 throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
@@ -178,7 +149,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         switch (deliveryStatus) {
             case WAITING_ADDRESS:
-            case WAITING_PAYMENT:
                 throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
             case ADDRESS_EXPIRED:
                 throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
@@ -216,7 +186,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         switch (deliveryStatus) {
             case WAITING_ADDRESS:
-            case WAITING_PAYMENT:
                 throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
             case ADDRESS_EXPIRED:
                 throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
@@ -282,7 +251,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
         switch (deliveryStatus) {
             case WAITING_ADDRESS:
-            case WAITING_PAYMENT:
                 throw new CustomException(ErrorStatus.DELIVERY_BEFORE_ADDRESS);
             case ADDRESS_EXPIRED:
                 throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_EXPIRED);
@@ -318,7 +286,6 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         switch (deliveryStatus) {
             case WAITING_ADDRESS:
-            case WAITING_PAYMENT:
                 throw new CustomException(ErrorStatus.DELIVERY_ADDRESS_NOT_EXPIRED);
             case READY:
                 throw new CustomException(ErrorStatus.DELIVERY_ALREADY_READY);
