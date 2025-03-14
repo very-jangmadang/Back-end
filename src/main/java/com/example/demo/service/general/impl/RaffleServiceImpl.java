@@ -80,6 +80,22 @@ public class RaffleServiceImpl implements RaffleService {
 
     @Override
     @Transactional
+    public Long deleteRaffle(Long id) {
+        Raffle raffle = raffleRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+
+        RaffleStatus status = raffle.getRaffleStatus();
+
+        if(status != RaffleStatus.CANCELLED) {
+            throw new CustomException(ErrorStatus.RAFFLE_CANT_DELETE);
+        }
+
+        raffleRepository.deleteById(id);
+        return id;
+    }
+
+    @Override
+    @Transactional
     public RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long raffleId) {
 
         // 요청받은 래플 id로 엔티티 조회
