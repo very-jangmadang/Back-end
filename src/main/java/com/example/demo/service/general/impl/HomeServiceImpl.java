@@ -32,6 +32,7 @@ public class HomeServiceImpl implements HomeService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final FollowRepository followRepository;
     @Lazy
     private final HomeService homeService;
 
@@ -56,6 +57,7 @@ public class HomeServiceImpl implements HomeService {
     @Override
     public HomeResponseDTO getHome() {
 
+        // 마감임박인 래플 5개 조회
         Page<Raffle> approachingRaffles = homeService.getApproachingRaffles(0, 16);
         List<Raffle> rafflesSortedByEndAt = approachingRaffles.getContent().stream().limit(5).toList();
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, null);
@@ -83,16 +85,10 @@ public class HomeServiceImpl implements HomeService {
 
         // 내가 찜한 래플 5개 조회 ( 로그인 했을 시 기능 )
         Pageable pageable = PageRequest.of(0, 16);
-        Page<Like> likes = likeRepository.findByUserIdOrderByCreatedAtDesc(user.getId(), pageable);
-        List<Like> sortedLikes = likes.getContent().stream().limit(5).toList();
+        Page<Raffle> pagedLikedRaffles = likeRepository.findRaffleByUserIdOrderByCreatedAtDesc(user.getId(), pageable);
+        List<Raffle> likedRaffles = pagedLikedRaffles.getContent().stream().limit(5).toList();
 
-        List<HomeRaffleDTO> myLikeRafflesDTO = new ArrayList<>();
-
-        for (Like sortedLike : sortedLikes) {
-            Raffle raffle = sortedLike.getRaffle();
-            HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, true);
-            myLikeRafflesDTO.add(raffleDTO);
-        }
+        List<HomeRaffleDTO> myLikeRafflesDTO = convertToHomeRaffleDTOList(likedRaffles, user);
 
         // 내가 팔로우한 상점의 래플 5개 조회 (마감임박순, 로그인 했을 시 본인의 찜 여부도 전달)
         List<Follow> followings = user.getFollowings();
@@ -133,7 +129,12 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(pagedRaffles.getContent(), null);
 
         return HomeRaffleListDTO.builder()
-                .raffles(result).build();
+                .raffles(result)
+                .currentPage(pagedRaffles.getNumber() + 1)
+                .totalPages(pagedRaffles.getTotalPages())
+                .totalElements(pagedRaffles.getTotalElements())
+                .hasNext(pagedRaffles.hasNext())
+                .build();
     }
 
     @Override
@@ -152,7 +153,12 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(pagedRaffles.getContent(), user);
 
         return HomeRaffleListDTO.builder()
-                .raffles(result).build();
+                .raffles(result)
+                .currentPage(pagedRaffles.getNumber() + 1)
+                .totalPages(pagedRaffles.getTotalPages())
+                .totalElements(pagedRaffles.getTotalElements())
+                .hasNext(pagedRaffles.hasNext())
+                .build();
     }
 
     @Override
@@ -163,6 +169,10 @@ public class HomeServiceImpl implements HomeService {
 
         return HomeRaffleListDTO.builder()
                 .raffles(rafflesSortedByEndAtDTO)
+                .currentPage(pagedRafflesSortedByEndAt.getNumber() + 1)
+                .totalPages(pagedRafflesSortedByEndAt.getTotalPages())
+                .totalElements(pagedRafflesSortedByEndAt.getTotalElements())
+                .hasNext(pagedRafflesSortedByEndAt.hasNext())
                 .build();
     }
 
@@ -179,6 +189,10 @@ public class HomeServiceImpl implements HomeService {
 
         return HomeRaffleListDTO.builder()
                 .raffles(rafflesSortedByEndAtDTO)
+                .currentPage(pagedRafflesSortedByEndAt.getNumber() + 1)
+                .totalPages(pagedRafflesSortedByEndAt.getTotalPages())
+                .totalElements(pagedRafflesSortedByEndAt.getTotalElements())
+                .hasNext(pagedRafflesSortedByEndAt.hasNext())
                 .build();
 
     }
@@ -210,12 +224,16 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     public HomeRaffleListDTO getHomeMoreRaffles() {
-        Page<Raffle> applyRaffles = homeService.getMoreRaffles(0, 16);
-        List<Raffle> rafflesSortedByApply = applyRaffles.getContent().stream().limit(5).toList();
+        Page<Raffle> pagedRafflesSortedByApply = homeService.getMoreRaffles(0, 16);
+        List<Raffle> rafflesSortedByApply = pagedRafflesSortedByApply.getContent().stream().limit(5).toList();
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
 
         return HomeRaffleListDTO.builder()
                 .raffles(rafflesSortedByApplyListDTO)
+                .currentPage(pagedRafflesSortedByApply.getNumber() + 1)
+                .totalPages(pagedRafflesSortedByApply.getTotalPages())
+                .totalElements(pagedRafflesSortedByApply.getTotalElements())
+                .hasNext(pagedRafflesSortedByApply.hasNext())
                 .build();
     }
 
@@ -225,12 +243,16 @@ public class HomeServiceImpl implements HomeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
-        Page<Raffle> applyRaffles = homeService.getMoreRaffles(0, 16);
-        List<Raffle> rafflesSortedByApply = applyRaffles.getContent().stream().limit(5).toList();
+        Page<Raffle> pagedRafflesSortedByApply = homeService.getMoreRaffles(0, 16);
+        List<Raffle> rafflesSortedByApply = pagedRafflesSortedByApply.getContent().stream().limit(5).toList();
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, user);
 
         return HomeRaffleListDTO.builder()
                 .raffles(rafflesSortedByApplyListDTO)
+                .currentPage(pagedRafflesSortedByApply.getNumber() + 1)
+                .totalPages(pagedRafflesSortedByApply.getTotalPages())
+                .totalElements(pagedRafflesSortedByApply.getTotalElements())
+                .hasNext(pagedRafflesSortedByApply.hasNext())
                 .build();
     }
 
@@ -241,19 +263,17 @@ public class HomeServiceImpl implements HomeService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(page-1, size);
-        Page<Like> likes = likeRepository.findByUserIdOrderByCreatedAtDesc(user.getId(), pageable);
-        List<Like> sortedLikes = likes.getContent();
+        Page<Raffle> pagedLikedRaffles = likeRepository.findRaffleByUserIdOrderByCreatedAtDesc(user.getId(), pageable);
+        List<Raffle> likedRaffles = pagedLikedRaffles.getContent();
 
-        List<HomeRaffleDTO> myLikeRafflesDTO = new ArrayList<>();
-
-        for (Like sortedLike : sortedLikes) {
-            Raffle raffle = sortedLike.getRaffle();
-            HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, true);
-            myLikeRafflesDTO.add(raffleDTO);
-        }
+        List<HomeRaffleDTO> myLikeRafflesDTO = convertToHomeRaffleDTOList(likedRaffles, user);
 
         return HomeRaffleListDTO.builder()
                 .raffles(myLikeRafflesDTO)
+                .currentPage(pagedLikedRaffles.getNumber() + 1)
+                .totalPages(pagedLikedRaffles.getTotalPages())
+                .totalElements(pagedLikedRaffles.getTotalElements())
+                .hasNext(pagedLikedRaffles.hasNext())
                 .build();
     }
 

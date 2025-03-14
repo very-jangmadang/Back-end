@@ -13,4 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class HomeRaffleListDTO {
     private List<HomeRaffleDTO> raffles;
+    private int currentPage;
+    private int totalPages;
+    private long totalElements;
+    private boolean hasNext;
 }

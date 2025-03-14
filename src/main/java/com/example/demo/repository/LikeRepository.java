@@ -27,7 +27,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
             "FROM Like l WHERE l.raffle.id IN :raffleIds AND l.user = :user GROUP BY l.raffle.id")
     List<Object[]> checkLikesByRaffleIdsAndUser(@Param("raffleIds") List<Long> raffleIds, @Param("user") User user);
 
-    @Query("SELECT l FROM Like l WHERE l.user.id = :userId ORDER BY l.createdAt DESC")
-    Page<Like> findByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
+    @Query("SELECT l.raffle FROM Like l JOIN FETCH l.raffle WHERE l.user.id = :userId ORDER BY l.createdAt DESC")
+    Page<Raffle> findRaffleByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
 
 }
