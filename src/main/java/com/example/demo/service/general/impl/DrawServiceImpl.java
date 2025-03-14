@@ -3,6 +3,7 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
+import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Draw.DrawResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Delivery;
@@ -26,6 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.demo.domain.converter.DeliveryConverter.toDelivery;
+import static com.example.demo.domain.converter.DeliveryConverter.toDeliveryResponseDto;
 import static com.example.demo.domain.converter.DrawConverter.*;
 
 @Service
@@ -188,7 +190,7 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     @Transactional
-    public String selfDraw(Long raffleId) {
+    public DeliveryResponseDTO.ResponseDto selfDraw(Long raffleId) {
         User user = getUser();
         Raffle raffle = getRaffle(raffleId);
 
@@ -213,7 +215,7 @@ public class DrawServiceImpl implements DrawService {
 
         Delivery delivery = draw(raffle, applyList);
 
-        return String.format(Constants.DELIVERY_OWNER_URL, delivery.getId());
+        return toDeliveryResponseDto(delivery.getId());
     }
 
     @Override
@@ -239,7 +241,7 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     @Transactional
-    public String redraw(Long raffleId) {
+    public DeliveryResponseDTO.ResponseDto redraw(Long raffleId) {
         User user = getUser();
         Raffle raffle = getRaffle(raffleId);
 
@@ -271,7 +273,7 @@ public class DrawServiceImpl implements DrawService {
 
         applyRepository.updateUncheckedByRaffle(raffle);
 
-        return String.format(Constants.DELIVERY_OWNER_URL, delivery.getId());
+        return toDeliveryResponseDto(delivery.getId());
     }
 
     private User getUser() {

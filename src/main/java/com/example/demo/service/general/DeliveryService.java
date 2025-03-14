@@ -13,7 +13,7 @@ public interface DeliveryService {
 
     DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId);
 
-    String cancel(Long deliveryId);
+    DeliveryResponseDTO.ResponseDto cancel(Long deliveryId);
 
     DeliveryResponseDTO.ResponseDto success(Long deliveryId);
 
