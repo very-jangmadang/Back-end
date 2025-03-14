@@ -12,10 +12,7 @@ import com.example.demo.entity.User;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.*;
-import com.example.demo.service.general.DeliverySchedulerService;
-import com.example.demo.service.general.DrawSchedulerService;
-import com.example.demo.service.general.DrawService;
-import com.example.demo.service.general.EmailService;
+import com.example.demo.service.general.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,8 +37,7 @@ public class DrawServiceImpl implements DrawService {
     private final UserRepository userRepository;
     private final DeliveryRepository deliveryRepository;
     private final EmailService emailService;
-    private final DeliverySchedulerService deliverySchedulerService;
-    private final DrawSchedulerService drawSchedulerService;
+    private final SchedulerService schedulerService;
 
     @Override
     @Transactional
@@ -63,7 +59,7 @@ public class DrawServiceImpl implements DrawService {
 
         emailService.sendWinnerPrizeEmail(delivery);
 
-        deliverySchedulerService.scheduleDeliveryJob(delivery);
+        schedulerService.scheduleDeliveryJob(delivery);
       
         return delivery;
     }
@@ -206,7 +202,7 @@ public class DrawServiceImpl implements DrawService {
                 throw new CustomException(ErrorStatus.DRAW_FINISHED);
         }
 
-        drawSchedulerService.cancelDrawJob(raffle);
+        schedulerService.cancelDrawJob(raffle);
 
         List<Apply> applyList = applyRepository.findByRaffle(raffle);
 
@@ -230,7 +226,7 @@ public class DrawServiceImpl implements DrawService {
         validateRaffleStatus(raffleStatus);
         validateCancel(raffle, raffleStatus);
 
-        drawSchedulerService.cancelDrawJob(raffle);
+        schedulerService.cancelDrawJob(raffle);
 
         cancel(raffle);
 
@@ -313,7 +309,7 @@ public class DrawServiceImpl implements DrawService {
                 if (deliveryStatus != DeliveryStatus.ADDRESS_EXPIRED)
                     throw new CustomException(ErrorStatus.CANCEL_FAIL);
 
-                deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendAddress");
+                schedulerService.cancelDeliveryJob(delivery, "Waiting");
 
                 emailService.sendWinnerCancelEmail(delivery);
 

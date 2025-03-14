@@ -27,7 +27,5 @@ public class RaffleStartJob implements Job {
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
         raffle.setRaffleStatus(RaffleStatus.ACTIVE);
-        raffleRepository.save(raffle);
-
     }
 }
