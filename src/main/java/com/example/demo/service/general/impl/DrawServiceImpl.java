@@ -67,7 +67,7 @@ public class DrawServiceImpl implements DrawService {
     @Override
     @Transactional
     public void cancel(Raffle raffle) {
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        List<Apply> applyList = raffle.getApplyList();
         if (applyList == null || applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
@@ -111,7 +111,7 @@ public class DrawServiceImpl implements DrawService {
         if (userApply.isChecked() && !user.equals(raffle.getWinner()))
             throw new CustomException(ErrorStatus.DRAW_ALREADY_CHECKED);
 
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        List<Apply> applyList = raffle.getApplyList();
         if (applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
@@ -150,7 +150,7 @@ public class DrawServiceImpl implements DrawService {
         if (raffleStatus == RaffleStatus.UNFULFILLED)
             throw new CustomException(ErrorStatus.DRAW_PENDING);
 
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        List<Apply> applyList = raffle.getApplyList();
         if (applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
@@ -178,7 +178,7 @@ public class DrawServiceImpl implements DrawService {
         if (raffleStatus != RaffleStatus.UNFULFILLED)
             throw new CustomException(ErrorStatus.DRAW_COMPLETED);
 
-        int applyNum = applyRepository.countByRaffle(raffle);
+        int applyNum = raffle.getApplyList().size();
         int ticket = raffle.getTicketNum();
 
         return toResultDto(raffle, applyNum * ticket);
@@ -204,7 +204,7 @@ public class DrawServiceImpl implements DrawService {
 
         schedulerService.cancelDrawJob(raffle);
 
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        List<Apply> applyList = raffle.getApplyList();
 
         if (applyList.isEmpty())
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
@@ -253,7 +253,7 @@ public class DrawServiceImpl implements DrawService {
             throw new CustomException(ErrorStatus.REDRAW_AGAIN);
 
         User winner = raffle.getWinner();
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        List<Apply> applyList = raffle.getApplyList();
 
         applyList = applyList.stream()
                 .filter(apply -> !apply.getUser().equals(winner))

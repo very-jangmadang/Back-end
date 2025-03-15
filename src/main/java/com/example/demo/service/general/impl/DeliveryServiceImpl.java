@@ -29,7 +29,6 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
     private final UserRepository userRepository;
-    private final ApplyRepository applyRepository;
     private final DrawService drawService;
     private final SchedulerService schedulerService;
     private final EmailService emailService;
@@ -221,7 +220,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         validateOwner(delivery, user);
 
         Raffle raffle = delivery.getRaffle();
-        int applyNum = applyRepository.countByRaffle(raffle);
+        int applyNum = raffle.getApplyList().size();
         int ticket = raffle.getTicketNum();
 
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
@@ -343,7 +342,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         raffleRepository.save(raffle);
 
         User user = raffle.getUser();
-        int applyNum = applyRepository.countByRaffle(raffle);
+        int applyNum = raffle.getApplyList().size();
         int ticket = raffle.getTicketNum();
 
         user.setTicket_num(user.getTicket_num() + (ticket * applyNum));
