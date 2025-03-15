@@ -9,15 +9,20 @@ import com.example.demo.entity.User;
 import com.example.demo.service.general.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.List;
+
 
 @Service
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
@@ -26,12 +31,8 @@ public class EmailServiceImpl implements EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    public EmailServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
-        this.mailSender = mailSender;
-        this.templateEngine = templateEngine;
-    }
-
     @Override
+    @Async("emailTaskExecutor")
     public void sendWinnerPrizeEmail(Delivery delivery) {
         User user = delivery.getWinner();
         Raffle raffle = delivery.getRaffle();
@@ -66,6 +67,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async("emailTaskExecutor")
     public void sendWinnerCancelEmail(Delivery delivery) {
         User user = delivery.getWinner();
         Raffle raffle = delivery.getRaffle();
@@ -96,6 +98,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async("emailTaskExecutor")
     public void sendOwnerAddressExpiredEmail(Delivery delivery) {
         User user = delivery.getUser();
         Raffle raffle = delivery.getRaffle();
@@ -128,6 +131,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async("emailTaskExecutor")
     public void sendOwnerCancelEmail(Raffle raffle) {
         User user = raffle.getUser();
 
@@ -158,6 +162,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async("emailTaskExecutor")
     public void sendWinnerShippingExpiredEmail(Delivery delivery) {
         User user = delivery.getWinner();
         Raffle raffle = delivery.getRaffle();
@@ -189,6 +194,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async("emailTaskExecutor")
     public void sendOwnerUnfulfilledEmail(Raffle raffle) {
         User user = raffle.getUser();
 
@@ -221,6 +227,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async("emailTaskExecutor")
     public void sendOwnerReadyEmail(Delivery delivery) {
         User user = delivery.getUser();
         Raffle raffle = delivery.getRaffle();
@@ -245,6 +252,79 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("fromEmail", fromEmail);
 
             String body = templateEngine.process("OwnerReadyEmail.html", context);
+            helper.setText(body, true);
+
+            mailSender.send(helper.getMimeMessage());
+
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
+        }
+    }
+
+    @Override
+    public void sendRaffleOpenEmail(Raffle raffle, User user) {
+
+        try {
+            System.out.println("Thread: " + Thread.currentThread().getName() + " - Sending email to " + user.getNickname());
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(user.getEmail());
+            helper.setFrom(fromEmail);
+
+            String subject = "[장마당] " + raffle.getName() + " 래플 오픈 안내";
+            helper.setSubject(subject);
+
+            Context context = new Context();
+            context.setVariable("userName", user.getNickname());
+            context.setVariable("raffleName", raffle.getName());
+            context.setVariable("raffleUrl", String.format(Constants.RAFFLE_URL, raffle.getId()));
+
+            context.setVariable("fromEmail", fromEmail);
+
+            String body = templateEngine.process("RaffleOpenEmail.html", context);
+            helper.setText(body, true);
+
+            mailSender.send(helper.getMimeMessage());
+
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
+        }
+    }
+
+    @Override
+    @Async("emailTaskExecutor")
+    public void sendBatchRaffleOpenEmail(List<User> users, Raffle raffle) {
+        for (User user : users) {
+            sendRaffleOpenEmail(raffle, user);
+        }
+    }
+
+    @Override
+    @Async("emailTaskExecutor")
+    public void sendOwnerRaffleOpenEmail(Raffle raffle) {
+        User user = raffle.getUser();
+
+        try {
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(user.getEmail());
+            helper.setFrom(fromEmail);
+
+            String subject = "[장마당] " + raffle.getName() + " 래플 오픈 안내";
+            helper.setSubject(subject);
+
+            Context context = new Context();
+            context.setVariable("userName", user.getNickname());
+            context.setVariable("raffleName", raffle.getName());
+            context.setVariable("raffleUrl", String.format(Constants.RAFFLE_URL, raffle.getId()));
+
+            context.setVariable("fromEmail", fromEmail);
+
+            String body = templateEngine.process("OwnerRaffleOpenEmail.html", context);
             helper.setText(body, true);
 
             mailSender.send(helper.getMimeMessage());
