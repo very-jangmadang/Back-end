@@ -40,7 +40,7 @@ public class ShippingJob implements Job {
             emailService.sendWinnerShippingExpiredEmail(delivery);
 
         } else {
-            String userId = baseController.getCurrentUserEmail();
+            Long userId = baseController.getCurrentUserId();
             kakaoPayService.cancelPayment(userId);
 
             delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);

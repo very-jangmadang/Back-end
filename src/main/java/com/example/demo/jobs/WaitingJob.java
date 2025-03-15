@@ -37,7 +37,7 @@ public class WaitingJob implements Job {
         DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
 
         if (deliveryStatus == DeliveryStatus.SHIPPING_EXPIRED) {
-            String userId = baseController.getCurrentUserEmail();
+            Long userId = baseController.getCurrentUserId();
             kakaoPayService.cancelPayment(userId);
         }
 
