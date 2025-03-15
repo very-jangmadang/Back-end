@@ -16,7 +16,7 @@ public class RaffleResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UploadResultDTO{
+    public static class UploadResultDTO {
         private Long raffle_id;
 
     }

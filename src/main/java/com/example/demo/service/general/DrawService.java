@@ -1,5 +1,6 @@
 package com.example.demo.service.general;
 
+import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Draw.DrawResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Delivery;
@@ -19,9 +20,9 @@ public interface DrawService {
 
     DrawResponseDTO.ResultDto getResult(Long raffleId);
 
-    String selfDraw(Long raffleId);
+    DeliveryResponseDTO.ResponseDto selfDraw(Long raffleId);
 
     DrawResponseDTO.CancelDto forceCancel(Long raffleId);
 
-    String redraw(Long raffleId);
+    DeliveryResponseDTO.ResponseDto redraw(Long raffleId);
 }

@@ -1,6 +1,5 @@
 package com.example.demo.service.general.impl;
 
-import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.controller.BaseController;
@@ -106,7 +105,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         deliverySchedulerService.scheduleDeliveryJob(delivery);
 
-        return toResponseDto(deliveryId);
+        return toDeliveryResponseDto(deliveryId);
     }
 
     @Override
@@ -136,7 +135,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         finalize(delivery);
 
-        return toResponseDto(deliveryId);
+        return toDeliveryResponseDto(deliveryId);
     }
 
     @Override
@@ -178,7 +177,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public String cancel(Long deliveryId) {
+    public DeliveryResponseDTO.ResponseDto cancel(Long deliveryId) {
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
         validateWinner(delivery, user);
@@ -201,12 +200,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
 
-        // Todo: Yoon 시작 - 배송비 환불
-
         String userId = baseController.getCurrentUserEmail();
         kakaoPayService.cancelPayment(userId);
-
-        // Todo: Yoon 완료
 
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
@@ -216,7 +211,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         emailService.sendOwnerCancelEmail(raffle);
 
-        return String.format(Constants.DELIVERY_WINNER_URL, delivery.getId());
+        return toDeliveryResponseDto(deliveryId);
     }
 
     @Override
@@ -272,7 +267,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         deliverySchedulerService.scheduleDeliveryJob(delivery);
 
-        return toResponseDto(deliveryId);
+        return toDeliveryResponseDto(deliveryId);
     }
 
     @Override
