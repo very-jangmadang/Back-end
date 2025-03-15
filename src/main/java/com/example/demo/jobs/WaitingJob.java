@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class ExtendShippingJob implements Job {
+public class WaitingJob implements Job {
 
     private final DeliveryRepository deliveryRepository;
     private final DrawService drawService;
@@ -34,21 +34,19 @@ public class ExtendShippingJob implements Job {
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
 
-        // Todo: Yoon 시작 - 배송비 환불
+        DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
 
-        Long userId = baseController.getCurrentUserId();
-        kakaoPayService.cancelPayment(userId);
-
-        // Todo: Yoon 완료
+        if (deliveryStatus == DeliveryStatus.SHIPPING_EXPIRED) {
+            Long userId = baseController.getCurrentUserId();
+            kakaoPayService.cancelPayment(userId);
+        }
 
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
-        deliveryRepository.save(delivery);
+        emailService.sendWinnerCancelEmail(delivery);
 
         Raffle raffle = delivery.getRaffle();
         drawService.cancel(raffle);
 
-        emailService.sendWinnerCancelEmail(delivery);
         emailService.sendOwnerCancelEmail(raffle);
-
     }
 }

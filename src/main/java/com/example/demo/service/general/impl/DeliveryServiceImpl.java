@@ -31,7 +31,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final UserRepository userRepository;
     private final ApplyRepository applyRepository;
     private final DrawService drawService;
-    private final DeliverySchedulerService deliverySchedulerService;
+    private final SchedulerService schedulerService;
     private final EmailService emailService;
     private final RaffleRepository raffleRepository;
     private final KakaoPayService kakaoPayService;
@@ -103,7 +103,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         emailService.sendOwnerReadyEmail(delivery);
 
-        deliverySchedulerService.scheduleDeliveryJob(delivery);
+        schedulerService.scheduleDeliveryJob(delivery);
 
         return toDeliveryResponseDto(deliveryId);
     }
@@ -131,7 +131,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
-        deliverySchedulerService.cancelDeliveryJob(delivery, "Complete");
+        schedulerService.cancelDeliveryJob(delivery, "Complete");
 
         finalize(delivery);
 
@@ -164,13 +164,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (delivery.isShippingExtended())
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_EXTEND);
 
-        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
-        deliverySchedulerService.cancelDeliveryJob(delivery, "Shipping");
+        schedulerService.cancelDeliveryJob(delivery, "Waiting");
+        schedulerService.cancelDeliveryJob(delivery, "Shipping");
       
         delivery.extendShippingDeadline();
         deliveryRepository.save(delivery);
 
-        deliverySchedulerService.scheduleDeliveryJob(delivery);
+        schedulerService.scheduleDeliveryJob(delivery);
 
         return toWaitDto(delivery);
     }
@@ -198,7 +198,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
-        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
+        schedulerService.cancelDeliveryJob(delivery, "Waiting");
 
         Long userId = baseController.getCurrentUserId();
         kakaoPayService.cancelPayment(userId);
@@ -259,13 +259,13 @@ public class DeliveryServiceImpl implements DeliveryService {
                 throw new CustomException(ErrorStatus.DELIVERY_ALREADY_COMPLETED);
         }
 
-        deliverySchedulerService.cancelDeliveryJob(delivery, "Shipping");
+        schedulerService.cancelDeliveryJob(delivery, "Shipping");
 
         delivery.setInvoiceNumber(deliveryRequestDTO.getInvoiceNumber());
         delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
         deliveryRepository.save(delivery);
 
-        deliverySchedulerService.scheduleDeliveryJob(delivery);
+        schedulerService.scheduleDeliveryJob(delivery);
 
         return toDeliveryResponseDto(deliveryId);
     }
@@ -297,13 +297,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (delivery.isAddressExtended())
             throw new CustomException(ErrorStatus.DELIVERY_ALREADY_EXTEND);
 
-        deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendAddress");
-        deliverySchedulerService.cancelDeliveryJob(delivery, "Address");
+        schedulerService.cancelDeliveryJob(delivery, "Waiting");
+        schedulerService.cancelDeliveryJob(delivery, "Address");
 
         delivery.extendAddressDeadline();
         deliveryRepository.save(delivery);
 
-        deliverySchedulerService.scheduleDeliveryJob(delivery);
+        schedulerService.scheduleDeliveryJob(delivery);
 
         return toWaitDto(delivery);
     }
