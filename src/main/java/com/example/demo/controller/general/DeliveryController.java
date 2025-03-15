@@ -32,13 +32,6 @@ public class DeliveryController {
         return ApiResponse.of(_OK, deliveryService.setAddress(deliveryId));
     }
 
-    @Operation(summary = "당첨자 - 배송비 결제 완료하기")
-    @PostMapping("/{deliveryId}/winner/complete")
-    public ApiResponse<DeliveryResponseDTO.ResponseDto> complete(@PathVariable Long deliveryId) {
-
-        return ApiResponse.of(_OK, deliveryService.complete(deliveryId));
-    }
-
     @Operation(summary = "당첨자 - 운송장 입력 기한 연장하기")
     @PostMapping("{deliveryId}/winner/wait")
     public ApiResponse<DeliveryResponseDTO.WaitDto> WaitShipping(@PathVariable Long deliveryId) {
