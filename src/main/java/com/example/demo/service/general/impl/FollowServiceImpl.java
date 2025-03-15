@@ -28,8 +28,7 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public ApiResponse<List<FollowResponse>> getFollowedStores(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        User user = findUser(userId);
 
         List<FollowResponse> followedStores = followRepository.findByUser(user).stream()
                 .map(follow -> FollowConverter.toResponse(follow, userRepository))
@@ -40,8 +39,7 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public ApiResponse<Void> followStore(Long userId, Long storeId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        User user = findUser(userId);
 
         // storeId가 존재하는 user 인지 확인
         boolean storeExists = userRepository.existsById(storeId);
@@ -67,8 +65,7 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public ApiResponse<Void> unfollowStore(Long userId, Long storeId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+        User user = findUser(userId);
 
         // 팔로우 정보 조회
         Follow follow = followRepository.findByUserAndStoreId(user, storeId)
@@ -78,5 +75,9 @@ public class FollowServiceImpl implements FollowService {
         followRepository.delete(follow);
 
         return ApiResponse.of(SuccessStatus.FOLLOW_UNFOLLOW_SUCCESS, null);
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 }

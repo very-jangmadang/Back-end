@@ -19,31 +19,31 @@ public class PaymentController {
 
     @GetMapping("/tickets")
     public ApiResponse<UserTicketResponse> getUserTickets() {
-        String userId = baseController.getCurrentUserEmail();
+        Long userId = baseController.getCurrentUserId();
         return userPaymentService.getUserTickets(userId);
     }
 
     @GetMapping("/bankInfo")
     public ApiResponse<UserBankInfoResponse> getUserPaymentInfo() {
-        String userId = baseController.getCurrentUserEmail();
+        Long userId = baseController.getCurrentUserId();
         return userPaymentService.getUserPaymentInfo(userId);
     }
 
     @PostMapping("/bankInfo")
     public ApiResponse<UserBankInfoResponse> postUserPaymentInfo(@RequestBody UserBankInfoRequest userBankInfoRequest) {
-        String userId = baseController.getCurrentUserEmail();
+        Long userId = baseController.getCurrentUserId();
         return userPaymentService.postUserPaymentInfo(userId, userBankInfoRequest);
     }
 
     @GetMapping("/history/charge")
     public ApiResponse<List<PaymentResponse>> getPaymentHistory(@RequestParam String period) {
-        String userId = baseController.getCurrentUserEmail();
+        Long userId = baseController.getCurrentUserId();
         return userPaymentService.getPaymentHistory(userId, period);
     }
 
     @PostMapping("/trade")
     public ApiResponse<Void> tradeTickets(@RequestParam String role, @RequestParam int ticketCount) {
-        String userId = baseController.getCurrentUserEmail();
+        Long userId = baseController.getCurrentUserId();
         return userPaymentService.tradeTickets(userId, role, ticketCount);
     }
 

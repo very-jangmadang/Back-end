@@ -200,7 +200,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         deliverySchedulerService.cancelDeliveryJob(delivery, "ExtendShipping");
 
-        String userId = baseController.getCurrentUserEmail();
+        Long userId = baseController.getCurrentUserId();
         kakaoPayService.cancelPayment(userId);
 
         delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);

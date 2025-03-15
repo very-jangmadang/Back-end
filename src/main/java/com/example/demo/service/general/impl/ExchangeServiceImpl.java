@@ -37,7 +37,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     private final UserRepository userRepository;
 
     @Override
-    public ApiResponse<ExchangeResponse> exchange(String userId, ExchangeRequest request) {
+    public ApiResponse<ExchangeResponse> exchange(Long userId, ExchangeRequest request) {
 
         // 유저 결제 정보 조회 (없으면 예외 발생)
         User user = findUser(userId);
@@ -51,7 +51,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         user.setTicket_num(user.getTicket_num() - request.getAmount());
         userRepository.save(user);
 
-        Exchange exchange = exchangeConverter.toEntity(userId, request);
+        Exchange exchange = exchangeConverter.toEntity(findUser(userId), request);
         exchangeRepository.save(exchange);
 
         // API 응답 반환
@@ -60,13 +60,8 @@ public class ExchangeServiceImpl implements ExchangeService {
         return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, exchangeResponse);
     }
 
-    private User findUser(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-    }
-
     @Override
-    public ApiResponse<List<ExchangeHistoryResponse>> getExchangeHistory(String userId, String period) {
+    public ApiResponse<List<ExchangeHistoryResponse>> getExchangeHistory(Long userId, String period) {
         try {
             // 현재 시간 기준으로 조회할 기간 설정
             LocalDateTime now = LocalDateTime.now();
@@ -94,6 +89,10 @@ public class ExchangeServiceImpl implements ExchangeService {
             logger.error("교환 내역 조회 중 오류 발생: {}", e.getMessage(), e);
             throw new CustomException(ErrorStatus.PAYMENT_HISTORY_ERROR);
         }
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
 }

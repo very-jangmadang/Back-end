@@ -21,13 +21,13 @@ public class ExchangeController {
 
     @PostMapping("/exchange")
     public ApiResponse<ExchangeResponse> exchange(@RequestBody ExchangeRequest request) {
-        String userEmail = baseController.getCurrentUserEmail();
-        return exchangeService.exchange(userEmail, request);
+        Long userId = baseController.getCurrentUserId();
+        return exchangeService.exchange(userId, request);
     }
 
     @GetMapping("/history/exchange")
     public ApiResponse<List<ExchangeHistoryResponse>> getExchangeHistory(@RequestParam String period) {
-        String userEmail = baseController.getCurrentUserEmail();
-        return exchangeService.getExchangeHistory(userEmail, period);
+        Long userId = baseController.getCurrentUserId();
+        return exchangeService.getExchangeHistory(userId, period);
     }
 }
