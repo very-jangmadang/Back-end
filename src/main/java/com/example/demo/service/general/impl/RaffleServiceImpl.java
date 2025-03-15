@@ -123,8 +123,8 @@ public class RaffleServiceImpl implements RaffleService {
                 state = "host";
 
                 Delivery delivery = deliveryRepository.findByRaffleAndDeliveryStatusIn(raffle, List.of(
-                        DeliveryStatus.WAITING_ADDRESS, DeliveryStatus.WAITING_PAYMENT,
-                        DeliveryStatus.READY, DeliveryStatus.SHIPPED, DeliveryStatus.COMPLETED));
+                        DeliveryStatus.WAITING_ADDRESS, DeliveryStatus.READY,
+                        DeliveryStatus.SHIPPED, DeliveryStatus.COMPLETED));
 
                 if (delivery != null)
                     deliveryId = delivery.getId();

@@ -9,8 +9,6 @@ public interface DeliveryService {
 
     DeliveryResponseDTO.ResponseDto setAddress(Long deliveryId);
 
-    DeliveryResponseDTO.ResponseDto complete(Long deliveryId);
-
     DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId);
 
     DeliveryResponseDTO.ResponseDto cancel(Long deliveryId);
