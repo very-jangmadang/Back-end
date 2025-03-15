@@ -99,7 +99,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.setShippingDeadline();
         deliveryRepository.save(delivery);
 
-        deliverySchedulerService.cancelDeliveryJob(delivery, "Address");
+        schedulerService.cancelDeliveryJob(delivery, "Address");
 
         emailService.sendOwnerReadyEmail(delivery);
 
