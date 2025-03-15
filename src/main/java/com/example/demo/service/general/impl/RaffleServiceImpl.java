@@ -30,7 +30,7 @@ public class RaffleServiceImpl implements RaffleService {
     private final RaffleRepository raffleRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final RaffleSchedulerService raffleSchedulerService;
+    private final SchedulerService schedulerService;
     private final S3UploadService s3UploadService;
     private final ImageService imageService;
     private final ApplyRepository applyRepository;
@@ -70,8 +70,7 @@ public class RaffleServiceImpl implements RaffleService {
         // 6. 래플 저장
         raffleRepository.save(raffle);
 
-        raffleSchedulerService.scheduleRaffleJob(raffle, true);
-        raffleSchedulerService.scheduleRaffleJob(raffle, false);
+        schedulerService.scheduleRaffleJob(raffle);
 
         // 7. 래플 엔티티를 ResponseDTO로 변환 후 반환
         return RaffleConverter.toUploadResultDTO(raffle);

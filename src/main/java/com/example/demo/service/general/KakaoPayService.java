@@ -9,5 +9,5 @@ import com.example.demo.domain.dto.Payment.ReadyResponse;
 public interface KakaoPayService {
     ApiResponse<ReadyResponse> preparePayment(PaymentRequest paymentRequest);
     ApiResponse<ApproveResponse> approvePayment(String pgToken, String tid);
-    ApiResponse<CancelResponse> cancelPayment(String userId);
+    ApiResponse<CancelResponse> cancelPayment(Long userId);
 }

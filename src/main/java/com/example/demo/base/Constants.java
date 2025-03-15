@@ -15,7 +15,10 @@ public class Constants {
     public static final int SHIPPING_DEADLINE = 96;
 
     // 배송지/운송장 입력 기한 연장 (시간 단위)
-    public static final int WAIT = 24;
+    public static final int EXTENSION_HOURS = 24;
+
+    // 선택 가능 기한 (시간 단위)
+    public static final int CHOICE_PERIOD = 24;
 
     // 수령 완료 기한(7일) (시간 단위)
     public static final int COMPLETE = 168;

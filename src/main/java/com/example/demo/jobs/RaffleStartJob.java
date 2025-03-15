@@ -37,7 +37,6 @@ public class RaffleStartJob implements Job {
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
         raffle.setRaffleStatus(RaffleStatus.ACTIVE);
-        raffleRepository.save(raffle);
 
         List<Like> likeList = likeRepository.findByRaffle(raffle);
         for (Like like : likeList)
