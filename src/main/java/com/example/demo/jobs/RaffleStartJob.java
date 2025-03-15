@@ -2,7 +2,6 @@ package com.example.demo.jobs;
 
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
-import com.example.demo.entity.Apply;
 import com.example.demo.entity.Like;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.User;
@@ -16,8 +15,8 @@ import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -38,9 +37,19 @@ public class RaffleStartJob implements Job {
 
         raffle.setRaffleStatus(RaffleStatus.ACTIVE);
 
-        List<Like> likeList = likeRepository.findByRaffle(raffle);
-        for (Like like : likeList)
-            emailService.sendRaffleOpenEmail(raffle, like.getUser());
+        List<Like> likeList = likeRepository.findByRaffleWithUser(raffle);
+        List<User> users = likeList.stream()
+                .map(Like::getUser)
+                .collect(Collectors.toList());
+
+        int batchSize = 100;
+        int totalSize = users.size();
+        for (int i = 0; i < totalSize; i += batchSize) {
+            int end = Math.min(i + batchSize, totalSize);
+            List<User> batchUsers = users.subList(i, end);
+
+            emailService.sendBatchRaffleOpenEmail(batchUsers, raffle);
+        }
 
         emailService.sendOwnerRaffleOpenEmail(raffle);
 
