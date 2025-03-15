@@ -20,4 +20,8 @@ public interface EmailService {
 
     void sendOwnerReadyEmail(Delivery delivery);
 
+    void sendRaffleOpenEmail(Raffle raffle, User user);
+
+    void sendOwnerRaffleOpenEmail(Raffle raffle);
+
 }

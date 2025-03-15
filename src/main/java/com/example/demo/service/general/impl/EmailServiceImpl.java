@@ -253,4 +253,67 @@ public class EmailServiceImpl implements EmailService {
             throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
         }
     }
+
+    @Override
+    public void sendRaffleOpenEmail(Raffle raffle, User user) {
+
+        try {
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(user.getEmail());
+            helper.setFrom(fromEmail);
+
+            String subject = "[장마당] " + raffle.getName() + " 래플 오픈 안내";
+            helper.setSubject(subject);
+
+            Context context = new Context();
+            context.setVariable("userName", user.getNickname());
+            context.setVariable("raffleName", raffle.getName());
+            context.setVariable("raffleUrl", String.format(Constants.RAFFLE_URL, raffle.getId()));
+
+            context.setVariable("fromEmail", fromEmail);
+
+            String body = templateEngine.process("RaffleOpenEmail.html", context);
+            helper.setText(body, true);
+
+            mailSender.send(helper.getMimeMessage());
+
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
+        }
+    }
+
+    @Override
+    public void sendOwnerRaffleOpenEmail(Raffle raffle) {
+        User user = raffle.getUser();
+
+        try {
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(user.getEmail());
+            helper.setFrom(fromEmail);
+
+            String subject = "[장마당] " + raffle.getName() + " 래플 오픈 안내";
+            helper.setSubject(subject);
+
+            Context context = new Context();
+            context.setVariable("userName", user.getNickname());
+            context.setVariable("raffleName", raffle.getName());
+            context.setVariable("raffleUrl", String.format(Constants.RAFFLE_URL, raffle.getId()));
+
+            context.setVariable("fromEmail", fromEmail);
+
+            String body = templateEngine.process("OwnerRaffleOpenEmail.html", context);
+            helper.setText(body, true);
+
+            mailSender.send(helper.getMimeMessage());
+
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorStatus.DRAW_EMAIL_FAILED);
+        }
+    }
 }

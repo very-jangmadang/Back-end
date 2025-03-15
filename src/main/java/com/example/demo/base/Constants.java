@@ -29,6 +29,9 @@ public class Constants {
     // 당첨자 배송 정보 확인 url
     public static final String DELIVERY_WINNER_URL = "/api/member/delivery/%d/winner";
 
+    // 래플 url
+    public static final String RAFFLE_URL = "https://www.jangmadang.site/raffles/%d";
+
     // 최대 조회 닉네임 개수
     public static final int MAX_NICKNAMES = 50;
 
