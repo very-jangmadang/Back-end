@@ -1,6 +1,7 @@
 package com.example.demo.domain.dto.Inquiry;
 
 import com.example.demo.entity.base.enums.InquiryStatus;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class InquiryAndCommentsResponseDTO {
     private String nickname;
     private String inquiryContent;
     private InquiryStatus status;
-    private LocalDateTime timestamp;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
     private List<InquiryCommentResponseDTO> comments;
 }
