@@ -55,7 +55,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         exchangeRepository.save(exchange);
 
         // API 응답 반환
-        ExchangeResponse exchangeResponse = new ExchangeResponse("환전 성공!!");
+        ExchangeResponse exchangeResponse = new ExchangeResponse("환전 성공!!", exchange.getExchangedAt());
        
         return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, exchangeResponse);
     }

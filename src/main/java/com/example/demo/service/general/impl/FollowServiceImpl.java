@@ -41,6 +41,11 @@ public class FollowServiceImpl implements FollowService {
     public ApiResponse<Void> followStore(Long userId, Long storeId) {
         User user = findUser(userId);
 
+        // 본인은 팔로우 할 수 없음
+        if(userId.equals(storeId)) {
+            throw new CustomException(ErrorStatus.FOLLOW_SELF); // 본인 팔로우 금지
+        }
+
         // storeId가 존재하는 user 인지 확인
         boolean storeExists = userRepository.existsById(storeId);
         if (!storeExists) {

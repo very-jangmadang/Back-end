@@ -156,6 +156,7 @@ public enum ErrorStatus implements BaseErrorCode {
     FOLLOW_ALREADY(HttpStatus.BAD_REQUEST, "FOLLOW_4001", "이미 팔로우한 상점입니다."),
     FOLLOW_NOT(HttpStatus.BAD_REQUEST, "FOLLOW_4002", "팔로우 상태가 아닙니다."),
     FOLLOW_STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW_4003", "상점을 찾을 수 없습니다."),
+    FOLLOW_SELF(HttpStatus.BAD_REQUEST, "FOLLOW_4004", "자기 자신은 팔로우 할 수 없습니다."),
 
     // 25. Yoon - 거래 관련 에러
     TRADE_USER_PAYMENT_INVALID_PERIOD(HttpStatus.BAD_REQUEST, "TRADE_4001", "유효하지 않은 기간입니다."),
