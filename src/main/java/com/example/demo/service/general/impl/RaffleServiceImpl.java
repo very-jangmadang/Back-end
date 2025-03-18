@@ -180,16 +180,15 @@ public class RaffleServiceImpl implements RaffleService {
         }
         User user = userRepository.findById(Long.parseLong(authentication.getName()))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-        int userTicket = user.getTicket_num();
 
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+
+        int userTicket = user.getTicket_num();
         int raffleTicket = raffle.getTicketNum();
 
-        if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED)
-            throw new CustomException(ErrorStatus.APPLY_UNOPENED_RAFFLE);
         if (raffle.getRaffleStatus() != RaffleStatus.ACTIVE)
-            throw new CustomException(ErrorStatus.APPLY_FINISHED_RAFFLE);
+            throw new CustomException(ErrorStatus.APPLY_RAFFLE_UNAVAILABLE);
 
         if (raffle.getUser().equals(user))
             throw new CustomException(ErrorStatus.APPLY_SELF_RAFFLE);
@@ -209,13 +208,12 @@ public class RaffleServiceImpl implements RaffleService {
         }
 
         user.setTicket_num(userTicket - raffleTicket);
-        userRepository.save(user);
 
         Apply apply = Apply.builder()
                 .raffle(raffle)
                 .user(user)
                 .build();
-        applyRepository.save(apply);
+        raffle.addApply(apply);
 
         return RaffleResponseDTO.ApplyResultDTO.builder()
                 .applyDTO(toApplyDto(apply))

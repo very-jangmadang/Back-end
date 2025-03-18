@@ -23,7 +23,6 @@ import java.util.List;
 public class RaffleEndJob implements Job {
 
     private final RaffleRepository raffleRepository;
-    private final ApplyRepository applyRepository;
     private final EmailService emailService;
     private final DrawService drawService;
     private final SchedulerService schedulerService;
@@ -36,10 +35,10 @@ public class RaffleEndJob implements Job {
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-        int applyCount = applyRepository.countByRaffle(raffle);
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        List<Apply> applyList = raffle.getApplyList();
+        int applyCount = applyList.size();
 
-        if (applyList == null || applyList.isEmpty()) {
+        if (applyCount == 0) {
             raffle.setRaffleStatus(RaffleStatus.CANCELLED);
             emailService.sendOwnerCancelEmail(raffle);
             return;

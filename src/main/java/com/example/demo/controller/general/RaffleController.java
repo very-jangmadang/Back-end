@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.base.status.SuccessStatus._OK;
@@ -44,14 +45,19 @@ public class RaffleController {
 
     @Operation(summary = "래플 응모하기")
     @PostMapping("/api/member/raffles/{raffleId}/apply")
-    public ApiResponse<?> apply(@PathVariable Long raffleId) {
+    public ResponseEntity<ApiResponse<?>> apply(@PathVariable Long raffleId) {
 
         RaffleResponseDTO.ApplyResultDTO resultDTO = raffleService.apply(raffleId);
 
-        if (resultDTO.getApplyDTO() == null)
-            return ApiResponse.onFailure(ErrorStatus.APPLY_INSUFFICIENT_TICKET, resultDTO.getFailedApplyDTO());
+        if (resultDTO.getApplyDTO() == null) {
+            ErrorStatus errorStatus = ErrorStatus.APPLY_INSUFFICIENT_TICKET;
 
-        return ApiResponse.of(_OK, resultDTO.getApplyDTO());
+            return ResponseEntity
+                    .status(errorStatus.getHttpStatus())
+                    .body(ApiResponse.onFailure(errorStatus, resultDTO.getFailedApplyDTO()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.of(_OK, resultDTO.getApplyDTO()));
     }
 }
 

@@ -68,7 +68,8 @@ public class Raffle extends BaseEntity {
     private BigDecimal shippingFee;
 
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
-    List<Apply> applyList;
+    @Builder.Default
+    List<Apply> applyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     @Builder.Default // 이슈
@@ -87,6 +88,7 @@ public class Raffle extends BaseEntity {
     public void addDelivery(Delivery delivery) {
         this.delivery.add(delivery);
     }
+    public void addApply(Apply apply) { this.applyList.add(apply); }
 
     // 조회수 증가
     public void addView() {
