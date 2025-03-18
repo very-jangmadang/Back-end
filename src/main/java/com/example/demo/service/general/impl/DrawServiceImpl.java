@@ -37,7 +37,6 @@ public class DrawServiceImpl implements DrawService {
     private final ApplyRepository applyRepository;
     private final RaffleRepository raffleRepository;
     private final UserRepository userRepository;
-    private final DeliveryRepository deliveryRepository;
     private final EmailService emailService;
     private final SchedulerService schedulerService;
 
@@ -93,7 +92,7 @@ public class DrawServiceImpl implements DrawService {
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
         validateRaffleEnd(raffleStatus);
 
-        Delivery delivery = deliveryRepository.findByRaffleAndWinner(raffle, raffle.getWinner());
+        Delivery delivery = raffle.getDelivery().get(raffle.getDelivery().size() - 1);
 
         // 개최자인 경우
         if (raffle.getUser().equals(user))
