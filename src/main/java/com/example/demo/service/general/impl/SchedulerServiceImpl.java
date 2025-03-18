@@ -162,4 +162,11 @@ public class SchedulerServiceImpl implements SchedulerService {
     public void cancelDeliveryJob(Delivery delivery, String type) {
         cancelJob("Delivery_" + delivery.getId() + "_" + type);
     }
+
+    @Override
+    public void cancelRaffleJob(Raffle raffle, boolean isStart) {
+        String jobName = "Raffle_" + raffle.getId();
+        jobName = isStart ? jobName + "_START" : jobName + "_END";
+        cancelJob(jobName);
+    }
 }
