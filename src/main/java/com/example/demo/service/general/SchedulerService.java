@@ -14,5 +14,5 @@ public interface SchedulerService {
 
     void cancelDeliveryJob(Delivery delivery, String type);
 
-    void cancelRaffleJob(Raffle raffle, boolean isStart);
+    void cancelRaffleJob(Raffle raffle);
 }

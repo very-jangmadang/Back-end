@@ -5,6 +5,7 @@ import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.jobs.*;
 import com.example.demo.service.general.SchedulerService;
 import lombok.RequiredArgsConstructor;
@@ -164,9 +165,11 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public void cancelRaffleJob(Raffle raffle, boolean isStart) {
+    public void cancelRaffleJob(Raffle raffle) {
         String jobName = "Raffle_" + raffle.getId();
-        jobName = isStart ? jobName + "_START" : jobName + "_END";
-        cancelJob(jobName);
+        cancelJob(jobName + "_END");
+
+        if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED)
+            cancelJob(jobName + "_START");
     }
 }
