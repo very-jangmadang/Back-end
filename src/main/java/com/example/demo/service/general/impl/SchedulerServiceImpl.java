@@ -89,7 +89,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     public void scheduleDrawJob(Raffle raffle) {
         String jobName = "Raffle_" + raffle.getId() + "_DRAW";
-        scheduleJob(jobName, DrawJob.class, raffle.getEndAt().plusHours(Constants.DRAW_DEADLINE), Map.of("raffleId", raffle.getId()));
+        scheduleJob(jobName, DrawJob.class, raffle.getEndAt().plusHours(Constants.CHOICE_PERIOD), Map.of("raffleId", raffle.getId()));
     }
 
     @Override

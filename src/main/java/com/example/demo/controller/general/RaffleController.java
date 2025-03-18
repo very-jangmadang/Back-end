@@ -22,10 +22,10 @@ public class RaffleController {
     private final RaffleService raffleService;
     @Operation(summary = "래플 업로드")
     @PostMapping(value = "/api/member/raffles", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<RaffleResponseDTO.UploadResultDTO> upload(@ModelAttribute @Valid RaffleRequestDTO.UploadDTO request) {
+    public ApiResponse<RaffleResponseDTO.ResponseDTO> upload(@ModelAttribute @Valid RaffleRequestDTO.UploadDTO request) {
 
         // 1. raffle 업로드 처리 : 서비스 계층에 요청
-        RaffleResponseDTO.UploadResultDTO result = raffleService.uploadRaffle(request);
+        RaffleResponseDTO.ResponseDTO result = raffleService.uploadRaffle(request);
 
         // 2.성공 응답 + 업로드 결과 DTO 반환
         return ApiResponse.of(SuccessStatus.RAFFLE_UPLOAD_SUCCESS, result);

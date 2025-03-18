@@ -40,7 +40,7 @@ public class RaffleServiceImpl implements RaffleService {
 
     @Override
     @Transactional
-    public RaffleResponseDTO.UploadResultDTO uploadRaffle(RaffleRequestDTO.UploadDTO request) {
+    public RaffleResponseDTO.ResponseDTO uploadRaffle(RaffleRequestDTO.UploadDTO request) {
 
         // 0. 작성자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -73,7 +73,7 @@ public class RaffleServiceImpl implements RaffleService {
         schedulerService.scheduleRaffleJob(raffle);
 
         // 7. 래플 엔티티를 ResponseDTO로 변환 후 반환
-        return RaffleConverter.toUploadResultDTO(raffle);
+        return RaffleConverter.toRaffleResponseDTO(raffle);
     }
 
     @Override

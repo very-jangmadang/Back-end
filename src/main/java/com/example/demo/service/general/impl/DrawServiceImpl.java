@@ -5,6 +5,7 @@ import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Draw.DrawResponseDTO;
+import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
 import com.example.demo.entity.Apply;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 import static com.example.demo.domain.converter.DeliveryConverter.toDelivery;
 import static com.example.demo.domain.converter.DeliveryConverter.toDeliveryResponseDto;
 import static com.example.demo.domain.converter.DrawConverter.*;
+import static com.example.demo.domain.converter.RaffleConverter.toRaffleResponseDTO;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,10 +54,8 @@ public class DrawServiceImpl implements DrawService {
 
         Delivery delivery = toDelivery(raffle);
         delivery.setAddressDeadline();
-        deliveryRepository.save(delivery);
 
         raffle.addDelivery(delivery);
-        raffleRepository.save(raffle);
 
         emailService.sendWinnerPrizeEmail(delivery);
 
@@ -82,7 +82,6 @@ public class DrawServiceImpl implements DrawService {
         }
 
         raffle.setRaffleStatus(RaffleStatus.CANCELLED);
-        raffleRepository.save(raffle);
     }
 
     @Override
@@ -92,7 +91,7 @@ public class DrawServiceImpl implements DrawService {
         Raffle raffle = getRaffle(raffleId);
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
-        validateRaffleStatus(raffleStatus);
+        validateRaffleEnd(raffleStatus);
 
         Delivery delivery = deliveryRepository.findByRaffleAndWinner(raffle, raffle.getWinner());
 
@@ -146,13 +145,9 @@ public class DrawServiceImpl implements DrawService {
         Raffle raffle = getRaffle(raffleId);
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
-        validateRaffleStatus(raffleStatus);
+        validateRaffleEnd(raffleStatus);
         if (raffleStatus == RaffleStatus.UNFULFILLED)
             throw new CustomException(ErrorStatus.DRAW_PENDING);
-
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
-        if (applyList.isEmpty())
-            throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
         Apply apply = applyRepository.findByRaffleAndUser(raffle, user);
 
@@ -163,7 +158,6 @@ public class DrawServiceImpl implements DrawService {
             throw new CustomException(ErrorStatus.DRAW_ALREADY_CHECKED);
 
         apply.setChecked();
-        applyRepository.save(apply);
     }
 
     @Override
@@ -174,9 +168,8 @@ public class DrawServiceImpl implements DrawService {
         validateRaffleOwnership(user, raffle);
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
-        validateRaffleStatus(raffleStatus);
-        if (raffleStatus != RaffleStatus.UNFULFILLED)
-            throw new CustomException(ErrorStatus.DRAW_COMPLETED);
+        validateRaffleEnd(raffleStatus);
+        validateRaffleUnfulfilled(raffleStatus);
 
         int applyNum = applyRepository.countByRaffle(raffle);
         int ticket = raffle.getTicketNum();
@@ -193,14 +186,8 @@ public class DrawServiceImpl implements DrawService {
         validateRaffleOwnership(user, raffle);
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
-        validateRaffleStatus(raffleStatus);
-        switch (raffleStatus) {
-            case ENDED:
-                throw new CustomException(ErrorStatus.DRAW_COMPLETED);
-            case CANCELLED:
-            case COMPLETED:
-                throw new CustomException(ErrorStatus.DRAW_FINISHED);
-        }
+        validateRaffleEnd(raffleStatus);
+        validateRaffleUnfulfilled(raffleStatus);
 
         schedulerService.cancelDrawJob(raffle);
 
@@ -216,23 +203,21 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     @Transactional
-    public DrawResponseDTO.CancelDto forceCancel(Long raffleId) {
+    public RaffleResponseDTO.ResponseDTO forceCancel(Long raffleId) {
         User user = getUser();
         Raffle raffle = getRaffle(raffleId);
 
         validateRaffleOwnership(user, raffle);
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
-        validateRaffleStatus(raffleStatus);
+        validateRaffleEnd(raffleStatus);
         validateCancel(raffle, raffleStatus);
 
         schedulerService.cancelDrawJob(raffle);
 
         cancel(raffle);
 
-        return DrawResponseDTO.CancelDto.builder()
-                .raffleId(raffleId)
-                .build();
+        return toRaffleResponseDTO(raffle);
     }
 
     @Override
@@ -244,7 +229,7 @@ public class DrawServiceImpl implements DrawService {
         validateRaffleOwnership(user, raffle);
 
         RaffleStatus raffleStatus = raffle.getRaffleStatus();
-        validateRaffleStatus(raffleStatus);
+        validateRaffleEnd(raffleStatus);
         if (raffleStatus == RaffleStatus.UNFULFILLED)
             throw new CustomException(ErrorStatus.DRAW_PENDING);
         validateCancel(raffle, raffleStatus);
@@ -263,7 +248,6 @@ public class DrawServiceImpl implements DrawService {
             throw new CustomException(ErrorStatus.DRAW_EMPTY);
 
         raffle.setIsRedrawn();
-        raffleRepository.save(raffle);
 
         Delivery delivery = draw(raffle, applyList);
 
@@ -291,9 +275,14 @@ public class DrawServiceImpl implements DrawService {
             throw new CustomException(ErrorStatus.DRAW_NOT_OWNER);
     }
 
-    private void validateRaffleStatus(RaffleStatus status) {
+    private void validateRaffleEnd(RaffleStatus status) {
         if (status == RaffleStatus.UNOPENED || status == RaffleStatus.ACTIVE)
             throw new CustomException(ErrorStatus.DRAW_NOT_ENDED);
+    }
+
+    private void validateRaffleUnfulfilled(RaffleStatus status) {
+        if (status != RaffleStatus.UNFULFILLED)
+            throw new CustomException(ErrorStatus.DRAW_NOT_UNFULFILLED);
     }
 
     private void validateCancel(Raffle raffle, RaffleStatus raffleStatus) {
@@ -301,9 +290,10 @@ public class DrawServiceImpl implements DrawService {
             throw new CustomException(ErrorStatus.DRAW_FINISHED);
 
         if (raffleStatus == RaffleStatus.ENDED) {
-            Delivery delivery = deliveryRepository.findByRaffleAndWinner(raffle, raffle.getWinner());
+            List<Delivery> deliveryList = raffle.getDelivery();
 
-            if (delivery != null) {
+            if (!deliveryList.isEmpty()) {
+                Delivery delivery = deliveryList.get(deliveryList.size() - 1);
                 DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
 
                 if (deliveryStatus != DeliveryStatus.ADDRESS_EXPIRED)
@@ -314,7 +304,6 @@ public class DrawServiceImpl implements DrawService {
                 emailService.sendWinnerCancelEmail(delivery);
 
                 delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
-                deliveryRepository.save(delivery);
             }
         }
     }

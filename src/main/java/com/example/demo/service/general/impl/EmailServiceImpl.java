@@ -265,7 +265,6 @@ public class EmailServiceImpl implements EmailService {
     public void sendRaffleOpenEmail(Raffle raffle, User user) {
 
         try {
-            System.out.println("Thread: " + Thread.currentThread().getName() + " - Sending email to " + user.getNickname());
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
