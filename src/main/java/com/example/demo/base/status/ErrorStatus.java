@@ -84,16 +84,15 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 13. Huiju - 당첨자 추첨 관련 에러
     DRAW_EMPTY(HttpStatus.BAD_REQUEST, "DRAW_4001", "응모한 사용자가 없습니다."),
-    DRAW_NO_WINNER_EMAIL(HttpStatus.BAD_REQUEST, "DRAW_4002", "당첨자의 이메일이 존재하지 않습니다."),
-    DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4003", "해당 래플의 개최자가 아닙니다."),
+    DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4002", "해당 래플의 개최자가 아닙니다."),
+    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4003", "아직 마감되지 않았습니다."),
+    DRAW_NOT_IN(HttpStatus.BAD_REQUEST, "DRAW_4004", "해당 래플의 응모자가 아닙니다."),
+    DRAW_PENDING(HttpStatus.BAD_REQUEST, "DRAW_4005", "아직 추첨이 되지 않았습니다."),
+    DRAW_NOT_UNFULFILLED(HttpStatus.BAD_REQUEST, "DRAW_4006", "UNFULFILLED 래플이 아닙니다."),
+    DRAW_FINISHED(HttpStatus.BAD_REQUEST, "DRAW_4007", "이미 종료된 래플입니다."),
+    DRAW_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "DRAW_4008", "이미 결과를 확인한 래플입니다"),
+    DRAW_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4009", "래플의 개최자입니다."),
     DRAW_EMAIL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DRAW_5001", "이메일 전송에 실패하였습니다."),
-    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4004", "아직 마감되지 않았습니다."),
-    DRAW_NOT_IN(HttpStatus.BAD_REQUEST, "DRAW_4005", "해당 래플의 응모자가 아닙니다."),
-    DRAW_PENDING(HttpStatus.BAD_REQUEST, "DRAW_4006", "아직 추첨이 되지 않았습니다."),
-    DRAW_COMPLETED(HttpStatus.BAD_REQUEST, "DRAW_4007", "이미 추첨이 완료되었습니다."),
-    DRAW_FINISHED(HttpStatus.BAD_REQUEST, "DRAW_4008", "이미 종료된 래플입니다."),
-    DRAW_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "DRAW_4009", "이미 결과를 확인한 래플입니다"),
-    DRAW_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4010", "래플의 개최자입니다."),
 
     // 14. Huiju - 배송 관련 에러
     DELIVERY_NOT_WINNER(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "당첨자가 아닙니다."),

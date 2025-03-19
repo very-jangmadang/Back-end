@@ -31,16 +31,8 @@ public class DrawResponseDTO {
         private Long raffleId;
         private int minTicket;
         private int applyTicket;
-        private BigDecimal totalAmount;
+        private BigDecimal finalAmount;
         private long remainedMinutes;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CancelDto {
-        private Long raffleId;
     }
 
 }

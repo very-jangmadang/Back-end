@@ -3,6 +3,8 @@ package com.example.demo.controller.general;
 import com.example.demo.base.ApiResponse;
 import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Draw.DrawResponseDTO;
+import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
+import com.example.demo.entity.Raffle;
 import com.example.demo.service.general.DrawService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +51,7 @@ public class DrawController {
 
     @Operation(summary = "개최자 - 래플 종료하기")
     @PostMapping("/{raffleId}/cancel")
-    public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(@PathVariable Long raffleId) {
+    public ApiResponse<RaffleResponseDTO.ResponseDTO> cancelDraw(@PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, drawService.forceCancel(raffleId));
     }
