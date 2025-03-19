@@ -66,14 +66,14 @@ public class DeliveryConverter {
                 .build();
     }
 
-    public static DeliveryResponseDTO.ResponseDto toResponseDto(Long deliveryId) {
+    public static DeliveryResponseDTO.ResponseDto toDeliveryResponseDto(Long deliveryId) {
         return DeliveryResponseDTO.ResponseDto.builder()
                 .deliveryId(deliveryId)
                 .build();
     }
 
     public static DeliveryResponseDTO.RaffleDTO toRaffleDto(Delivery delivery) {
-        Duration duration = Duration.between(LocalDateTime.now(), delivery.getShippingDeadline().plusHours(Constants.WAIT));
+        Duration duration = Duration.between(LocalDateTime.now(), delivery.getShippingDeadline().plusHours(Constants.EXTENSION_HOURS));
 
         return DeliveryResponseDTO.RaffleDTO.builder()
                 .raffleName(delivery.getRaffle().getName())

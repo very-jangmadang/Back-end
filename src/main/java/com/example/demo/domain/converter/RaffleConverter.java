@@ -30,8 +30,8 @@ public class RaffleConverter {
                 .build();
     }
 
-    public static RaffleResponseDTO.UploadResultDTO toUploadResultDTO(Raffle raffle) {
-        return RaffleResponseDTO.UploadResultDTO.builder()
+    public static RaffleResponseDTO.ResponseDTO toRaffleResponseDTO(Raffle raffle) {
+        return RaffleResponseDTO.ResponseDTO.builder()
                 .raffle_id(raffle.getId())
                 .build();
     }

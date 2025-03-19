@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
-    @Transactional
+
     @Modifying
     @Query("UPDATE User u SET u.ticket_num = u.ticket_num + :refundTicket WHERE u.id IN :userIds")
     void batchUpdateTicketNum(@Param("refundTicket") int refundTicket, @Param("userIds") List<Long> userIds);
@@ -31,5 +31,4 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT u.id FROM User u WHERE u.email = :email")
     Long findIdByEmail(String email);
 
-    Optional<User> findByEmail(String email);
 }

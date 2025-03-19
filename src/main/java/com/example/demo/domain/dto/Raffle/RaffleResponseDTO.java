@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +15,7 @@ public class RaffleResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UploadResultDTO{
+    public static class ResponseDTO {
         private Long raffle_id;
 
     }

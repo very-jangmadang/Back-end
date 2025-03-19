@@ -60,7 +60,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         this.userPaymentRepository = userPaymentRepository;
         this.restTemplate = new RestTemplate();
         this.userPaymentConverter = userPaymentConverter;
-        this.kakaoPayConverter = new KakaoPayConverter(cid, approvalUrl, cancelUrl, failUrl);
+        this.kakaoPayConverter = new KakaoPayConverter(cid, approvalUrl, cancelUrl, failUrl, userRepository);
     }
 
 
@@ -77,7 +77,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 
         // API 응답 데이터를 기반으로 Payment 엔티티 저장
         Optional.ofNullable(readyResponse).ifPresent(response -> {
-            Payment paymentEntity = kakaoPayConverter.toEntity(paymentRequest, response);
+            Payment paymentEntity = kakaoPayConverter.toEntity(findUser(paymentRequest.getUserId()), paymentRequest, response);
             savePaymentEntity(paymentEntity);
         });
         return ApiResponse.of(SuccessStatus.PAYMENT_READY_SUCCESS, readyResponse);
@@ -100,8 +100,8 @@ public class KakaoPayServiceImpl implements KakaoPayService {
             payment.setAmount(payment.getAmount()/100);
             savePaymentEntity(payment);
 
-            UserPayment userPayment = findOrCreateUser(payment.getUserId());
-            User user = findUser(payment.getUserId());
+            UserPayment userPayment = findOrCreateUser(payment.getUser().getId());
+            User user = payment.getUser();
 
             // 유저 티켓 수 업데이트 (배송비가 아닌 경우)
             if (!payment.getItemId().equals("배송비")) {
@@ -117,14 +117,14 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, approveResponse);
     }
 
-    private User findUser(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+    private UserPayment findOrCreateUser(Long userId) {
+        return userPaymentRepository.findByUserId(userId)
+                .orElseGet(() -> userPaymentRepository.save(userPaymentConverter.createDefaultUserPayment(findUser(userId))));
     }
 
-    private UserPayment findOrCreateUser(String userId) {
-        return userPaymentRepository.findByUserId(userId)
-                .orElseGet(() -> userPaymentRepository.save(userPaymentConverter.createDefaultUserPayment(userId)));
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
     private Payment findPaymentByTid(String tid) {
@@ -166,7 +166,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 
     // 결제 취소
     @Override
-    public ApiResponse<CancelResponse> cancelPayment(String userId) {
+    public ApiResponse<CancelResponse> cancelPayment(Long userId) {
         Payment payment = paymentRepository.findTopByUserIdAndStatusAndItemIdOrderByApprovedAtDesc(userId, "APPROVED", "배송비");
         if (payment == null) {
             throw new CustomException(ErrorStatus.PAYMENT_NOT_FOUND);

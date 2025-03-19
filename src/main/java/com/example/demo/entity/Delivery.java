@@ -69,13 +69,13 @@ public class Delivery extends BaseEntity {
 
     public void extendAddressDeadline() {
         this.deliveryStatus = DeliveryStatus.WAITING_ADDRESS;
-        this.addressDeadline = this.addressDeadline.plusHours(Constants.WAIT);
+        this.addressDeadline = this.addressDeadline.plusHours(Constants.EXTENSION_HOURS);
         this.isAddressExtended = true;
     }
 
     public void extendShippingDeadline() {
         this.deliveryStatus = DeliveryStatus.READY;
-        this.shippingDeadline = this.shippingDeadline.plusHours(Constants.WAIT);
+        this.shippingDeadline = this.shippingDeadline.plusHours(Constants.EXTENSION_HOURS);
         this.isShippingExtended = true;
     }
 

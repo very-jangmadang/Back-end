@@ -1,6 +1,7 @@
 package com.example.demo.entity.Payment;
 
 import com.example.demo.entity.BaseEntity;
+import com.example.demo.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -19,9 +20,9 @@ public class Exchange extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Column(nullable = false)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotNull
     private int amount; // 환전 금액

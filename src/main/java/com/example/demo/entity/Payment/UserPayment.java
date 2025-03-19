@@ -1,6 +1,7 @@
 package com.example.demo.entity.Payment;
 
 import com.example.demo.entity.BaseEntity;
+import com.example.demo.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,9 +18,9 @@ public class UserPayment extends BaseEntity {
     @Column(name = "user_payment_id")
     private Long id;
 
-    @NotNull
-    @Column(nullable = false)
-    private String userId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotNull
     @Column(nullable = false)
