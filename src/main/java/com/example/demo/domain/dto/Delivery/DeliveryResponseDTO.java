@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class DeliveryResponseDTO {
 
@@ -17,7 +16,7 @@ public class DeliveryResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DeliveryDto {
+    public static class WinnerResultDto {
         private Long raffleId;
         private Long winnerId;
         private DeliveryStatus deliveryStatus;
@@ -53,13 +52,13 @@ public class DeliveryResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ResultDto {
+    public static class OwnerResultDto {
         private Long raffleId;
         private Long winnerId;
         private Long deliveryId;
         private int minTicket;
         private int applyTicket;
-        private BigDecimal finalAmount;
+        private BigDecimal totalAmount;
         private DeliveryStatus deliveryStatus;
         private LocalDateTime shippingDeadline;
         private boolean isAddressExtended;

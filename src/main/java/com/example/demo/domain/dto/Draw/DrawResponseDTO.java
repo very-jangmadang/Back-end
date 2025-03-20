@@ -31,7 +31,7 @@ public class DrawResponseDTO {
         private Long raffleId;
         private int minTicket;
         private int applyTicket;
-        private BigDecimal finalAmount;
+        private BigDecimal totalAmount;
         private long remainedMinutes;
     }
 

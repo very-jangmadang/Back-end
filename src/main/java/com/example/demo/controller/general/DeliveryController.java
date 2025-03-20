@@ -20,7 +20,7 @@ public class DeliveryController {
 
     @Operation(summary = "당첨자 - 배송 정보 확인하기")
     @GetMapping("/{deliveryId}/winner")
-    public ApiResponse<DeliveryResponseDTO.DeliveryDto> getDelivery(@PathVariable Long deliveryId) {
+    public ApiResponse<DeliveryResponseDTO.WinnerResultDto> getDelivery(@PathVariable Long deliveryId) {
 
         return ApiResponse.of(_OK, deliveryService.getDelivery(deliveryId));
     }
@@ -55,7 +55,7 @@ public class DeliveryController {
 
     @Operation(summary = "개최자 - 배송 정보 확인하기")
     @GetMapping("{deliveryId}/owner")
-    public ApiResponse<DeliveryResponseDTO.ResultDto> getResult(@PathVariable Long deliveryId) {
+    public ApiResponse<DeliveryResponseDTO.OwnerResultDto> getResult(@PathVariable Long deliveryId) {
 
         return ApiResponse.of(_OK, deliveryService.getResult(deliveryId));
     }

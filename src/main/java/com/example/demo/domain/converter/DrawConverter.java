@@ -35,7 +35,7 @@ public class DrawConverter {
                 .raffleId(raffle.getId())
                 .minTicket(raffle.getMinTicket())
                 .applyTicket(applyTicket)
-                .finalAmount(BigDecimal.valueOf(applyTicket).multiply(feeRate))
+                .totalAmount(BigDecimal.valueOf(applyTicket).multiply(feeRate))
                 .remainedMinutes(duration.toMinutes())
                 .build();
     }
