@@ -123,7 +123,6 @@ public class SchedulerServiceImpl implements SchedulerService {
                     triggerTime = delivery.getAddressDeadline().plusHours(Constants.CHOICE_PERIOD);
                 else
                     triggerTime = LocalDateTime.now().plusHours(Constants.CHOICE_PERIOD);
-
                 break;
             case SHIPPING_EXPIRED:
                 jobName += "_Waiting";

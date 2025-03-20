@@ -234,7 +234,7 @@ public class DrawServiceImpl implements DrawService {
         validateCancel(raffle, raffleStatus);
 
         if (raffle.isRedrawn())
-            throw new CustomException(ErrorStatus.REDRAW_AGAIN);
+            throw new CustomException(ErrorStatus.DRAW_ALREADY_REDRAW);
 
         User winner = raffle.getWinner();
         List<Apply> applyList = raffle.getApplyList();
@@ -296,7 +296,7 @@ public class DrawServiceImpl implements DrawService {
                 DeliveryStatus deliveryStatus = delivery.getDeliveryStatus();
 
                 if (deliveryStatus != DeliveryStatus.ADDRESS_EXPIRED)
-                    throw new CustomException(ErrorStatus.CANCEL_FAIL);
+                    throw new CustomException(ErrorStatus.RAFFLE_CANCEL_FAIL);
 
                 schedulerService.cancelDeliveryJob(delivery, "Waiting");
 
