@@ -3,7 +3,9 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.HomeConverter;
+import com.example.demo.domain.converter.base.PageConverter;
 import com.example.demo.domain.dto.Home.*;
+import com.example.demo.domain.dto.base.PageInfo;
 import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.general.HomeService;
@@ -117,13 +119,11 @@ public class HomeServiceImpl implements HomeService {
 
         // 카테고리별 조회 + 응모자순으로 래플 조회 (응모 안마감된것 우선)
         List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(pagedRaffles.getContent(), null);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedRaffles);
 
         return HomeRaffleListDTO.builder()
                 .raffles(result)
-                .currentPage(pagedRaffles.getNumber() + 1)
-                .totalPages(pagedRaffles.getTotalPages())
-                .totalElements(pagedRaffles.getTotalElements())
-                .hasNext(pagedRaffles.hasNext())
+                .pageInfo(pageInfo)
                 .build();
     }
 
@@ -141,13 +141,11 @@ public class HomeServiceImpl implements HomeService {
 
         // 카테고리별 조회 + 응모자순으로 래플 조회 (응모 안마감된것 우선)
         List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(pagedRaffles.getContent(), user);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedRaffles);
 
         return HomeRaffleListDTO.builder()
                 .raffles(result)
-                .currentPage(pagedRaffles.getNumber() + 1)
-                .totalPages(pagedRaffles.getTotalPages())
-                .totalElements(pagedRaffles.getTotalElements())
-                .hasNext(pagedRaffles.hasNext())
+                .pageInfo(pageInfo)
                 .build();
     }
 
@@ -155,14 +153,13 @@ public class HomeServiceImpl implements HomeService {
     public HomeRaffleListDTO getHomeApproaching(int page, int size) {
         Page<Raffle> pagedRafflesSortedByEndAt = homeService.getApproachingRaffles(page-1, size);
         List<Raffle> rafflesSortedByEndAt = pagedRafflesSortedByEndAt.getContent();
+
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, null);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedRafflesSortedByEndAt);
 
         return HomeRaffleListDTO.builder()
                 .raffles(rafflesSortedByEndAtDTO)
-                .currentPage(pagedRafflesSortedByEndAt.getNumber() + 1)
-                .totalPages(pagedRafflesSortedByEndAt.getTotalPages())
-                .totalElements(pagedRafflesSortedByEndAt.getTotalElements())
-                .hasNext(pagedRafflesSortedByEndAt.hasNext())
+                .pageInfo(pageInfo)
                 .build();
     }
 
@@ -175,14 +172,13 @@ public class HomeServiceImpl implements HomeService {
         // 마감임박인 래플 더보기 조회
         Page<Raffle> pagedRafflesSortedByEndAt = homeService.getApproachingRaffles(page-1, size);
         List<Raffle> rafflesSortedByEndAt = pagedRafflesSortedByEndAt.getContent();
+
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, user);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedRafflesSortedByEndAt);
 
         return HomeRaffleListDTO.builder()
                 .raffles(rafflesSortedByEndAtDTO)
-                .currentPage(pagedRafflesSortedByEndAt.getNumber() + 1)
-                .totalPages(pagedRafflesSortedByEndAt.getTotalPages())
-                .totalElements(pagedRafflesSortedByEndAt.getTotalElements())
-                .hasNext(pagedRafflesSortedByEndAt.hasNext())
+                .pageInfo(pageInfo)
                 .build();
 
     }
@@ -197,14 +193,13 @@ public class HomeServiceImpl implements HomeService {
         Pageable pageable = PageRequest.of(page-1, size);
         Page<Raffle> pagedFollowingAllRaffles = followRepository.findRafflesByUserFollowings(userId, now, pageable);
         List<Raffle> myFollowRaffles = pagedFollowingAllRaffles.getContent();
+
         List<HomeRaffleDTO> myFollowingRafflesDTO = convertToHomeRaffleDTOList(myFollowRaffles, user);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedFollowingAllRaffles);
 
         return HomeRaffleListDTO.builder()
                 .raffles(myFollowingRafflesDTO)
-                .currentPage(pagedFollowingAllRaffles.getNumber() + 1)
-                .totalPages(pagedFollowingAllRaffles.getTotalPages())
-                .totalElements(pagedFollowingAllRaffles.getTotalElements())
-                .hasNext(pagedFollowingAllRaffles.hasNext())
+                .pageInfo(pageInfo)
                 .build();
     }
 
@@ -212,14 +207,13 @@ public class HomeServiceImpl implements HomeService {
     public HomeRaffleListDTO getHomeMoreRaffles(int page, int size) {
         Page<Raffle> pagedRafflesSortedByApply = homeService.getMoreRaffles(page-1, size);
         List<Raffle> rafflesSortedByApply = pagedRafflesSortedByApply.getContent();
+
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedRafflesSortedByApply);
 
         return HomeRaffleListDTO.builder()
                 .raffles(rafflesSortedByApplyListDTO)
-                .currentPage(pagedRafflesSortedByApply.getNumber() + 1)
-                .totalPages(pagedRafflesSortedByApply.getTotalPages())
-                .totalElements(pagedRafflesSortedByApply.getTotalElements())
-                .hasNext(pagedRafflesSortedByApply.hasNext())
+                .pageInfo(pageInfo)
                 .build();
     }
 
@@ -231,14 +225,13 @@ public class HomeServiceImpl implements HomeService {
 
         Page<Raffle> pagedRafflesSortedByApply = homeService.getMoreRaffles(page-1, size);
         List<Raffle> rafflesSortedByApply = pagedRafflesSortedByApply.getContent();
+
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, user);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedRafflesSortedByApply);
 
         return HomeRaffleListDTO.builder()
                 .raffles(rafflesSortedByApplyListDTO)
-                .currentPage(pagedRafflesSortedByApply.getNumber() + 1)
-                .totalPages(pagedRafflesSortedByApply.getTotalPages())
-                .totalElements(pagedRafflesSortedByApply.getTotalElements())
-                .hasNext(pagedRafflesSortedByApply.hasNext())
+                .pageInfo(pageInfo)
                 .build();
     }
 
@@ -253,13 +246,11 @@ public class HomeServiceImpl implements HomeService {
         List<Raffle> likedRaffles = pagedLikedRaffles.getContent();
 
         List<HomeRaffleDTO> myLikeRafflesDTO = convertToHomeRaffleDTOList(likedRaffles, user);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedLikedRaffles);
 
         return HomeRaffleListDTO.builder()
                 .raffles(myLikeRafflesDTO)
-                .currentPage(pagedLikedRaffles.getNumber() + 1)
-                .totalPages(pagedLikedRaffles.getTotalPages())
-                .totalElements(pagedLikedRaffles.getTotalElements())
-                .hasNext(pagedLikedRaffles.hasNext())
+                .pageInfo(pageInfo)
                 .build();
     }
 
