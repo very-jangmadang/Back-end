@@ -36,7 +36,7 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     int countReviewsByUserId(Long userId);
 
     // 이름으로 래플 검색
-    List<Raffle> findAllByNameContaining(String keyword);
+    Page<Raffle> findAllByNameContaining(String keyword, Pageable pageable);
 
     // 주최자로 래플 찾기
     List<Raffle> findAllByUserIdOrderByCreatedAtDesc(Long userId);
