@@ -6,9 +6,9 @@ import com.example.demo.domain.dto.Payment.*;
 import java.util.List;
 
 public interface UserPaymentService {
-    ApiResponse<UserTicketResponse> getUserTickets(String userId);
-    ApiResponse<UserBankInfoResponse> postUserPaymentInfo(String userId, UserBankInfoRequest userBankInfoRequest);
-    ApiResponse<UserBankInfoResponse> getUserPaymentInfo(String userId);
-    ApiResponse<List<PaymentResponse>> getPaymentHistory(String userId, String period);
-    ApiResponse<Void> tradeTickets(String userId, String role, int ticketCount);
+    ApiResponse<UserTicketResponse> getUserTickets(Long userId);
+    ApiResponse<UserBankInfoResponse> postUserPaymentInfo(Long userId, UserBankInfoRequest userBankInfoRequest);
+    ApiResponse<UserBankInfoResponse> getUserPaymentInfo(Long userId);
+    ApiResponse<List<PaymentResponse>> getPaymentHistory(Long userId, String period);
+    ApiResponse<Void> tradeTickets(Long userId, String role, int ticketCount);
 }

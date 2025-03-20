@@ -7,10 +7,8 @@ import com.example.demo.entity.Raffle;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Set;
 
-import static java.time.LocalTime.from;
 import static java.time.LocalTime.now;
 
 public class DrawConverter {
@@ -30,13 +28,14 @@ public class DrawConverter {
 
     public static DrawResponseDTO.ResultDto toResultDto(Raffle raffle, int applyTicket) {
 
-        Duration duration = Duration.between(now(), raffle.getEndAt().plusHours(Constants.DRAW_DEADLINE));
+        BigDecimal feeRate = new BigDecimal(Constants.FEE_RATE).multiply(new BigDecimal("100"));
+        Duration duration = Duration.between(now(), raffle.getEndAt().plusHours(Constants.CHOICE_PERIOD));
 
         return DrawResponseDTO.ResultDto.builder()
                 .raffleId(raffle.getId())
                 .minTicket(raffle.getMinTicket())
                 .applyTicket(applyTicket)
-                .totalAmount(BigDecimal.valueOf(applyTicket).multiply(new BigDecimal("93")))
+                .finalAmount(BigDecimal.valueOf(applyTicket).multiply(feeRate))
                 .remainedMinutes(duration.toMinutes())
                 .build();
     }

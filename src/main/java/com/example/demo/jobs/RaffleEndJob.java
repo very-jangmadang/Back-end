@@ -7,9 +7,9 @@ import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.RaffleRepository;
-import com.example.demo.service.general.DrawSchedulerService;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
+import com.example.demo.service.general.SchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -23,10 +23,9 @@ import java.util.List;
 public class RaffleEndJob implements Job {
 
     private final RaffleRepository raffleRepository;
-    private final ApplyRepository applyRepository;
     private final EmailService emailService;
     private final DrawService drawService;
-    private final DrawSchedulerService drawSchedulerService;
+    private final SchedulerService schedulerService;
 
     @Override
     @Transactional
@@ -36,29 +35,25 @@ public class RaffleEndJob implements Job {
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
-        int applyCount = applyRepository.countByRaffle(raffle);
-        List<Apply> applyList = applyRepository.findByRaffle(raffle);
+        List<Apply> applyList = raffle.getApplyList();
+        int applyCount = applyList.size();
+
+        if (applyCount == 0) {
+            raffle.setRaffleStatus(RaffleStatus.CANCELLED);
+            emailService.sendOwnerCancelEmail(raffle);
+            return;
+        }
 
         if (applyCount * raffle.getTicketNum() < raffle.getMinTicket()) {
-            updateRaffleStatus(raffle, RaffleStatus.UNFULFILLED);
+            raffle.setRaffleStatus(RaffleStatus.UNFULFILLED);
 
-            drawSchedulerService.scheduleDrawJob(raffle);
+            schedulerService.scheduleDrawJob(raffle);
             emailService.sendOwnerUnfulfilledEmail(raffle);
             return;
         }
 
-        updateRaffleStatus(raffle, RaffleStatus.ENDED);
-
-        if (applyList == null || applyList.isEmpty()) {
-            updateRaffleStatus(raffle, RaffleStatus.CANCELLED);
-            return;
-        }
+        raffle.setRaffleStatus(RaffleStatus.ENDED);
 
         drawService.draw(raffle, applyList);
-    }
-
-    private void updateRaffleStatus(Raffle raffle, RaffleStatus status) {
-        raffle.setRaffleStatus(status);
-        raffleRepository.save(raffle);
     }
 }

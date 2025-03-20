@@ -66,10 +66,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 10. Huiju - 응모 관련 에러
     APPLY_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
-    APPLY_UNOPENED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "아직 응모가 시작되지 않은 래플입니다."),
-    APPLY_FINISHED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 종료된 래플입니다."),
-    APPLY_SELF_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4004", "본인이 개최한 래플에는 응모할 수 없습니다."),
-    APPLY_ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4005", "이미 응모한 래플입니다."),
+    APPLY_RAFFLE_UNAVAILABLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "응모가 불가능한 래플입니다."),
+    APPLY_SELF_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4003", "본인이 개최한 래플에는 응모할 수 없습니다."),
+    APPLY_ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4004", "이미 응모한 래플입니다."),
 
     // 11. Hyungjin - 이미지 관련 에러
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_4001", "이미지 업로드에 실패했습니다."),
@@ -85,16 +84,15 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 13. Huiju - 당첨자 추첨 관련 에러
     DRAW_EMPTY(HttpStatus.BAD_REQUEST, "DRAW_4001", "응모한 사용자가 없습니다."),
-    DRAW_NO_WINNER_EMAIL(HttpStatus.BAD_REQUEST, "DRAW_4002", "당첨자의 이메일이 존재하지 않습니다."),
-    DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4003", "해당 래플의 개최자가 아닙니다."),
+    DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4002", "해당 래플의 개최자가 아닙니다."),
+    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4003", "아직 마감되지 않았습니다."),
+    DRAW_NOT_IN(HttpStatus.BAD_REQUEST, "DRAW_4004", "해당 래플의 응모자가 아닙니다."),
+    DRAW_PENDING(HttpStatus.BAD_REQUEST, "DRAW_4005", "아직 추첨이 되지 않았습니다."),
+    DRAW_NOT_UNFULFILLED(HttpStatus.BAD_REQUEST, "DRAW_4006", "UNFULFILLED 래플이 아닙니다."),
+    DRAW_FINISHED(HttpStatus.BAD_REQUEST, "DRAW_4007", "이미 종료된 래플입니다."),
+    DRAW_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "DRAW_4008", "이미 결과를 확인한 래플입니다"),
+    DRAW_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4009", "래플의 개최자입니다."),
     DRAW_EMAIL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DRAW_5001", "이메일 전송에 실패하였습니다."),
-    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4004", "아직 마감되지 않았습니다."),
-    DRAW_NOT_IN(HttpStatus.BAD_REQUEST, "DRAW_4005", "해당 래플의 응모자가 아닙니다."),
-    DRAW_PENDING(HttpStatus.BAD_REQUEST, "DRAW_4006", "아직 추첨이 되지 않았습니다."),
-    DRAW_COMPLETED(HttpStatus.BAD_REQUEST, "DRAW_4007", "이미 추첨이 완료되었습니다."),
-    DRAW_FINISHED(HttpStatus.BAD_REQUEST, "DRAW_4008", "이미 종료된 래플입니다."),
-    DRAW_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "DRAW_4009", "이미 결과를 확인한 래플입니다"),
-    DRAW_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4010", "래플의 개최자입니다."),
 
     // 14. Huiju - 배송 관련 에러
     DELIVERY_NOT_WINNER(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "당첨자가 아닙니다."),
@@ -157,6 +155,7 @@ public enum ErrorStatus implements BaseErrorCode {
     FOLLOW_ALREADY(HttpStatus.BAD_REQUEST, "FOLLOW_4001", "이미 팔로우한 상점입니다."),
     FOLLOW_NOT(HttpStatus.BAD_REQUEST, "FOLLOW_4002", "팔로우 상태가 아닙니다."),
     FOLLOW_STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW_4003", "상점을 찾을 수 없습니다."),
+    FOLLOW_SELF(HttpStatus.BAD_REQUEST, "FOLLOW_4004", "자기 자신은 팔로우 할 수 없습니다."),
 
     // 25. Yoon - 거래 관련 에러
     TRADE_USER_PAYMENT_INVALID_PERIOD(HttpStatus.BAD_REQUEST, "TRADE_4001", "유효하지 않은 기간입니다."),

@@ -4,6 +4,7 @@ import com.example.demo.domain.dto.Payment.*;
 import com.example.demo.entity.Payment.Payment;
 import com.example.demo.entity.Payment.UserPayment;
 import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -11,9 +12,15 @@ import java.time.LocalDateTime;
 @Component
 public class UserPaymentConverter {
 
-    public UserPayment createDefaultUserPayment(String userId) {
+    private final UserRepository userRepository;
+
+    public UserPaymentConverter(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public UserPayment createDefaultUserPayment(User user) {
         UserPayment userPayment = new UserPayment();
-        userPayment.setUserId(userId);
+        userPayment.setUser(user);
         userPayment.setBankName("Default J-MARKET Bank"); // 기본 은행 이름 설정
         userPayment.setBankNumber("000-000-0000"); // 기본 계좌번호 설정
         userPayment.setUpdatedAt(LocalDateTime.now());
