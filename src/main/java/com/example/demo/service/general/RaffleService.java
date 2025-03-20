@@ -9,7 +9,7 @@ public interface RaffleService {
     RaffleResponseDTO.ResponseDTO uploadRaffle(RaffleRequestDTO.UploadDTO request);
 
     // 래플 삭제
-    Long deleteRaffle(Long id);
+    Long softDeleteRaffle(Long id);
 
     // 래플 상세조회
     RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long id);

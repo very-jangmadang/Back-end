@@ -18,7 +18,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE raffle SET deleted_at = NOW() WHERE raffle_id = ?")
 @Where(clause = "deleted_at is null")
 public class Raffle extends BaseEntity {
 
@@ -72,15 +71,15 @@ public class Raffle extends BaseEntity {
     @Column(precision = 10, scale = 2)
     private BigDecimal shippingFee;
 
-    @OneToMany(mappedBy = "raffle", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     @Builder.Default
     List<Apply> applyList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "raffle", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     @Builder.Default // 이슈
     List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "raffle", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "raffle", cascade = CascadeType.ALL)
     @Builder.Default
     List<Delivery> delivery = new ArrayList<>();
 
@@ -105,6 +104,5 @@ public class Raffle extends BaseEntity {
     public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
     public void setWinner(User winner) { this.winner = winner; }
     public void setIsRedrawn() { this.isRedrawn = true; }
-
-
+    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
 }

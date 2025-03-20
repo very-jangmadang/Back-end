@@ -43,11 +43,11 @@ public class RaffleController {
         return ApiResponse.of(SuccessStatus.RAFFLE_FETCH_SUCCESS, result);
     }
 
-    @Operation(summary = "래플 삭제하기")
-    @DeleteMapping("/api/member/raffles/{raffleId}")
+    @Operation(summary = "래플 삭제하기(논리)")
+    @PatchMapping("/api/member/raffles/{raffleId}")
     public ApiResponse<?> deletePostById(@PathVariable Long raffleId) {
-        raffleService.deleteRaffle(raffleId);
-        return ApiResponse.of(SuccessStatus._OK, raffleId);
+        Long id = raffleService.softDeleteRaffle(raffleId);
+        return ApiResponse.of(SuccessStatus._OK, id);
     }
 
     @Operation(summary = "래플 응모하기")

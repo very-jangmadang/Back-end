@@ -17,7 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.demo.domain.converter.RaffleConverter.toApplyDto;
 
@@ -78,18 +80,45 @@ public class RaffleServiceImpl implements RaffleService {
 
     @Override
     @Transactional
-    public Long deleteRaffle(Long id) {
+    public Long softDeleteRaffle(Long id) {
         Raffle raffle = raffleRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
         RaffleStatus status = raffle.getRaffleStatus();
 
-        if(status != RaffleStatus.CANCELLED) {
-            throw new CustomException(ErrorStatus.RAFFLE_CANT_DELETE);
-        }
+        switch (status) {
+            case UNOPENED, CANCELLED, COMPLETED:
+                softDelete(raffle);
+                break;
+            case ACTIVE:
+                List<Apply> applyList = raffle.getApplyList();
+                if(applyList != null && !applyList.isEmpty()){
+                    // TODO 패널티 부과 로직 추가
 
-        raffleRepository.deleteById(id);
+                    int refundTicket = raffle.getTicketNum();
+                    List<Long> userIdList = applyList.stream()
+                                    .map(apply -> apply.getUser().getId())
+                                    .collect(Collectors.toList());
+
+                    if (!userIdList.isEmpty() && refundTicket > 0) {
+                        userRepository.batchUpdateTicketNum(refundTicket, userIdList);
+                    }
+
+                }
+                softDelete(raffle);
+                break;
+            case UNFULFILLED, ENDED:
+                throw new CustomException(ErrorStatus.RAFFLE_CANT_DELETE);
+            case DELETED:
+                throw new CustomException(ErrorStatus.RAFFLE_ALREADY_DELETED);
+        }
         return id;
+    }
+
+    private void softDelete(Raffle raffle) {
+        schedulerService.cancelRaffleJob(raffle);
+        raffle.setRaffleStatus(RaffleStatus.DELETED);
+        raffle.setDeletedAt(LocalDateTime.now());
     }
 
     @Override
