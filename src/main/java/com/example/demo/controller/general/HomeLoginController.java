@@ -71,9 +71,9 @@ public class HomeLoginController {
 
     @Operation(summary = "내가 찜한 래플 더보기")
     @GetMapping("/likes")
-    public ApiResponse<HomeRaffleListDTO> homeLikeRaffles(@RequestParam(defaultValue = "1") int page,
-                                                          @RequestParam(defaultValue = "16") int size,
-                                                          Authentication authentication){
+    public ApiResponse<HomeRaffleListDTO> homeLikeRaffles(Authentication authentication,
+                                                          @RequestParam(defaultValue = "1") int page,
+                                                          @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
         HomeRaffleListDTO result = homeService.getHomeLikeRaffles(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
