@@ -46,8 +46,9 @@ public class HomeController {
 
     @Operation(summary = "래플 둘러보기")
     @GetMapping("/more")
-    public ApiResponse<HomeRaffleListDTO> homeMoreRaffles(){
-        HomeRaffleListDTO result = homeService.getHomeMoreRaffles();
+    public ApiResponse<HomeRaffleListDTO> homeMoreRaffles(@RequestParam(defaultValue = "1") int page,
+                                                          @RequestParam(defaultValue = "16") int size){
+        HomeRaffleListDTO result = homeService.getHomeMoreRaffles(page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 

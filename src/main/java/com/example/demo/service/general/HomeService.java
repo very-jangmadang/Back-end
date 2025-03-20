@@ -19,11 +19,11 @@ public interface HomeService {
 
     HomeRaffleListDTO getHomeApproachingLogin(Long userId, int page, int size);
 
-    HomeRaffleListDTO getHomeFollowingRaffles(Long userId);
+    HomeRaffleListDTO getHomeFollowingRaffles(Long userId, int page, int size);
 
-    HomeRaffleListDTO getHomeMoreRaffles();
+    HomeRaffleListDTO getHomeMoreRaffles(int page, int size);
 
-    HomeRaffleListDTO getHomeMoreRafflesLogin(Long userId);
+    HomeRaffleListDTO getHomeMoreRafflesLogin(Long userId, int page, int size);
 
     HomeRaffleListDTO getHomeLikeRaffles(Long userId, int page, int size);
 

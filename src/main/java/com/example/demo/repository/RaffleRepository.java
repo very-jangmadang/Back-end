@@ -53,7 +53,7 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
             "LEFT JOIN Apply a ON r.id = a.raffle.id " +
             "GROUP BY r " +
             "ORDER BY " +
-            "CASE WHEN r.endAt > CURRENT_TIMESTAMP THEN 1 ELSE 2 END, " +
+            "CASE WHEN r.endAt > :now THEN 1 ELSE 2 END, " +
             "COUNT(a) DESC")
-    Page<Raffle> findAllSortedByApply(Pageable pageable);
+    Page<Raffle> findAllSortedByApply(@Param("now") LocalDateTime now, Pageable pageable);
 }

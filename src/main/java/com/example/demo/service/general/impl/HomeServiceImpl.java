@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,21 +34,22 @@ public class HomeServiceImpl implements HomeService {
     @Lazy
     private final HomeService homeService;
 
+    // 마감임박인 래플 조회
     @Override
-    @Cacheable(value = "homeRaffles", key = "'approaching-' + #page")
     public Page<Raffle> getApproachingRaffles(int page, int size) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime maxTime = now.plusHours(24);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "endAt"));
+        Pageable pageable = PageRequest.of(page, size);
         return raffleRepository.findRafflesEndingSoon(now, maxTime, pageable);
     }
 
+    // 래플 둘러보기
     @Override
-    @Cacheable(value = "homeRaffles", key="'apply-' + #page")
     public Page<Raffle> getMoreRaffles(int page, int size) {
+        LocalDateTime now = LocalDateTime.now();
         Pageable pageable = PageRequest.of(page, size);
-        return raffleRepository.findAllSortedByApply(pageable);
+        return raffleRepository.findAllSortedByApply(now, pageable);
     }
 
 
@@ -63,8 +62,8 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, null);
 
         // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 안 했을 시)
-        Page<Raffle> applyRaffles = homeService.getMoreRaffles(0, 16);
-        List<Raffle> rafflesSortedByApply = applyRaffles.getContent().stream().limit(5).toList();
+        Page<Raffle> moreRaffles = homeService.getMoreRaffles(0, 16);
+        List<Raffle> rafflesSortedByApply = moreRaffles.getContent().stream().limit(5).toList();
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
 
         return getHomeResponseDTO(rafflesSortedByEndAtDTO, null, null, rafflesSortedByApplyListDTO);
@@ -75,7 +74,6 @@ public class HomeServiceImpl implements HomeService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-        LocalDateTime now = LocalDateTime.now();
 
         // 마감임박인 래플 5개 조회 (로그인 했을 시, 본인이 찜한 여부까지 같이 전달)
         Page<Raffle> approachingRaffles = homeService.getApproachingRaffles(0, 16);
@@ -84,31 +82,23 @@ public class HomeServiceImpl implements HomeService {
 
 
         // 내가 찜한 래플 5개 조회 ( 로그인 했을 시 기능 )
-        Pageable pageable = PageRequest.of(0, 16);
-        Page<Raffle> pagedLikedRaffles = likeRepository.findRaffleByUserIdOrderByCreatedAtDesc(user.getId(), pageable);
+        Pageable pageableForLike = PageRequest.of(0, 16);
+        Page<Raffle> pagedLikedRaffles = likeRepository.findRaffleByUserIdOrderByCreatedAtDesc(user.getId(), pageableForLike);
         List<Raffle> likedRaffles = pagedLikedRaffles.getContent().stream().limit(5).toList();
-
         List<HomeRaffleDTO> myLikeRafflesDTO = convertToHomeRaffleDTOList(likedRaffles, user);
 
+
         // 내가 팔로우한 상점의 래플 5개 조회 (마감임박순, 로그인 했을 시 본인의 찜 여부도 전달)
-        List<Follow> followings = user.getFollowings();
-        List<Raffle> followingAllRaffles = new ArrayList<>();
-
-
-        for (Follow following : followings) {
-            if (following.getStoreId() != null) {
-                List<Raffle> storeRaffles = raffleRepository.findAllByUserId(following.getStoreId());
-                followingAllRaffles.addAll(storeRaffles);
-            }
-        }
-
-        List<Raffle> myFollowRaffles = sortRafflesByEndAt(followingAllRaffles, 5);
+        LocalDateTime now = LocalDateTime.now();
+        Pageable pageableForFollow = PageRequest.of(0,16);
+        Page<Raffle> pagedFollowingAllRaffles = followRepository.findRafflesByUserFollowings(userId,now, pageableForFollow);
+        List<Raffle> myFollowRaffles = pagedFollowingAllRaffles.getContent().stream().limit(5).toList();
         List<HomeRaffleDTO> myFollowingRafflesDTO = convertToHomeRaffleDTOList(myFollowRaffles, user);
 
 
         // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 했을 시 찜 여부도 같이 전달)
-        Page<Raffle> applyRaffles = homeService.getMoreRaffles(0, 16);
-        List<Raffle> rafflesSortedByApply = applyRaffles.getContent().stream().limit(5).toList();
+        Page<Raffle> moreRaffles = homeService.getMoreRaffles(0, 16);
+        List<Raffle> rafflesSortedByApply = moreRaffles.getContent().stream().limit(5).toList();
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, user);
 
 
@@ -198,34 +188,30 @@ public class HomeServiceImpl implements HomeService {
     }
 
     @Override
-    public HomeRaffleListDTO getHomeFollowingRaffles(Long userId) {
+    public HomeRaffleListDTO getHomeFollowingRaffles(Long userId, int page, int size) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Follow> followings = user.getFollowings();
-        List<Raffle> followingAllRaffles = new ArrayList<>();
-
-
-        for (Follow following : followings) {
-            if (following.getStoreId() != null) {
-                List<Raffle> storeRaffles = raffleRepository.findAllByUserId(following.getStoreId());
-                followingAllRaffles.addAll(storeRaffles);
-            }
-        }
-
-        List<Raffle> myFollowRaffles = sortRafflesByEndAt(followingAllRaffles, 5);
+        LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(page-1, size);
+        Page<Raffle> pagedFollowingAllRaffles = followRepository.findRafflesByUserFollowings(userId, now, pageable);
+        List<Raffle> myFollowRaffles = pagedFollowingAllRaffles.getContent();
         List<HomeRaffleDTO> myFollowingRafflesDTO = convertToHomeRaffleDTOList(myFollowRaffles, user);
 
         return HomeRaffleListDTO.builder()
                 .raffles(myFollowingRafflesDTO)
+                .currentPage(pagedFollowingAllRaffles.getNumber() + 1)
+                .totalPages(pagedFollowingAllRaffles.getTotalPages())
+                .totalElements(pagedFollowingAllRaffles.getTotalElements())
+                .hasNext(pagedFollowingAllRaffles.hasNext())
                 .build();
     }
 
     @Override
-    public HomeRaffleListDTO getHomeMoreRaffles() {
-        Page<Raffle> pagedRafflesSortedByApply = homeService.getMoreRaffles(0, 16);
-        List<Raffle> rafflesSortedByApply = pagedRafflesSortedByApply.getContent().stream().limit(5).toList();
+    public HomeRaffleListDTO getHomeMoreRaffles(int page, int size) {
+        Page<Raffle> pagedRafflesSortedByApply = homeService.getMoreRaffles(page-1, size);
+        List<Raffle> rafflesSortedByApply = pagedRafflesSortedByApply.getContent();
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
 
         return HomeRaffleListDTO.builder()
@@ -238,13 +224,13 @@ public class HomeServiceImpl implements HomeService {
     }
 
     @Override
-    public HomeRaffleListDTO getHomeMoreRafflesLogin(Long userId) {
+    public HomeRaffleListDTO getHomeMoreRafflesLogin(Long userId, int page, int size) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
-        Page<Raffle> pagedRafflesSortedByApply = homeService.getMoreRaffles(0, 16);
-        List<Raffle> rafflesSortedByApply = pagedRafflesSortedByApply.getContent().stream().limit(5).toList();
+        Page<Raffle> pagedRafflesSortedByApply = homeService.getMoreRaffles(page-1, size);
+        List<Raffle> rafflesSortedByApply = pagedRafflesSortedByApply.getContent();
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, user);
 
         return HomeRaffleListDTO.builder()
@@ -293,46 +279,48 @@ public class HomeServiceImpl implements HomeService {
                 .build();
     }
 
+
     private List<HomeRaffleDTO> convertToHomeRaffleDTOList(List<Raffle> raffles, User user) {
-        List<HomeRaffleDTO> dtoList = new ArrayList<>();
+        List<Long> raffleIds = raffles.stream()
+                .map(Raffle::getId)
+                .toList();
 
-        for (Raffle raffle : raffles) {
-            boolean likeStatus = false;
-
-            // 로그인한 경우에만 likeStatus 조회
-            if (user != null) {
-                List<Long> likedRaffleIds = user.getLikes().stream()
-                        .map(like -> like.getRaffle().getId())
-                        .toList();
-                likeStatus = likedRaffleIds.contains(raffle.getId());
-            }
-
-            HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, likeStatus);
-            dtoList.add(raffleDTO);
+        Set<Long> likedRaffleIds;
+        if (user != null && !raffleIds.isEmpty()) {
+            likedRaffleIds = new HashSet<>(likeRepository.findLikedRaffleIdsByUserAndRaffleList(raffleIds, user));
+        } else {
+            likedRaffleIds = new HashSet<>();
         }
 
-        return dtoList;
+        return raffles.stream()
+                .map(raffle -> {
+                    boolean likeStatus = likedRaffleIds.contains(raffle.getId());
+                    return HomeConverter.toHomeRaffleDTO(raffle, likeStatus);
+                })
+                .toList();
     }
 
-    private List<Raffle> sortRafflesByEndAt(List<Raffle> raffles, Integer limit){
+    //    private List<HomeRaffleDTO> convertToHomeRaffleDTOList(List<Raffle> raffles, User user) {
+//        List<HomeRaffleDTO> dtoList = new ArrayList<>();
+//
+//        for (Raffle raffle : raffles) {
+//            boolean likeStatus = false;
+//
+//            // 로그인한 경우에만 likeStatus 조회
+//            if (user != null) {
+//                List<Long> likedRaffleIds = user.getLikes().stream()
+//                        .map(like -> like.getRaffle().getId())
+//                        .toList();
+//                likeStatus = likedRaffleIds.contains(raffle.getId());
+//            }
+//
+//            HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, likeStatus);
+//            dtoList.add(raffleDTO);
+//        }
+//
+//        return dtoList;
+//    }
 
-        LocalDateTime now = LocalDateTime.now();
 
-        if(limit != null){
-            return raffles.stream()
-                    .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
-                    .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
-                    .limit(limit)
-                    .toList();
-        }
-
-        else{
-            return raffles.stream()
-                    .filter(r -> Duration.between(now, r.getEndAt()).toMillis() >= 0)
-                    .sorted(Comparator.comparingLong(r -> Duration.between(now, r.getEndAt()).toMillis()))
-                    .toList();
-        }
-
-    }
 
 }

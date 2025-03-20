@@ -51,17 +51,21 @@ public class HomeLoginController {
 
     @Operation(summary = "팔로우한 상점의 래플 더보기")
     @GetMapping("/following")
-    public ApiResponse<HomeRaffleListDTO> homeFollowingRaffles(Authentication authentication){
+    public ApiResponse<HomeRaffleListDTO> homeFollowingRaffles(Authentication authentication,
+                                                               @RequestParam(defaultValue = "1") int page,
+                                                               @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        HomeRaffleListDTO result = homeService.getHomeFollowingRaffles(userId);
+        HomeRaffleListDTO result = homeService.getHomeFollowingRaffles(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
     @Operation(summary = "래플 둘러보기")
     @GetMapping("/more")
-    public ApiResponse<HomeRaffleListDTO> homeMoreRaffles(Authentication authentication){
+    public ApiResponse<HomeRaffleListDTO> homeMoreRaffles(Authentication authentication,
+                                                          @RequestParam(defaultValue = "1") int page,
+                                                          @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        HomeRaffleListDTO result =  homeService.getHomeMoreRafflesLogin(userId);
+        HomeRaffleListDTO result =  homeService.getHomeMoreRafflesLogin(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
