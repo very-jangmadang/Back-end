@@ -19,12 +19,9 @@ public class SwaggerConfig {
                 .title("JMarketYard Back-End API")
                 .description("장마당 백엔드 API 명세서")
                 .version("1.0.0");
-
-        String cookieSchemeName = "JWT_COOKIE";
         String headerSchemeName = "Authorization";
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList(headerSchemeName)
-                .addList(cookieSchemeName);
+                .addList(headerSchemeName);
 
         Components components = new Components()
                 .addSecuritySchemes(headerSchemeName,
@@ -32,12 +29,7 @@ public class SwaggerConfig {
                                 .name(headerSchemeName)
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
-                                .bearerFormat("JWT"))
-                .addSecuritySchemes(cookieSchemeName,
-                        new SecurityScheme()
-                                .name(cookieSchemeName)
-                                .type(SecurityScheme.Type.APIKEY)
-                                .in(SecurityScheme.In.COOKIE));
+                                .bearerFormat("JWT"));
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
                 .info(apiInfo)

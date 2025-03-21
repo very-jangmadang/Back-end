@@ -46,6 +46,8 @@ public enum ErrorStatus implements BaseErrorCode {
     // 5. Hyungjin - 래플 관련 에러
     RAFFLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RAFFLE_4001", "해당 래플을 찾을 수 없습니다."),
     RAFFLE_CANCEL_FAIL(HttpStatus.BAD_REQUEST, "RAFFLE_4002", "종료 가능한 래플이 아닙니다."),
+    RAFFLE_CANT_DELETE(HttpStatus.BAD_REQUEST, "RAFFLE_4003", "래플 종료 후 삭제 가능합니다"),
+    RAFFLE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "RAFFLE_4004", "이미 삭제된 래플입니다"),
 
     // 6. Hyungjin - 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_4001", "해당 카테고리를 찾을 수 없습니다."),
