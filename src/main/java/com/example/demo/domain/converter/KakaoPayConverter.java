@@ -39,7 +39,7 @@ public class KakaoPayConverter {
     }
 
 
-    public Map<String, Object> toPrepareParameters(PaymentRequest paymentRequest) {
+    public Map<String, Object> toPrepareParameters(PaymentRequest paymentRequest, String failUrl) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("cid", this.cid);
         parameters.put("partner_user_id", paymentRequest.getUserId());
@@ -50,7 +50,7 @@ public class KakaoPayConverter {
         parameters.put("tax_free_amount", 0);
         parameters.put("approval_url", this.approvalUrl);
         parameters.put("cancel_url", this.cancelUrl);
-        parameters.put("fail_url", this.failUrl);
+        parameters.put("fail_url", failUrl);
         return parameters;
     }
 
