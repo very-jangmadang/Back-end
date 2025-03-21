@@ -35,12 +35,4 @@ public class DrawResponseDTO {
         private long remainedMinutes;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CancelDto {
-        private Long raffleId;
-    }
-
 }

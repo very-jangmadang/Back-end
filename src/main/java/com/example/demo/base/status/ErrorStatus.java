@@ -5,7 +5,6 @@ import com.example.demo.base.code.BaseErrorCode;
 import com.example.demo.base.code.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.http.protocol.HTTP;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -46,6 +45,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 5. Hyungjin - 래플 관련 에러
     RAFFLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RAFFLE_4001", "해당 래플을 찾을 수 없습니다."),
+    RAFFLE_CANCEL_FAIL(HttpStatus.BAD_REQUEST, "RAFFLE_4002", "종료 가능한 래플이 아닙니다."),
+    RAFFLE_CANT_DELETE(HttpStatus.BAD_REQUEST, "RAFFLE_4003", "래플 종료 후 삭제 가능합니다"),
+    RAFFLE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "RAFFLE_4004", "이미 삭제된 래플입니다"),
 
     // 6. Hyungjin - 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_4001", "해당 카테고리를 찾을 수 없습니다."),
@@ -66,10 +68,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 10. Huiju - 응모 관련 에러
     APPLY_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
-    APPLY_UNOPENED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "아직 응모가 시작되지 않은 래플입니다."),
-    APPLY_FINISHED_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4003", "이미 종료된 래플입니다."),
-    APPLY_SELF_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4004", "본인이 개최한 래플에는 응모할 수 없습니다."),
-    APPLY_ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4005", "이미 응모한 래플입니다."),
+    APPLY_RAFFLE_UNAVAILABLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "응모가 불가능한 래플입니다."),
+    APPLY_SELF_RAFFLE(HttpStatus.BAD_REQUEST, "APPLY_4003", "본인이 개최한 래플에는 응모할 수 없습니다."),
+    APPLY_ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "APPLY_4004", "이미 응모한 래플입니다."),
 
     // 11. Hyungjin - 이미지 관련 에러
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_4001", "이미지 업로드에 실패했습니다."),
@@ -85,48 +86,32 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 13. Huiju - 당첨자 추첨 관련 에러
     DRAW_EMPTY(HttpStatus.BAD_REQUEST, "DRAW_4001", "응모한 사용자가 없습니다."),
-    DRAW_NO_WINNER_EMAIL(HttpStatus.BAD_REQUEST, "DRAW_4002", "당첨자의 이메일이 존재하지 않습니다."),
-    DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4003", "해당 래플의 개최자가 아닙니다."),
+    DRAW_NOT_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4002", "해당 래플의 개최자가 아닙니다."),
+    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4003", "아직 마감되지 않았습니다."),
+    DRAW_NOT_IN(HttpStatus.BAD_REQUEST, "DRAW_4004", "해당 래플의 응모자가 아닙니다."),
+    DRAW_PENDING(HttpStatus.BAD_REQUEST, "DRAW_4005", "아직 추첨이 되지 않았습니다."),
+    DRAW_NOT_UNFULFILLED(HttpStatus.BAD_REQUEST, "DRAW_4006", "UNFULFILLED 래플이 아닙니다."),
+    DRAW_FINISHED(HttpStatus.BAD_REQUEST, "DRAW_4007", "이미 종료된 래플입니다."),
+    DRAW_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "DRAW_4008", "이미 결과를 확인한 래플입니다"),
+    DRAW_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4009", "래플의 개최자입니다."),
+    DRAW_ALREADY_REDRAW(HttpStatus.BAD_REQUEST, "DRAW_4010", "두번 이상 재추첨할 수 없습니다."),
     DRAW_EMAIL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DRAW_5001", "이메일 전송에 실패하였습니다."),
-    DRAW_NOT_ENDED(HttpStatus.BAD_REQUEST, "DRAW_4004", "아직 마감되지 않았습니다."),
-    DRAW_NOT_IN(HttpStatus.BAD_REQUEST, "DRAW_4005", "해당 래플의 응모자가 아닙니다."),
-    DRAW_PENDING(HttpStatus.BAD_REQUEST, "DRAW_4006", "아직 추첨이 되지 않았습니다."),
-    DRAW_COMPLETED(HttpStatus.BAD_REQUEST, "DRAW_4007", "이미 추첨이 완료되었습니다."),
-    DRAW_FINISHED(HttpStatus.BAD_REQUEST, "DRAW_4008", "이미 종료된 래플입니다."),
-    DRAW_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "DRAW_4009", "이미 결과를 확인한 래플입니다"),
-    DRAW_OWNER(HttpStatus.BAD_REQUEST, "DRAW_4010", "래플의 개최자입니다."),
 
     // 14. Huiju - 배송 관련 에러
     DELIVERY_NOT_WINNER(HttpStatus.BAD_REQUEST, "DELIVERY_4001", "당첨자가 아닙니다."),
     DELIVERY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DELIVERY_4002", "등록된 배송 정보가 없습니다."),
-    DELIVERY_ADDRESS_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4003", "주소 입력 기한이 만료되었습니다."),
-    DELIVERY_NOT_OWNER(HttpStatus.BAD_REQUEST, "DELIVERY_4004", "해당 래플의 개최자가 아닙니다."),
-    DELIVERY_SHIPPING_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4005", "운송장 입력 기한이 만료되었습니다."),
-    DELIVERY_BEFORE_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4006", "당첨자의 주소가 입력되지 않았습니다."),
-    DELIVERY_ALREADY_SHIPPED(HttpStatus.BAD_REQUEST, "DELIVERY_4007", "이미 운송장을 등록했습니다."),
-    DELIVERY_ALREADY_READY(HttpStatus.BAD_REQUEST, "DELIVERY_4008", "이미 당첨자의 주소가 입력되었습니다."),
-    DELIVERY_ADDRESS_NOT_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4009", "아직 배송지 입력 기한이 만료되지 않았습니다."),
-    DELIVERY_SHIPPING_NOT_EXPIRED(HttpStatus.BAD_REQUEST, "DELIVERY_4010", "아직 운송장 입력 기한이 만료되지 않았습니다."),
-    DELIVERY_CANCELLED(HttpStatus.BAD_REQUEST, "DELIVERY_4011", "당첨이 취소되었습니다."),
-    DELIVERY_NO_DEFAULT_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4012", "기본 배송지가 없습니다."),
-    DELIVERY_ALREADY_EXTEND(HttpStatus.BAD_REQUEST, "DELIVERY_4013", "한번 이상 연장할 수 없습니다."),
-    DELIVERY_BEFORE_SHIPPING(HttpStatus.BAD_REQUEST, "DELIVERY_4014", "아직 운송장이 등록되지 않았습니다."),
-    DELIVERY_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "DELIVERY_4015", "이미 수령 완료된 배송입니다."),
+    DELIVERY_NOT_OWNER(HttpStatus.BAD_REQUEST, "DELIVERY_4003", "해당 래플의 개최자가 아닙니다."),
+    DELIVERY_ALREADY_EXTEND(HttpStatus.BAD_REQUEST, "DELIVERY_4004", "한번 이상 연장할 수 없습니다."),
+    DELIVERY_FAIL(HttpStatus.BAD_REQUEST, "DELIVERY_4005", "요청을 처리할 수 있는 상태가 아닙니다."),
+    DELIVERY_NO_ADDRESS(HttpStatus.BAD_REQUEST, "DELIVERY_4006", "등록 가능한 주소가 없습니다."),
 
     // 15. Huiju - 주소 관련 에러
-    ADDRESS_EMPTY(HttpStatus.BAD_REQUEST, "ADDRESS_4001", "사용자에게 등록된 주소가 없습니다."),
-    ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "ADDRESS_4002", "존재하지 않는 주소입니다."),
-    ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4003", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
-    ADDRESS_FULL(HttpStatus.BAD_REQUEST, "ADDRESS_4004", "최대 주소 갯수(" + Constants.MAX_ADDRESS_COUNT + "개)를 초과했습니다."),
-    ADDRESS_LONG_MESSAGE(HttpStatus.BAD_REQUEST, "ADDRESS_4005", "입력 가능 최대 글자수를 초과하였습니다."),
-    ADDRESS_DEFAULT_LOCKED(HttpStatus.BAD_REQUEST, "ADDRESS_4006", "기본 배송지는 삭제할 수 없습니다."),
-    ADDRESS_HAS_ACTIVE_DELIVERY(HttpStatus.BAD_REQUEST, "ADDRESS_4007", "배송 정보로 등록된 주소는 삭제할 수 없습니다."),
-
-    // 16. Huiju - 강제 종료 관련 에러
-    CANCEL_FAIL(HttpStatus.BAD_REQUEST, "CANCEL_4001", "종료 가능한 래플이 아닙니다."),
-
-    // 17. Huiju - 재추첨 관련 에러
-    REDRAW_AGAIN(HttpStatus.BAD_REQUEST, "REDRAW_4001", "한번 이상 재추첨할 수 없습니다."),
+    ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "ADDRESS_4001", "존재하지 않는 주소입니다."),
+    ADDRESS_MISMATCH_USER(HttpStatus.FORBIDDEN, "ADDRESS_4002", "선택한 주소가 해당 사용자에게 유효한 주소가 아닙니다."),
+    ADDRESS_FULL(HttpStatus.BAD_REQUEST, "ADDRESS_4003", "최대 주소 갯수(" + Constants.MAX_ADDRESS_COUNT + "개)를 초과했습니다."),
+    ADDRESS_LONG_MESSAGE(HttpStatus.BAD_REQUEST, "ADDRESS_4004", "입력 가능 최대 글자수를 초과하였습니다."),
+    ADDRESS_DEFAULT_LOCKED(HttpStatus.BAD_REQUEST, "ADDRESS_4005", "기본 배송지는 삭제할 수 없습니다."),
+    ADDRESS_HAS_ACTIVE_DELIVERY(HttpStatus.BAD_REQUEST, "ADDRESS_4006", "배송 정보로 등록된 주소는 삭제할 수 없습니다."),
 
     // 18. Yoon - 결제 관련 에러
     PAYMENT_REQUEST_FAILED(HttpStatus.BAD_REQUEST, "PAY_4001", "PAY API 요청 실패"),
@@ -157,6 +142,7 @@ public enum ErrorStatus implements BaseErrorCode {
     FOLLOW_ALREADY(HttpStatus.BAD_REQUEST, "FOLLOW_4001", "이미 팔로우한 상점입니다."),
     FOLLOW_NOT(HttpStatus.BAD_REQUEST, "FOLLOW_4002", "팔로우 상태가 아닙니다."),
     FOLLOW_STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW_4003", "상점을 찾을 수 없습니다."),
+    FOLLOW_SELF(HttpStatus.BAD_REQUEST, "FOLLOW_4004", "자기 자신은 팔로우 할 수 없습니다."),
 
     // 25. Yoon - 거래 관련 에러
     TRADE_USER_PAYMENT_INVALID_PERIOD(HttpStatus.BAD_REQUEST, "TRADE_4001", "유효하지 않은 기간입니다."),

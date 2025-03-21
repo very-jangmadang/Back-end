@@ -5,19 +5,17 @@ import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.entity.Delivery;
 
 public interface DeliveryService {
-    DeliveryResponseDTO.DeliveryDto getDelivery(Long deliveryId);
+    DeliveryResponseDTO.WinnerResultDto getDelivery(Long deliveryId);
 
     DeliveryResponseDTO.ResponseDto setAddress(Long deliveryId);
 
-    DeliveryResponseDTO.ResponseDto complete(Long deliveryId);
-
     DeliveryResponseDTO.WaitDto waitShipping(Long deliveryId);
 
-    String cancel(Long deliveryId);
+    DeliveryResponseDTO.ResponseDto cancel(Long deliveryId);
 
     DeliveryResponseDTO.ResponseDto success(Long deliveryId);
 
-    DeliveryResponseDTO.ResultDto getResult(Long deliveryId);
+    DeliveryResponseDTO.OwnerResultDto getResult(Long deliveryId);
 
     DeliveryResponseDTO.ResponseDto addInvoice(Long deliveryId, DeliveryRequestDTO deliveryRequestDTO);
 

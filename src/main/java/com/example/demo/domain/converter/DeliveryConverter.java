@@ -24,10 +24,10 @@ public class DeliveryConverter {
                 .build();
     }
 
-    public static DeliveryResponseDTO.DeliveryDto toDeliveryDto(
+    public static DeliveryResponseDTO.WinnerResultDto toWinnerResultDto(
             Delivery delivery, MypageResponseDTO.AddressDto addressDto, DeliveryResponseDTO.RaffleDTO raffleDto) {
 
-        return DeliveryResponseDTO.DeliveryDto.builder()
+        return DeliveryResponseDTO.WinnerResultDto.builder()
                 .raffleId(delivery.getRaffle().getId())
                 .winnerId(delivery.getWinner().getId())
                 .deliveryStatus(delivery.getDeliveryStatus())
@@ -50,15 +50,15 @@ public class DeliveryConverter {
                 .build();
     }
 
-    public static DeliveryResponseDTO.ResultDto toResultDto(
+    public static DeliveryResponseDTO.OwnerResultDto toOwnerResultDto(
             Delivery delivery, int applyTicket, MypageResponseDTO.AddressDto addressDto) {
-        return DeliveryResponseDTO.ResultDto.builder()
+        return DeliveryResponseDTO.OwnerResultDto.builder()
                 .raffleId(delivery.getRaffle().getId())
                 .winnerId(delivery.getWinner().getId())
                 .deliveryId(delivery.getId())
                 .minTicket(delivery.getRaffle().getMinTicket())
                 .applyTicket(applyTicket)
-                .finalAmount(BigDecimal.valueOf(applyTicket).multiply(new BigDecimal("93")))
+                .totalAmount(BigDecimal.valueOf(applyTicket).multiply(new BigDecimal("93")))
                 .deliveryStatus(delivery.getDeliveryStatus())
                 .shippingDeadline(delivery.getShippingDeadline())
                 .isAddressExtended(delivery.isAddressExtended())
@@ -66,14 +66,14 @@ public class DeliveryConverter {
                 .build();
     }
 
-    public static DeliveryResponseDTO.ResponseDto toResponseDto(Long deliveryId) {
+    public static DeliveryResponseDTO.ResponseDto toDeliveryResponseDto(Long deliveryId) {
         return DeliveryResponseDTO.ResponseDto.builder()
                 .deliveryId(deliveryId)
                 .build();
     }
 
     public static DeliveryResponseDTO.RaffleDTO toRaffleDto(Delivery delivery) {
-        Duration duration = Duration.between(LocalDateTime.now(), delivery.getShippingDeadline().plusHours(Constants.WAIT));
+        Duration duration = Duration.between(LocalDateTime.now(), delivery.getShippingDeadline().plusHours(Constants.EXTENSION_HOURS));
 
         return DeliveryResponseDTO.RaffleDTO.builder()
                 .raffleName(delivery.getRaffle().getName())

@@ -93,8 +93,8 @@ public class PaymentConnectController {
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> createPayment(@RequestParam String itemId, @RequestParam String itemName, @RequestParam int totalAmount) {
 
-        // 사용자 email 가져오기
-        String userId = baseController.getCurrentUserEmail();
+        // 사용자Id 가져오기
+        Long userId = baseController.getCurrentUserId();
 
         PaymentRequest paymentRequest = KakaoPayConverter.toPaymentRequest(userId, itemId, itemName, totalAmount);
         ReadyResponse readyResponse = kakaoPayService.preparePayment(paymentRequest).getResult();

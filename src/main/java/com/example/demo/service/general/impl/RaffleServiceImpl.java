@@ -17,8 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.example.demo.domain.converter.RaffleConverter.toApplyDto;
 
@@ -31,7 +32,7 @@ public class RaffleServiceImpl implements RaffleService {
     private final RaffleRepository raffleRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final RaffleSchedulerService raffleSchedulerService;
+    private final SchedulerService schedulerService;
     private final S3UploadService s3UploadService;
     private final ImageService imageService;
     private final ApplyRepository applyRepository;
@@ -41,7 +42,7 @@ public class RaffleServiceImpl implements RaffleService {
 
     @Override
     @Transactional
-    public RaffleResponseDTO.UploadResultDTO uploadRaffle(RaffleRequestDTO.UploadDTO request) {
+    public RaffleResponseDTO.ResponseDTO uploadRaffle(RaffleRequestDTO.UploadDTO request) {
 
         // 0. 작성자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -71,11 +72,53 @@ public class RaffleServiceImpl implements RaffleService {
         // 6. 래플 저장
         raffleRepository.save(raffle);
 
-        raffleSchedulerService.scheduleRaffleJob(raffle, true);
-        raffleSchedulerService.scheduleRaffleJob(raffle, false);
+        schedulerService.scheduleRaffleJob(raffle);
 
         // 7. 래플 엔티티를 ResponseDTO로 변환 후 반환
-        return RaffleConverter.toUploadResultDTO(raffle);
+        return RaffleConverter.toRaffleResponseDTO(raffle);
+    }
+
+    @Override
+    @Transactional
+    public Long softDeleteRaffle(Long id) {
+        Raffle raffle = raffleRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+
+        RaffleStatus status = raffle.getRaffleStatus();
+
+        switch (status) {
+            case UNOPENED, CANCELLED, COMPLETED:
+                softDelete(raffle);
+                break;
+            case ACTIVE:
+                List<Apply> applyList = raffle.getApplyList();
+                if(applyList != null && !applyList.isEmpty()){
+                    // TODO 패널티 부과 로직 추가
+
+                    int refundTicket = raffle.getTicketNum();
+                    List<Long> userIdList = applyList.stream()
+                                    .map(apply -> apply.getUser().getId())
+                                    .collect(Collectors.toList());
+
+                    if (!userIdList.isEmpty() && refundTicket > 0) {
+                        userRepository.batchUpdateTicketNum(refundTicket, userIdList);
+                    }
+
+                }
+                softDelete(raffle);
+                break;
+            case UNFULFILLED, ENDED:
+                throw new CustomException(ErrorStatus.RAFFLE_CANT_DELETE);
+            case DELETED:
+                throw new CustomException(ErrorStatus.RAFFLE_ALREADY_DELETED);
+        }
+        return id;
+    }
+
+    private void softDelete(Raffle raffle) {
+        schedulerService.cancelRaffleJob(raffle);
+        raffle.setRaffleStatus(RaffleStatus.DELETED);
+        raffle.setDeletedAt(LocalDateTime.now());
     }
 
     @Override
@@ -124,8 +167,8 @@ public class RaffleServiceImpl implements RaffleService {
                 state = "host";
 
                 Delivery delivery = deliveryRepository.findByRaffleAndDeliveryStatusIn(raffle, List.of(
-                        DeliveryStatus.WAITING_ADDRESS, DeliveryStatus.WAITING_PAYMENT,
-                        DeliveryStatus.READY, DeliveryStatus.SHIPPED, DeliveryStatus.COMPLETED));
+                        DeliveryStatus.WAITING_ADDRESS, DeliveryStatus.READY,
+                        DeliveryStatus.SHIPPED, DeliveryStatus.COMPLETED));
 
                 if (delivery != null)
                     deliveryId = delivery.getId();
@@ -182,16 +225,15 @@ public class RaffleServiceImpl implements RaffleService {
         }
         User user = userRepository.findById(Long.parseLong(authentication.getName()))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
-        int userTicket = user.getTicket_num();
 
         Raffle raffle = raffleRepository.findById(raffleId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
+
+        int userTicket = user.getTicket_num();
         int raffleTicket = raffle.getTicketNum();
 
-        if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED)
-            throw new CustomException(ErrorStatus.APPLY_UNOPENED_RAFFLE);
         if (raffle.getRaffleStatus() != RaffleStatus.ACTIVE)
-            throw new CustomException(ErrorStatus.APPLY_FINISHED_RAFFLE);
+            throw new CustomException(ErrorStatus.APPLY_RAFFLE_UNAVAILABLE);
 
         if (raffle.getUser().equals(user))
             throw new CustomException(ErrorStatus.APPLY_SELF_RAFFLE);
@@ -211,13 +253,12 @@ public class RaffleServiceImpl implements RaffleService {
         }
 
         user.setTicket_num(userTicket - raffleTicket);
-        userRepository.save(user);
 
         Apply apply = Apply.builder()
                 .raffle(raffle)
                 .user(user)
                 .build();
-        applyRepository.save(apply);
+        raffle.addApply(apply);
 
         return RaffleResponseDTO.ApplyResultDTO.builder()
                 .applyDTO(toApplyDto(apply))

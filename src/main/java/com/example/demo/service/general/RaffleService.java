@@ -6,7 +6,10 @@ import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
 public interface RaffleService {
 
     // 래플 업로드
-    RaffleResponseDTO.UploadResultDTO uploadRaffle(RaffleRequestDTO.UploadDTO request);
+    RaffleResponseDTO.ResponseDTO uploadRaffle(RaffleRequestDTO.UploadDTO request);
+
+    // 래플 삭제
+    Long softDeleteRaffle(Long id);
 
     // 래플 상세조회
     RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long id);

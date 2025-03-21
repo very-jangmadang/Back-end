@@ -22,9 +22,9 @@ public class ExchangeConverter {
         );
     }
 
-    public Exchange toEntity(String userId, ExchangeRequest request) {
+    public Exchange toEntity(User user, ExchangeRequest request) {
         Exchange exchange = new Exchange();
-        exchange.setUserId(userId);
+        exchange.setUser(user);
         exchange.setAmount(request.getAmount());
         exchange.setQuantity(request.getQuantity());
         exchange.setExchangeMethod("통장 입금");

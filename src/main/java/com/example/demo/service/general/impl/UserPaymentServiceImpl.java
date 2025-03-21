@@ -42,7 +42,7 @@ public class UserPaymentServiceImpl implements UserPaymentService {
 
 
     @Override
-    public ApiResponse<UserTicketResponse> getUserTickets(String userId) {
+    public ApiResponse<UserTicketResponse> getUserTickets(Long userId) {
         User user = findUser(userId);
 
         UserTicketResponse response = new UserTicketResponse();
@@ -52,13 +52,13 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         return ApiResponse.of(SuccessStatus.USER_PAYMENT_GET_TICKET, response);
     }
 
-    private User findUser(String email) {
-        return userRepository.findByEmail(email)
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
 
     @Override
-    public ApiResponse<UserBankInfoResponse> postUserPaymentInfo(String userId, UserBankInfoRequest request) {
+    public ApiResponse<UserBankInfoResponse> postUserPaymentInfo(Long userId, UserBankInfoRequest request) {
         UserPayment userPayment = findOrCreateUserPayment(userId);
 
         // 유저 결제 정보 업데이트 후 저장
@@ -74,7 +74,7 @@ public class UserPaymentServiceImpl implements UserPaymentService {
     }
 
     @Override
-    public ApiResponse<UserBankInfoResponse> getUserPaymentInfo(String userId) {
+    public ApiResponse<UserBankInfoResponse> getUserPaymentInfo(Long userId) {
         UserPayment userPayment = findOrCreateUserPayment(userId);
 
         // 응답 객체 생성
@@ -85,16 +85,16 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         return ApiResponse.of(SuccessStatus.USER_PAYMENT_GET_BANK_INFO, response);
     }
 
-    private UserPayment findOrCreateUserPayment(String userId) {
+    private UserPayment findOrCreateUserPayment(Long userId) {
         return userPaymentRepository.findByUserId(userId)
                 .orElseGet(() -> {
-                    UserPayment newUserPayment = userPaymentConverter.createDefaultUserPayment(userId);
+                    UserPayment newUserPayment = userPaymentConverter.createDefaultUserPayment(findUser(userId));
                     return userPaymentRepository.save(newUserPayment);
                 });
     }
 
     @Override
-    public ApiResponse<List<PaymentResponse>> getPaymentHistory(String userId, String period) {
+    public ApiResponse<List<PaymentResponse>> getPaymentHistory(Long userId, String period) {
         try {
             // 현재 시간 기준으로 조회할 기간 설정
             LocalDateTime now = LocalDateTime.now();
@@ -125,7 +125,7 @@ public class UserPaymentServiceImpl implements UserPaymentService {
     }
 
     @Override
-    public ApiResponse<Void> tradeTickets(String userId, String role, int ticketCount) {
+    public ApiResponse<Void> tradeTickets(Long userId, String role, int ticketCount) {
         if (ticketCount < 1) {
             throw new CustomException(ErrorStatus.TRADE_INVALID_TICKET_COUNT);
         }

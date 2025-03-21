@@ -3,12 +3,10 @@ package com.example.demo.jobs;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.entity.Delivery;
-import com.example.demo.entity.Raffle;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.repository.DeliveryRepository;
-import com.example.demo.service.general.DeliverySchedulerService;
-import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
+import com.example.demo.service.general.SchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -20,9 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class AddressJob implements Job {
 
     private final DeliveryRepository deliveryRepository;
-    private final DeliverySchedulerService deliverySchedulerService;
+    private final SchedulerService schedulerService;
     private final EmailService emailService;
-    private final DrawService drawService;
 
     @Override
     @Transactional
@@ -32,21 +29,10 @@ public class AddressJob implements Job {
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NOT_FOUND));
 
-        if (!delivery.isAddressExtended()) {
-            delivery.setDeliveryStatus(DeliveryStatus.ADDRESS_EXPIRED);
-            deliveryRepository.save(delivery);
+        delivery.setDeliveryStatus(DeliveryStatus.ADDRESS_EXPIRED);
 
-            deliverySchedulerService.scheduleDeliveryJob(delivery);
-            emailService.sendOwnerAddressExpiredEmail(delivery);
-        } else {
-            delivery.setDeliveryStatus(DeliveryStatus.CANCELLED);
-            deliveryRepository.save(delivery);
-
-            Raffle raffle = delivery.getRaffle();
-            drawService.cancel(raffle);
-
-            emailService.sendWinnerCancelEmail(delivery);
-            emailService.sendOwnerCancelEmail(raffle);
-        }
+        // TODO: 이메일 내용에 따라 함수 분리 가능성 있음
+        emailService.sendOwnerAddressExpiredEmail(delivery);
+        schedulerService.scheduleDeliveryJob(delivery);
     }
 }

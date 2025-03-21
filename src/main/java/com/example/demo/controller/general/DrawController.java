@@ -1,14 +1,14 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.domain.dto.Delivery.DeliveryResponseDTO;
 import com.example.demo.domain.dto.Draw.DrawResponseDTO;
+import com.example.demo.domain.dto.Raffle.RaffleResponseDTO;
+import com.example.demo.entity.Raffle;
 import com.example.demo.service.general.DrawService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 import static com.example.demo.base.status.SuccessStatus._OK;
 
@@ -44,27 +44,23 @@ public class DrawController {
 
     @Operation(summary = "개최자 - 미추첨 래플 수동 추첨하기")
     @PostMapping("/{raffleId}/draw")
-    public void selfDraw(
-            @PathVariable Long raffleId, HttpServletResponse response) throws IOException {
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> selfDraw(@PathVariable Long raffleId) {
 
-        String redirectUrl = drawService.selfDraw(raffleId);
-        response.sendRedirect(redirectUrl);
+        return ApiResponse.of(_OK, drawService.selfDraw(raffleId));
     }
 
     @Operation(summary = "개최자 - 래플 종료하기")
     @PostMapping("/{raffleId}/cancel")
-    public ApiResponse<DrawResponseDTO.CancelDto> cancelDraw(@PathVariable Long raffleId) {
+    public ApiResponse<RaffleResponseDTO.ResponseDTO> cancelDraw(@PathVariable Long raffleId) {
 
         return ApiResponse.of(_OK, drawService.forceCancel(raffleId));
     }
 
     @Operation(summary = "개최자 - 래플 재추첨하기")
     @PostMapping("{raffleId}/redraw")
-    public void redraw(
-            @PathVariable Long raffleId, HttpServletResponse response) throws IOException {
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> redraw(@PathVariable Long raffleId) {
 
-        String redirectUrl = drawService.redraw(raffleId);
-        response.sendRedirect(redirectUrl);
+        return ApiResponse.of(_OK, drawService.redraw(raffleId));
     }
 
 }

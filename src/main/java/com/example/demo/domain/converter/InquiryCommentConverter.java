@@ -26,6 +26,7 @@ public class InquiryCommentConverter {
         return InquiryCommentResponseDTO.builder()
                 .CommentId(comment.getId())
                 .userId(comment.getUser().getId())
+                .inquiryId(comment.getInquiry().getId())
                 .raffleId(comment.getInquiry().getRaffle().getId())
                 .nickname(comment.getUser().getNickname())
                 .title(comment.getTitle())
