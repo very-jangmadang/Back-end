@@ -32,11 +32,9 @@ public class Address extends BaseEntity {
 
     private boolean isDefault;  // 기본 배송지 여부
 
-//    @Setter
     @Column(length = 255)
     private String message;  // 배송 메세지
 
-//    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
