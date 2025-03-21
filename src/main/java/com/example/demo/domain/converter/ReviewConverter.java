@@ -27,12 +27,13 @@ public class ReviewConverter {
     }
 
     public static ReviewResponseDTO ToReviewResponseDTO(Review review) {
+        boolean isRaffleDeleted = (review.getRaffle() == null);
 
         return ReviewResponseDTO.builder()
                 .reviewId(review.getId())
                 .userId(review.getUser().getId())
-                .raffleId(review.getRaffle().getId())
-                .raffleName(review.getRaffle().getName())
+                .raffleId(isRaffleDeleted ? review.getRaffle().getId() : null)
+                .raffleName(isRaffleDeleted ? review.getRaffle().getName() : "삭제된 래플입니다.")
                 .reviewerId(review.getReviewer().getId())
                 .profileImageUrl(review.getReviewer().getProfileImageUrl())
                 .score((float) review.getScore())
