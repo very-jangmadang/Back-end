@@ -1,8 +1,10 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Raffle;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,4 +36,6 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     List<Raffle> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
     List<Raffle> findAllByUserId(Long userId);
+
+    List<Raffle> findByRaffleStatusIn(List<RaffleStatus> statuses);
 }
