@@ -97,4 +97,4 @@ public class KakaoPayConverter {
         parameters.put("cancel_tax_free_amount", 0);
         return parameters;
     }
-}
+} 
