@@ -66,9 +66,11 @@ public class HomeServiceImpl implements HomeService {
         // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 안 했을 시)
         Page<Raffle> moreRaffles = homeService.getMoreRaffles(page, size);
         List<Raffle> rafflesSortedByApply = moreRaffles.getContent();
-        List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
 
-        return getHomeResponseDTO(rafflesSortedByEndAtDTO, null, null, rafflesSortedByApplyListDTO);
+        List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
+        PageInfo pageInfo = PageConverter.toPageInfo(moreRaffles);
+
+        return getHomeResponseDTO(pageInfo, rafflesSortedByEndAtDTO, null, null, rafflesSortedByApplyListDTO);
     }
 
     @Override
@@ -101,10 +103,11 @@ public class HomeServiceImpl implements HomeService {
         // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 했을 시 찜 여부도 같이 전달)
         Page<Raffle> moreRaffles = homeService.getMoreRaffles(page, size);
         List<Raffle> rafflesSortedByApply = moreRaffles.getContent();
+
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, user);
+        PageInfo pageInfo = PageConverter.toPageInfo(moreRaffles);
 
-
-        return getHomeResponseDTO(rafflesSortedByEndAtDTO, myLikeRafflesDTO, myFollowingRafflesDTO, rafflesSortedByApplyListDTO);
+        return getHomeResponseDTO(pageInfo, rafflesSortedByEndAtDTO, myLikeRafflesDTO, myFollowingRafflesDTO, rafflesSortedByApplyListDTO);
     }
 
 
@@ -261,8 +264,9 @@ public class HomeServiceImpl implements HomeService {
 
 
     // HomeResponseDTO 만드는 메소드 분리
-    private static HomeResponseDTO getHomeResponseDTO(List<HomeRaffleDTO> rafflesSortedByEndAtDTO, List<HomeRaffleDTO> myLikeRafflesDTO,List<HomeRaffleDTO> myFollowingRafflesDTO, List<HomeRaffleDTO> rafflesSortedByApplyListDTO) {
+    private static HomeResponseDTO getHomeResponseDTO(PageInfo pageInfo, List<HomeRaffleDTO> rafflesSortedByEndAtDTO, List<HomeRaffleDTO> myLikeRafflesDTO,List<HomeRaffleDTO> myFollowingRafflesDTO, List<HomeRaffleDTO> rafflesSortedByApplyListDTO) {
         return HomeResponseDTO.builder()
+                .pageInfo(pageInfo)
                 .approaching(rafflesSortedByEndAtDTO)
                 .myLikeRaffles(myLikeRafflesDTO)
                 .myFollowRaffles(myFollowingRafflesDTO)
