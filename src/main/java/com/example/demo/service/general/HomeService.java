@@ -27,7 +27,4 @@ public interface HomeService {
 
     HomeRaffleListDTO getHomeLikeRaffles(Long userId, int page, int size);
 
-    Page<Raffle> getApproachingRaffles(int page, int size);
-
-    Page<Raffle> getMoreRaffles(int page, int size);
 }
