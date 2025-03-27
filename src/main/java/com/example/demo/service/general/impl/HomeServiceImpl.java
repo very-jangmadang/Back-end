@@ -56,7 +56,7 @@ public class HomeServiceImpl implements HomeService {
 
 
     @Override
-    public HomeResponseDTO getHome() {
+    public HomeResponseDTO getHome(int page, int size) {
 
         // 마감임박인 래플 5개 조회
         Page<Raffle> approachingRaffles = homeService.getApproachingRaffles(0, 16);
@@ -64,15 +64,15 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, null);
 
         // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 안 했을 시)
-        Page<Raffle> moreRaffles = homeService.getMoreRaffles(0, 16);
-        List<Raffle> rafflesSortedByApply = moreRaffles.getContent().stream().limit(5).toList();
+        Page<Raffle> moreRaffles = homeService.getMoreRaffles(page, size);
+        List<Raffle> rafflesSortedByApply = moreRaffles.getContent();
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
 
         return getHomeResponseDTO(rafflesSortedByEndAtDTO, null, null, rafflesSortedByApplyListDTO);
     }
 
     @Override
-    public HomeResponseDTO getHomeLogin(Long userId){
+    public HomeResponseDTO getHomeLogin(Long userId, int page, int size){
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
@@ -99,8 +99,8 @@ public class HomeServiceImpl implements HomeService {
 
 
         // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 했을 시 찜 여부도 같이 전달)
-        Page<Raffle> moreRaffles = homeService.getMoreRaffles(0, 16);
-        List<Raffle> rafflesSortedByApply = moreRaffles.getContent().stream().limit(5).toList();
+        Page<Raffle> moreRaffles = homeService.getMoreRaffles(page, size);
+        List<Raffle> rafflesSortedByApply = moreRaffles.getContent();
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, user);
 
 

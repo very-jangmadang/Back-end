@@ -22,9 +22,11 @@ public class HomeLoginController {
 
     @Operation(summary = "홈 화면 조회")
     @GetMapping("")
-    public ApiResponse<HomeResponseDTO> home(Authentication authentication){
+    public ApiResponse<HomeResponseDTO> home(Authentication authentication,
+                                             @RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        HomeResponseDTO result =  homeService.getHomeLogin(userId);
+        HomeResponseDTO result =  homeService.getHomeLogin(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 

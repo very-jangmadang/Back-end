@@ -19,8 +19,9 @@ public class HomeController {
 
     @Operation(summary = "홈 화면 조회")
     @GetMapping("")
-    public ApiResponse<HomeResponseDTO> home(){
-        HomeResponseDTO result = homeService.getHome();
+    public ApiResponse<HomeResponseDTO> home(@RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "16") int size){
+        HomeResponseDTO result = homeService.getHome(page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 

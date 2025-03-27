@@ -7,9 +7,9 @@ import org.springframework.data.domain.Page;
 
 public interface HomeService {
 
-    HomeResponseDTO getHome();
+    HomeResponseDTO getHome(int page, int size);
 
-    HomeResponseDTO getHomeLogin(Long userId);
+    HomeResponseDTO getHomeLogin(Long userId, int page, int size);
 
     HomeRaffleListDTO getHomeCategories(String categoryName, int page, int size);
 
