@@ -30,7 +30,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     @Query("SELECT l FROM Like l JOIN FETCH l.user WHERE l.raffle = :raffle")
     List<Like> findByRaffleWithUser(@Param("raffle") Raffle raffle);
 
-    @Query("SELECT l.raffle FROM Like l JOIN FETCH l.raffle WHERE l.user.id = :userId ORDER BY l.createdAt DESC")
+    @Query("SELECT l.raffle FROM Like l WHERE l.user.id = :userId ORDER BY l.createdAt DESC")
     Page<Raffle> findRaffleByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
 
     // 래플 리스트에서 유저가 좋아요 했는지 여부를 전송
