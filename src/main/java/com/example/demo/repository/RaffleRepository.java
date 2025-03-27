@@ -49,11 +49,14 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
 
 
     // 응모자순 래플 조회(응모가 안마감된 것들 우선으로)
-    @Query("SELECT r FROM Raffle r " +
-            "LEFT JOIN Apply a ON r.id = a.raffle.id " +
-            "GROUP BY r " +
-            "ORDER BY " +
-            "CASE WHEN r.endAt > :now THEN 1 ELSE 2 END, " +
-            "COUNT(a) DESC")
+    @Query(
+            value = "SELECT r FROM Raffle r " +
+                    "LEFT JOIN Apply a ON r.id = a.raffle.id " +
+                    "GROUP BY r " +
+                    "ORDER BY " +
+                    "CASE WHEN r.endAt > :now THEN 1 ELSE 2 END, " +
+                    "COUNT(a) DESC",
+            countQuery = "SELECT COUNT(DISTINCT r) FROM Raffle r"
+    )
     Page<Raffle> findAllSortedByApply(@Param("now") LocalDateTime now, Pageable pageable);
 }
