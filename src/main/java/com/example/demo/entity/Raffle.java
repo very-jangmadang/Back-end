@@ -4,6 +4,9 @@ import com.example.demo.entity.base.enums.ItemStatus;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +18,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Where(clause = "deleted_at is null")
 public class Raffle extends BaseEntity {
 
     @Id
@@ -79,6 +83,8 @@ public class Raffle extends BaseEntity {
     @Builder.Default
     List<Delivery> delivery = new ArrayList<>();
 
+    private LocalDateTime deletedAt;
+
     // 연관관계 편의 메서드
     public void addImage(Image image) {
         this.images.add(image);
@@ -98,6 +104,5 @@ public class Raffle extends BaseEntity {
     public void setRaffleStatus(RaffleStatus raffleStatus) { this.raffleStatus = raffleStatus; }
     public void setWinner(User winner) { this.winner = winner; }
     public void setIsRedrawn() { this.isRedrawn = true; }
-
-
+    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
 }

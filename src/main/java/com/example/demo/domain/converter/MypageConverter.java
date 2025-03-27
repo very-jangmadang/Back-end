@@ -51,6 +51,7 @@ public class MypageConverter {
                 .addressDetail(addressAddDto.getAddressDetail())
                 .phoneNumber(addressAddDto.getPhoneNumber())
                 .isDefault(addressAddDto.getIsDefault())
+                .message(addressAddDto.getMessage())
                 .build();
     }
   

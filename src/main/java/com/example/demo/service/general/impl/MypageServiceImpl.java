@@ -128,9 +128,6 @@ public class MypageServiceImpl implements MypageService {
         User user = getUser();
         List<Address> addressList = user.getAddresses();
 
-        if (addressList == null || addressList.isEmpty())
-            throw new CustomException(ErrorStatus.ADDRESS_EMPTY);
-
         List<MypageResponseDTO.AddressDto> addressDtos = addressList.stream()
                 .map(MypageConverter::toAddressDto)
                 .toList();
@@ -154,10 +151,8 @@ public class MypageServiceImpl implements MypageService {
 
         List<Address> addressList = user.getAddresses();
 
-        if (!address.isDefault()) {
+        if (!address.isDefault())
             address.setDefaultAddress();
-            addressRepository.save(address);
-        }
 
         List<MypageResponseDTO.AddressDto> addressDtos = addressList.stream()
                 .map(MypageConverter::toAddressDto)
@@ -177,21 +172,14 @@ public class MypageServiceImpl implements MypageService {
         if (user.getAddresses().size() == Constants.MAX_ADDRESS_COUNT)
             throw new CustomException(ErrorStatus.ADDRESS_FULL);
 
+        if (addressAddDto.getMessage() != null && addressAddDto.getMessage().length() > 255)
+            throw new CustomException(ErrorStatus.ADDRESS_LONG_MESSAGE);
+
         Address address = toAddress(addressAddDto);
         user.addAddress(address);
 
         if (address.isDefault() || user.getAddresses().size() == 1)
             address.setDefaultAddress();
-
-        String message = addressAddDto.getMessage();
-        if (message != null) {
-            if (message.length() > 255)
-                throw new CustomException(ErrorStatus.ADDRESS_LONG_MESSAGE);
-
-            address.setMessage(addressAddDto.getMessage());
-        }
-
-        addressRepository.save(address);
     }
 
     @Override
@@ -203,6 +191,8 @@ public class MypageServiceImpl implements MypageService {
             throw new CustomException(ErrorStatus.ADDRESS_DEFAULT_LOCKED);
 
         List<Address> addressesList = addressRepository.findAllById(addressDeleteDto.getAddressIdList());
+        if (addressesList.size() != addressDeleteDto.getAddressIdList().size() || addressesList.isEmpty())
+            throw new CustomException(ErrorStatus.ADDRESS_NOT_FOUND);
 
         for (Address address : addressesList) {
             if (!address.getUser().equals(user))
