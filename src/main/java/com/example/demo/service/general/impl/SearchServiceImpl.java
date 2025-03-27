@@ -3,24 +3,28 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.HomeConverter;
+import com.example.demo.domain.converter.base.PageConverter;
 import com.example.demo.domain.dto.Home.HomeRaffleDTO;
 import com.example.demo.domain.dto.Home.HomeRaffleListDTO;
 import com.example.demo.domain.dto.Search.SearchResponseDTO;
+import com.example.demo.domain.dto.base.PageInfo;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.SearchHistory;
 import com.example.demo.entity.User;
+import com.example.demo.repository.LikeRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.SearchHistoryRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.SearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,13 +34,15 @@ public class SearchServiceImpl implements SearchService {
     private final RaffleRepository raffleRepository;
     private final UserRepository userRepository;
     private final SearchHistoryRepository searchHistoryRepository;
+    private final LikeRepository likeRepository;
 
     @Override
     @Transactional
-    public SearchResponseDTO.SearchRaffleListDTO searchRaffles(String keyword, Long userId) {
+    public SearchResponseDTO.SearchRaffleListDTO searchRaffles(String keyword, Long userId, int page, int size) {
 
         // 검색 결과에 따른 List 반환
-        List<Raffle> raffles = raffleRepository.findAllByNameContaining(keyword);
+        Pageable pageableForSearch = PageRequest.of(page -1 , size);
+        Page<Raffle> pagedRaffles = raffleRepository.findAllByNameContaining(keyword, pageableForSearch);
 
         // 로그인 안한 회원인 경우 user를 null로 처리
         User user = null;
@@ -63,10 +69,12 @@ public class SearchServiceImpl implements SearchService {
             }
         }
 
-        List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(raffles, user);
+        List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(pagedRaffles.getContent(), user);
+        PageInfo pageInfo = PageConverter.toPageInfo(pagedRaffles);
 
         return SearchResponseDTO.SearchRaffleListDTO.builder()
                 .searchedRaffles(result)
+                .pageInfo(pageInfo)
                 .build();
     }
 
@@ -114,25 +122,25 @@ public class SearchServiceImpl implements SearchService {
      * 사용하는 메소드 분리
      * */
 
+
     private List<HomeRaffleDTO> convertToHomeRaffleDTOList(List<Raffle> raffles, User user) {
-        List<HomeRaffleDTO> dtoList = new ArrayList<>();
+        List<Long> raffleIds = raffles.stream()
+                .map(Raffle::getId)
+                .toList();
 
-        for (Raffle raffle : raffles) {
-            boolean likeStatus = false;
-
-            // 로그인한 경우에만 likeStatus 조회
-            if (user != null) {
-                List<Long> likedRaffleIds = user.getLikes().stream()
-                        .map(like -> like.getRaffle().getId())
-                        .toList();
-                likeStatus = likedRaffleIds.contains(raffle.getId());
-            }
-
-            HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, likeStatus);
-            dtoList.add(raffleDTO);
+        Set<Long> likedRaffleIds;
+        if (user != null && !raffleIds.isEmpty()) {
+            likedRaffleIds = new HashSet<>(likeRepository.findLikedRaffleIdsByUserAndRaffleList(raffleIds, user));
+        } else {
+            likedRaffleIds = new HashSet<>();
         }
 
-        return dtoList;
+        return raffles.stream()
+                .map(raffle -> {
+                    boolean likeStatus = likedRaffleIds.contains(raffle.getId());
+                    return HomeConverter.toHomeRaffleDTO(raffle, likeStatus);
+                })
+                .toList();
     }
 
 }

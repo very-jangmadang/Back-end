@@ -22,49 +22,62 @@ public class HomeLoginController {
 
     @Operation(summary = "홈 화면 조회")
     @GetMapping("")
-    public ApiResponse<HomeResponseDTO> home(Authentication authentication){
+    public ApiResponse<HomeResponseDTO> home(Authentication authentication,
+                                             @RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        HomeResponseDTO result =  homeService.getHomeLogin(userId);
+        HomeResponseDTO result =  homeService.getHomeLogin(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
     @Operation(summary = "카테고리별 래플 조회")
     @GetMapping("/categories")
-    public ApiResponse<HomeRaffleListDTO> homeCategories(@RequestParam("categoryName") String categoryName, Authentication authentication){
+    public ApiResponse<HomeRaffleListDTO> homeCategories(@RequestParam("categoryName") String categoryName,
+                                                         @RequestParam(defaultValue = "1") int page,
+                                                         @RequestParam(defaultValue = "16") int size,
+                                                         Authentication authentication){
         Long userId = Long.parseLong(authentication.getName());
-        HomeRaffleListDTO result =  homeService.getHomeCategoriesLogin(categoryName, userId);
+        HomeRaffleListDTO result =  homeService.getHomeCategoriesLogin(categoryName, userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
     @Operation(summary = "마감임박 상품 더보기")
     @GetMapping("/approaching")
-    public ApiResponse<HomeRaffleListDTO> homeApproaching(Authentication authentication){
+    public ApiResponse<HomeRaffleListDTO> homeApproaching(Authentication authentication,
+                                                          @RequestParam(defaultValue = "1") int page,
+                                                          @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        HomeRaffleListDTO result =  homeService.getHomeApproachingLogin(userId);
+        HomeRaffleListDTO result =  homeService.getHomeApproachingLogin(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
     @Operation(summary = "팔로우한 상점의 래플 더보기")
     @GetMapping("/following")
-    public ApiResponse<HomeRaffleListDTO> homeFollowingRaffles(Authentication authentication){
+    public ApiResponse<HomeRaffleListDTO> homeFollowingRaffles(Authentication authentication,
+                                                               @RequestParam(defaultValue = "1") int page,
+                                                               @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        HomeRaffleListDTO result = homeService.getHomeFollowingRaffles(userId);
+        HomeRaffleListDTO result = homeService.getHomeFollowingRaffles(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
     @Operation(summary = "래플 둘러보기")
     @GetMapping("/more")
-    public ApiResponse<HomeRaffleListDTO> homeMoreRaffles(Authentication authentication){
+    public ApiResponse<HomeRaffleListDTO> homeMoreRaffles(Authentication authentication,
+                                                          @RequestParam(defaultValue = "1") int page,
+                                                          @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        HomeRaffleListDTO result =  homeService.getHomeMoreRafflesLogin(userId);
+        HomeRaffleListDTO result =  homeService.getHomeMoreRafflesLogin(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
     @Operation(summary = "내가 찜한 래플 더보기")
     @GetMapping("/likes")
-    public ApiResponse<HomeRaffleListDTO> homeLikeRaffles(Authentication authentication){
+    public ApiResponse<HomeRaffleListDTO> homeLikeRaffles(Authentication authentication,
+                                                          @RequestParam(defaultValue = "1") int page,
+                                                          @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        HomeRaffleListDTO result = homeService.getHomeLikeRaffles(userId);
+        HomeRaffleListDTO result = homeService.getHomeLikeRaffles(userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 

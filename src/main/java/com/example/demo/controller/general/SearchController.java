@@ -25,8 +25,10 @@ public class SearchController {
 
     @Operation(summary = "검색")
     @GetMapping("/raffles")
-    public ApiResponse<SearchResponseDTO.SearchRaffleListDTO> searchRaffles(@RequestParam("keyword") String keyword){
-        SearchResponseDTO.SearchRaffleListDTO result = searchService.searchRaffles(keyword, null);
+    public ApiResponse<SearchResponseDTO.SearchRaffleListDTO> searchRaffles(@RequestParam("keyword") String keyword,
+                                                                            @RequestParam(defaultValue = "1") int page,
+                                                                            @RequestParam(defaultValue = "16") int size){
+        SearchResponseDTO.SearchRaffleListDTO result = searchService.searchRaffles(keyword, null, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
