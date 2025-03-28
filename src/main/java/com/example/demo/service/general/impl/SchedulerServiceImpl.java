@@ -241,7 +241,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
                     case SHIPPED:
                         String jobName = "Delivery_" + delivery.getId() + "_Complete";
-                         LocalDateTime triggerTime = delivery.getUpdatedAt().minusSeconds(0).withNano(0)
+                        LocalDateTime triggerTime = delivery.getUpdatedAt().withSecond(0).withNano(0)
                                 .plusHours(Constants.COMPLETE);
                         Class<? extends Job> jobClass = CompleteJob.class;
 
