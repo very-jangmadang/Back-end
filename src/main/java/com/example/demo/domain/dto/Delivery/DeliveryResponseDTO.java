@@ -24,6 +24,7 @@ public class DeliveryResponseDTO {
         private LocalDateTime shippingDeadline;
         private BigDecimal shippingFee;
         private boolean isShippingExtended;
+        private String courierName;
         private String invoiceNumber;
         private MypageResponseDTO.AddressDto address;
         private RaffleDTO raffleInfo;

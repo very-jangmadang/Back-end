@@ -35,6 +35,10 @@ public class Delivery extends BaseEntity {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "courier_id")
+    private Courier courier;
+
     @Enumerated (EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(30)")
     private DeliveryStatus deliveryStatus;
@@ -51,6 +55,7 @@ public class Delivery extends BaseEntity {
 
     public void setAddress(Address address) { this.address = address; }
     public void setDeliveryStatus(DeliveryStatus deliveryStatus) { this.deliveryStatus = deliveryStatus; }
+    public void setCourier(Courier courier) { this.courier = courier; }
     public void setInvoiceNumber(String invoiceNumber) { this.invoiceNumber = invoiceNumber; }
 
     public void setAddressDeadline() {
