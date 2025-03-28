@@ -17,7 +17,9 @@ public interface SchedulerService {
 
     void cancelRaffleJob(Raffle raffle);
 
+    SchedulerResponseDTO getJobKeys();
+
     void scheduleAll();
 
-    SchedulerResponseDTO getJobKeys();
+    void scheduleNew(Long raffleId);
 }

@@ -39,6 +39,7 @@ public class DrawServiceImpl implements DrawService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final SchedulerService schedulerService;
+    private final DeliveryRepository deliveryRepository;
 
     @Override
     @Transactional
@@ -55,6 +56,7 @@ public class DrawServiceImpl implements DrawService {
         delivery.setAddressDeadline();
 
         raffle.addDelivery(delivery);
+        deliveryRepository.save(delivery);
 
         emailService.sendWinnerPrizeEmail(delivery);
 

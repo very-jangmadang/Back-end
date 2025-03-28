@@ -5,10 +5,7 @@ import com.example.demo.domain.dto.Scheduler.SchedulerResponseDTO;
 import com.example.demo.service.general.SchedulerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.base.status.SuccessStatus._OK;
 
@@ -29,6 +26,14 @@ public class SchedulerController {
     @PostMapping("")
     public ApiResponse<?> scheduleAll() {
         schedulerService.scheduleAll();
+
+        return ApiResponse.of(_OK, null);
+    }
+
+    @Operation(summary = "새 래플 스케줄링")
+    @PostMapping("/new/{raffleId}")
+    public ApiResponse<?> scheduleNew(@PathVariable Long raffleId) {
+        schedulerService.scheduleNew(raffleId);
 
         return ApiResponse.of(_OK, null);
     }

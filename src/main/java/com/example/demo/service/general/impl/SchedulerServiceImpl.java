@@ -37,6 +37,7 @@ public class SchedulerServiceImpl implements SchedulerService {
             JobDetail jobDetail = buildJobDetail(jobName, jobClass, jobData);
             Trigger trigger = buildJobTrigger(time);
 
+            System.out.println(jobName);
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
             handleSchedulerException(e);
@@ -153,6 +154,9 @@ public class SchedulerServiceImpl implements SchedulerService {
                 scheduler.unscheduleJob(triggerKey);
                 scheduler.deleteJob(jobKey);
             }
+            // 존재하지 않는 작업 취소 불가
+//            else
+//                throw new CustomException(ErrorStatus.JOB_NOT_FOUND);
 
         } catch (SchedulerException e) {
             throw new CustomException(ErrorStatus.JOB_CANCEL_FAILED);
@@ -176,6 +180,21 @@ public class SchedulerServiceImpl implements SchedulerService {
 
         if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED)
             cancelJob(jobName + "_START");
+    }
+
+    @Override
+    public SchedulerResponseDTO getJobKeys() {
+        Set<JobKey> jobKeys = new HashSet<>();
+
+        try {
+            jobKeys = scheduler.getJobKeys(GroupMatcher.anyGroup());
+        } catch (SchedulerException e) {
+            handleSchedulerException(e);
+        }
+
+        return SchedulerResponseDTO.builder()
+                .JobKeys(jobKeys)
+                .build();
     }
 
     @Override
@@ -237,18 +256,28 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public SchedulerResponseDTO getJobKeys() {
-        Set<JobKey> jobKeys = new HashSet<>();
-
+    public void scheduleNew(Long raffleId) {
         try {
-            jobKeys = scheduler.getJobKeys(GroupMatcher.anyGroup());
+            if (!scheduler.isStarted())
+                scheduler.start();
+
+            List<Raffle> raffleList = raffleRepository.findByIdGreaterThanEqualOrderByIdAsc(raffleId);
+
+            for (Raffle raffle : raffleList) {
+                switch (raffle.getRaffleStatus()) {
+                    case UNOPENED:
+                    case ACTIVE:
+                        scheduleRaffleJob(raffle);
+                        break;
+                    case UNFULFILLED:
+                        scheduleDrawJob(raffle);
+                        break;
+                }
+            }
+
         } catch (SchedulerException e) {
             handleSchedulerException(e);
         }
-
-        return SchedulerResponseDTO.builder()
-                .JobKeys(jobKeys)
-                .build();
     }
 
 }

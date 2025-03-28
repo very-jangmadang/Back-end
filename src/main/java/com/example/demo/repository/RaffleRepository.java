@@ -38,4 +38,7 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     List<Raffle> findAllByUserId(Long userId);
 
     List<Raffle> findByRaffleStatusIn(List<RaffleStatus> statuses);
+
+    List<Raffle> findByIdGreaterThanEqualOrderByIdAsc(Long raffleId);
+
 }
