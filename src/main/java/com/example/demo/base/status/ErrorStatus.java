@@ -79,10 +79,8 @@ public enum ErrorStatus implements BaseErrorCode {
     JOB_EXECUTION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4001", "Job 실행에 실패했습니다."),
     JOB_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5001", "Job 저장에 실패했습니다."),
     JOB_UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5002", "알 수 없는 Job 에러가 발생했습니다."),
-    JOB_NOT_FOUND(HttpStatus.BAD_REQUEST, "JOB_4002", "Job을 찾을 수 없습니다."),
     JOB_CANCEL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOB_5003", "Job 취소에 실패했습니다."),
-    INVALID_DELIVERY_STATUS(HttpStatus.BAD_REQUEST, "JOB_4003", "Job 설정 가능한 배송 상태가 아닙니다."),
-    JOB_CREATION_FAILED(HttpStatus.BAD_REQUEST, "JOB_4004", "Job 생성에 실패했습니다."),
+    INVALID_DELIVERY_STATUS(HttpStatus.BAD_REQUEST, "JOB_4002", "Job 설정 가능한 배송 상태가 아닙니다."),
 
     // 13. Huiju - 당첨자 추첨 관련 에러
     DRAW_EMPTY(HttpStatus.BAD_REQUEST, "DRAW_4001", "응모한 사용자가 없습니다."),

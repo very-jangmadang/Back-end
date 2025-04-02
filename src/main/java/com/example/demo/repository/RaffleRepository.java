@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Raffle;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -43,6 +44,10 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
 
     List<Raffle> findAllByUserId(Long userId);
 
+    List<Raffle> findByRaffleStatusIn(List<RaffleStatus> statuses);
+
+    List<Raffle> findByIdGreaterThanEqualOrderByIdAsc(Long raffleId);
+
     // 마감임박순 래플 조회(24시간 이내에 마감인것들에서 마감임박순으로)
     @Query("SELECT r FROM Raffle r WHERE r.endAt BETWEEN :now AND :maxTime ORDER BY r.endAt ASC")
     Page<Raffle> findRafflesEndingSoon(@Param("now") LocalDateTime now, @Param("maxTime") LocalDateTime maxTime, Pageable pageable);
@@ -59,4 +64,5 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
             countQuery = "SELECT COUNT(DISTINCT r) FROM Raffle r"
     )
     Page<Raffle> findAllSortedByApply(@Param("now") LocalDateTime now, Pageable pageable);
+
 }
