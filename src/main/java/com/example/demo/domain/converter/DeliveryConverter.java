@@ -25,7 +25,7 @@ public class DeliveryConverter {
     }
 
     public static DeliveryResponseDTO.WinnerResultDto toWinnerResultDto(
-            Delivery delivery, MypageResponseDTO.AddressDto addressDto, DeliveryResponseDTO.RaffleDTO raffleDto) {
+            Delivery delivery, MypageResponseDTO.AddressDto addressDto, DeliveryResponseDTO.RaffleDTO raffleDto, String courierName) {
 
         return DeliveryResponseDTO.WinnerResultDto.builder()
                 .raffleId(delivery.getRaffle().getId())
@@ -35,6 +35,7 @@ public class DeliveryConverter {
                 .shippingDeadline(delivery.getShippingDeadline())
                 .shippingFee(delivery.getRaffle().getShippingFee())
                 .isShippingExtended(delivery.isShippingExtended())
+                .courierName(courierName)
                 .invoiceNumber(delivery.getInvoiceNumber())
                 .address(addressDto)
                 .raffleInfo(raffleDto)
