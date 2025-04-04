@@ -1,4 +1,4 @@
-name: CI/CD with docker
+name: CI/CD with docker (using secrets.APPLICATION)
 
 on:
   push:
@@ -6,101 +6,76 @@ on:
       - main
       - develop
 
+env:
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
+  EC2_HOST: ${{ secrets.EC2_HOST }}
+  PRIVATE_KEY: ${{ secrets.EC2_ACCESS_KEY }}
+
 jobs:
-  deploy:
+  build-and-push-docker:
+    runs-on: ubuntu-latest
+
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' || github.event_name == 'push' && github.ref == 'refs/heads/develop' && github.event.head_commit.message != 'Merge pull request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # ✅ GitHub Secrets에 저장된 application.yml 생성
+      - name: Create application.yml from GitHub Secrets
+        run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build --platform linux/amd64 -t ${{ env.DOCKER_IMAGE_NAME }} .
+
+      - name: Push Docker image
+        run: docker push ${{ env.DOCKER_IMAGE_NAME }}
+
+  deploy-to-ec2:
+    needs: build-and-push-docker
     runs-on: ubuntu-latest
 
     steps:
-
-      # 방금 push 받은 main, develop, feat/55로 브랜치 checkout
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # build에 필요한 .env file 생성
-      - name: Generate .env file
-        run: |
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" > .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "SPRING_MAIL_PASSWORD=${{ secrets.SPRING_MAIL_PASSWORD }}" >> .env
-          echo "SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }}" >> .env
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}" >> .env
-          echo "AWS_BUKET=${{ secrets.AWS_BUKET }}" >> .env
-          echo "DOMAIN"=${{secrets.DOMAIN}} >> .env
-          echo "KAKAO_PAY_CID"=${{secrets.KAKAO_PAY_CID}} >> .env
-          echo "KAKAO_PAY_SECRET_KEY"=${{secrets.KAKAO_PAY_SECRET_KEY}} >> .env
-
-      # gradle build 준비
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          distribution: 'temurin' # OpenJDK distribution
-          java-version: '17'
-
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      # jar 파일을 빌드
-      - name: Build JAR file with Gradle
-        run: |
-          export $(cat .env | xargs)
-          
-          ./gradlew clean build
-
-      # 해당 jar 파일로 도커 이미지 생성
-      - name: Build Docker image
-        run: |
-          docker build --platform linux/amd64 -t ajwoong/jangmadang:latest .
-
-
-      # 도커 이미지를 도커 허브에 push
-      - name: Push Docker image to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push ajwoong/jangmadang:latest
-
-
-      # ec2에 접속하여 env 파일 생성 및 도커 허브에서 이미지 pull
-      - name: Generate .env file on EC2
-        uses: appleboy/ssh-action@v0.1.5
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_ACCESS_KEY }}
-          port: 22
+          host: ${{ env.EC2_HOST }}
+          username: ubuntu
+          key: ${{ env.PRIVATE_KEY }}
           script: |
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > ~/.env
-            echo "SPRING_MAIL_PASSWORD=${{ secrets.SPRING_MAIL_PASSWORD }}" >> ~/.env
-            echo "SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }}" >> ~/.env
-            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}" >> ~/.env
-            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.env
-            echo "AWS_BUKET=${{ secrets.AWS_BUKET }}" >> ~/.env
-            echo "DOMAIN"=${{secrets.DOMAIN}} >> ~/.env
-            echo "KAKAO_PAY_CID"=${{secrets.KAKAO_PAY_CID}} >> ~/.env
-            echo "KAKAO_PAY_SECRET_KEY"=${{secrets.KAKAO_PAY_SECRET_KEY}} >> ~/.env
-          debug: true
+            cd /home/ubuntu/
+            sudo chmod 666 /var/run/docker.sock
 
-      # pull 받은 도커 이미지로 컨테이너 실행
-      - name: Deploy on EC2
-        uses: appleboy/ssh-action@v0.1.5
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_ACCESS_KEY }}
-          port: 22
-          script: |
-            # Stop the old container (if exists)
+            # 기존 컨테이너 정리
             sudo docker stop jangmadang-app || true
-            sudo docker rm jangmadang-app || true
+            sudo docker rm -f jangmadang-app || true
 
-            # Pull the latest Docker image
-            sudo docker pull ajwoong/jangmadang:latest
-
-            # Run the new container
+            # 최신 이미지 pull 후 컨테이너 실행
+            sudo docker pull ${{ env.DOCKER_IMAGE_NAME }}
             sudo docker run -d \
               --name jangmadang-app \
               -p 8080:8080 \
               -e TZ=Asia/Seoul \
               -e JAVA_OPTS="-Duser.timezone=Asia/Seoul" \
-              --env-file ~/.env \
-              ajwoong/jangmadang:latest
+              ${{ env.DOCKER_IMAGE_NAME }}
+
+            # 불필요한 이미지 정리
+            sudo docker image prune -f
