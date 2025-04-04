@@ -43,12 +43,6 @@ public class KakaoPayServiceImpl implements KakaoPayService {
     private final String secretKey;
     private final UserRepository userRepository;
 
-    @Value("${kakao.redirect-url}")
-    private String redirectUrl;
-
-    @Value("${kakao.delivery-url}")
-    private String redirectUrlDelivery;
-
     public KakaoPayServiceImpl(
             @Value("${kakao.pay.cid}") String cid,
             @Value("${kakao.pay.secretKey}") String secretKey,
@@ -74,13 +68,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
     @Override
     public ApiResponse<ReadyResponse> preparePayment(PaymentRequest paymentRequest) {
 
-        // 실패 경로
-        String failUrl = redirectUrl;
-        if (paymentRequest.getItemId().equals("배송비")) {
-            failUrl = redirectUrlDelivery;
-        }
-
-        Map<String, Object> parameters = kakaoPayConverter.toPrepareParameters(paymentRequest, failUrl);
+        Map<String, Object> parameters = kakaoPayConverter.toPrepareParameters(paymentRequest);
         ReadyResponse readyResponse = sendRequest(
                 "https://open-api.kakaopay.com/online/v1/payment/ready",
                 parameters,
