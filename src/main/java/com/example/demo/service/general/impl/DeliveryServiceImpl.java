@@ -34,6 +34,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final EmailService emailService;
     private final KakaoPayService kakaoPayService;
     private final BaseController baseController;
+    private final CourierRepository courierRepository;
 
     @Override
     public DeliveryResponseDTO.WinnerResultDto getDelivery(Long deliveryId) {
@@ -63,7 +64,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (deliveryStatus == DeliveryStatus.SHIPPING_EXPIRED)
             raffleDto = toRaffleDto(delivery);
 
-        return toWinnerResultDto(delivery, addressDto, raffleDto);
+        String courierName = null;
+        if (delivery.getCourier() != null)
+            courierName = delivery.getCourier().getName();
+
+        return toWinnerResultDto(delivery, addressDto, raffleDto, courierName);
     }
 
     @Override
@@ -191,11 +196,15 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = getDeliveryById(deliveryId);
         validateOwner(delivery, user);
 
+        Courier courier = courierRepository.findByName(deliveryRequestDTO.getCourierName())
+                .orElseThrow(() -> new CustomException(ErrorStatus.COMMON_WRONG_PARAMETER));
+
         if (delivery.getDeliveryStatus() != DeliveryStatus.READY)
             throw new CustomException(ErrorStatus.DELIVERY_FAIL);
 
         schedulerService.cancelDeliveryJob(delivery, "Shipping");
 
+        delivery.setCourier(courier);
         delivery.setInvoiceNumber(deliveryRequestDTO.getInvoiceNumber());
         delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
 

@@ -3,26 +3,31 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.Constants;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
+import com.example.demo.domain.dto.Scheduler.SchedulerResponseDTO;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
+import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.jobs.*;
+import com.example.demo.repository.DeliveryRepository;
+import com.example.demo.repository.RaffleRepository;
 import com.example.demo.service.general.SchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class SchedulerServiceImpl implements SchedulerService {
 
     private final Scheduler scheduler;
+    private final RaffleRepository raffleRepository;
+    private final DeliveryRepository deliveryRepository;
 
     private void scheduleJob(String jobName, Class<? extends Job> jobClass, LocalDateTime time, Map<String, Object> jobData) {
         try {
@@ -32,6 +37,7 @@ public class SchedulerServiceImpl implements SchedulerService {
             JobDetail jobDetail = buildJobDetail(jobName, jobClass, jobData);
             Trigger trigger = buildJobTrigger(time);
 
+            System.out.println(jobName);
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
             handleSchedulerException(e);
@@ -57,6 +63,12 @@ public class SchedulerServiceImpl implements SchedulerService {
         LocalDateTime adjustedTime = time.withSecond(0).withNano(0);
         Date startDate = Date.from(adjustedTime.atZone(appZoneId).toInstant());
 
+        Date now = new Date();
+        if (startDate.before(now))
+            return TriggerBuilder.newTrigger()
+                    .startNow()
+                    .build();
+
         return TriggerBuilder.newTrigger()
                 .startAt(startDate)
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule()
@@ -77,14 +89,15 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Override
     public void scheduleRaffleJob(Raffle raffle) {
-        String startJobName = "Raffle_" + raffle.getId() + "_START";
-        LocalDateTime startTime = raffle.getStartAt();
-        scheduleJob(startJobName, RaffleStartJob.class, startTime, Map.of("raffleId", raffle.getId()));
+        if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED) {
+            String startJobName = "Raffle_" + raffle.getId() + "_START";
+            LocalDateTime startTime = raffle.getStartAt();
+            scheduleJob(startJobName, RaffleStartJob.class, startTime, Map.of("raffleId", raffle.getId()));
+        }
 
         String endJobName = "Raffle_" + raffle.getId() + "_END";
         LocalDateTime endTime = raffle.getEndAt();
         scheduleJob(endJobName, RaffleEndJob.class, endTime, Map.of("raffleId", raffle.getId()));
-
     }
 
     @Override
@@ -118,11 +131,7 @@ public class SchedulerServiceImpl implements SchedulerService {
             case ADDRESS_EXPIRED:
                 jobName += "_Waiting";
                 jobClass = WaitingJob.class;
-
-                if (!delivery.isAddressExtended())
-                    triggerTime = delivery.getAddressDeadline().plusHours(Constants.CHOICE_PERIOD);
-                else
-                    triggerTime = LocalDateTime.now().plusHours(Constants.CHOICE_PERIOD);
+                triggerTime = delivery.getAddressDeadline().plusHours(Constants.CHOICE_PERIOD);
                 break;
             case SHIPPING_EXPIRED:
                 jobName += "_Waiting";
@@ -145,6 +154,7 @@ public class SchedulerServiceImpl implements SchedulerService {
                 scheduler.unscheduleJob(triggerKey);
                 scheduler.deleteJob(jobKey);
             }
+            // 존재하지 않는 작업 취소 불가
 //            else
 //                throw new CustomException(ErrorStatus.JOB_NOT_FOUND);
 
@@ -171,4 +181,103 @@ public class SchedulerServiceImpl implements SchedulerService {
         if (raffle.getRaffleStatus() == RaffleStatus.UNOPENED)
             cancelJob(jobName + "_START");
     }
+
+    @Override
+    public SchedulerResponseDTO getJobKeys() {
+        Set<JobKey> jobKeys = new HashSet<>();
+
+        try {
+            jobKeys = scheduler.getJobKeys(GroupMatcher.anyGroup());
+        } catch (SchedulerException e) {
+            handleSchedulerException(e);
+        }
+
+        return SchedulerResponseDTO.builder()
+                .JobKeys(jobKeys)
+                .build();
+    }
+
+    @Override
+    public void scheduleAll() {
+        try {
+            if (!scheduler.isStarted())
+                scheduler.start();
+
+            if (!scheduler.getJobKeys(GroupMatcher.anyGroup()).isEmpty())
+                return;
+
+            List<Raffle> raffleList = raffleRepository.findByRaffleStatusIn(List.of(
+                    RaffleStatus.UNOPENED, RaffleStatus.ACTIVE, RaffleStatus.UNFULFILLED));
+
+            for (Raffle raffle : raffleList) {
+                switch (raffle.getRaffleStatus()) {
+                    case UNOPENED:
+                    case ACTIVE:
+                        scheduleRaffleJob(raffle);
+                        break;
+                    case UNFULFILLED:
+                        scheduleDrawJob(raffle);
+                        break;
+                }
+            }
+
+            raffleList = raffleRepository.findByRaffleStatusIn(List.of(RaffleStatus.ENDED));
+
+            for (Raffle raffle : raffleList) {
+                Delivery delivery = deliveryRepository.findByRaffleAndDeliveryStatusIn(raffle, List.of(
+                        DeliveryStatus.WAITING_ADDRESS, DeliveryStatus.READY, DeliveryStatus.SHIPPED,
+                        DeliveryStatus.ADDRESS_EXPIRED, DeliveryStatus.SHIPPING_EXPIRED));
+
+                if (delivery == null)
+                    continue;
+
+                switch (delivery.getDeliveryStatus()) {
+                    case WAITING_ADDRESS:
+                    case READY:
+                    case ADDRESS_EXPIRED:
+                    case SHIPPING_EXPIRED:
+                        scheduleDeliveryJob(delivery);
+                        break;
+
+                    case SHIPPED:
+                        String jobName = "Delivery_" + delivery.getId() + "_Complete";
+                        LocalDateTime triggerTime = delivery.getUpdatedAt().withSecond(0).withNano(0)
+                                .plusHours(Constants.COMPLETE);
+                        Class<? extends Job> jobClass = CompleteJob.class;
+
+                        scheduleJob(jobName, jobClass, triggerTime, Map.of("deliveryId", delivery.getId()));
+                        break;
+                }
+            }
+
+        } catch (SchedulerException e) {
+            handleSchedulerException(e);
+        }
+    }
+
+    @Override
+    public void scheduleNew(Long raffleId) {
+        try {
+            if (!scheduler.isStarted())
+                scheduler.start();
+
+            List<Raffle> raffleList = raffleRepository.findByIdGreaterThanEqualOrderByIdAsc(raffleId);
+
+            for (Raffle raffle : raffleList) {
+                switch (raffle.getRaffleStatus()) {
+                    case UNOPENED:
+                    case ACTIVE:
+                        scheduleRaffleJob(raffle);
+                        break;
+                    case UNFULFILLED:
+                        scheduleDrawJob(raffle);
+                        break;
+                }
+            }
+
+        } catch (SchedulerException e) {
+            handleSchedulerException(e);
+        }
+    }
+
 }

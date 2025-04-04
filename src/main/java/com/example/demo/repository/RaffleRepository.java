@@ -1,15 +1,24 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Raffle;
+import com.example.demo.entity.base.enums.RaffleStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface RaffleRepository extends JpaRepository<Raffle, Long> {
-    Optional<Raffle> findById(Long id);
-    List<Raffle> findByCategoryName(String categoryName);
+
+    @Query("SELECT r FROM Raffle r " +
+            "LEFT JOIN Apply a ON r.id = a.raffle.id " +
+            "WHERE r.category.name = :categoryName " +
+            "GROUP BY r " +
+            "ORDER BY COUNT(a) DESC")
+    Page<Raffle> findByCategoryNameSortedByApply(@Param("categoryName") String categoryName, Pageable pageable);
 
     // 찜 횟수
     @Query("SELECT COUNT(l) FROM Like l WHERE l.raffle.id = :raffleId")
@@ -28,10 +37,32 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     int countReviewsByUserId(Long userId);
 
     // 이름으로 래플 검색
-    List<Raffle> findAllByNameContaining(String keyword);
+    Page<Raffle> findAllByNameContaining(String keyword, Pageable pageable);
 
     // 주최자로 래플 찾기
     List<Raffle> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
     List<Raffle> findAllByUserId(Long userId);
+
+    List<Raffle> findByRaffleStatusIn(List<RaffleStatus> statuses);
+
+    List<Raffle> findByIdGreaterThanEqualOrderByIdAsc(Long raffleId);
+
+    // 마감임박순 래플 조회(24시간 이내에 마감인것들에서 마감임박순으로)
+    @Query("SELECT r FROM Raffle r WHERE r.endAt BETWEEN :now AND :maxTime ORDER BY r.endAt ASC")
+    Page<Raffle> findRafflesEndingSoon(@Param("now") LocalDateTime now, @Param("maxTime") LocalDateTime maxTime, Pageable pageable);
+
+
+    // 응모자순 래플 조회(응모가 안마감된 것들 우선으로)
+    @Query(
+            value = "SELECT r FROM Raffle r " +
+                    "LEFT JOIN Apply a ON r.id = a.raffle.id " +
+                    "GROUP BY r " +
+                    "ORDER BY " +
+                    "CASE WHEN r.endAt > :now THEN 1 ELSE 2 END, " +
+                    "COUNT(a) DESC",
+            countQuery = "SELECT COUNT(DISTINCT r) FROM Raffle r"
+    )
+    Page<Raffle> findAllSortedByApply(@Param("now") LocalDateTime now, Pageable pageable);
+
 }

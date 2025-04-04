@@ -34,9 +34,11 @@ public class SearchLoginController {
 
     @Operation(summary = "검색")
     @GetMapping("/raffles")
-    public ApiResponse<SearchResponseDTO.SearchRaffleListDTO> searchRaffles(@RequestParam("keyword") String keyword, Authentication authentication){
+    public ApiResponse<SearchResponseDTO.SearchRaffleListDTO> searchRaffles(@RequestParam("keyword") String keyword, Authentication authentication,
+                                                                            @RequestParam(defaultValue = "1") int page,
+                                                                            @RequestParam(defaultValue = "16") int size){
         Long userId = Long.parseLong(authentication.getName());
-        SearchResponseDTO.SearchRaffleListDTO result = searchService.searchRaffles(keyword, userId);
+        SearchResponseDTO.SearchRaffleListDTO result = searchService.searchRaffles(keyword, userId, page, size);
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 }

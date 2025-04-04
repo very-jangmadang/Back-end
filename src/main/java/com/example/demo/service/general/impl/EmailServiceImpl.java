@@ -32,7 +32,7 @@ public class EmailServiceImpl implements EmailService {
     private String fromEmail;
 
     @Override
-    @Async("emailTaskExecutor")
+//    @Async("emailTaskExecutor")
     public void sendWinnerPrizeEmail(Delivery delivery) {
         User user = delivery.getWinner();
         Raffle raffle = delivery.getRaffle();
@@ -67,7 +67,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async("emailTaskExecutor")
+//    @Async("emailTaskExecutor")
     public void sendWinnerCancelEmail(Delivery delivery) {
         User user = delivery.getWinner();
         Raffle raffle = delivery.getRaffle();
@@ -98,7 +98,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async("emailTaskExecutor")
+//    @Async("emailTaskExecutor")
     public void sendOwnerAddressExpiredEmail(Delivery delivery) {
         User user = delivery.getUser();
         Raffle raffle = delivery.getRaffle();
@@ -131,7 +131,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async("emailTaskExecutor")
+//    @Async("emailTaskExecutor")
     public void sendOwnerCancelEmail(Raffle raffle) {
         User user = raffle.getUser();
 
@@ -162,7 +162,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async("emailTaskExecutor")
+//    @Async("emailTaskExecutor")
     public void sendWinnerShippingExpiredEmail(Delivery delivery) {
         User user = delivery.getWinner();
         Raffle raffle = delivery.getRaffle();
@@ -194,7 +194,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async("emailTaskExecutor")
+//    @Async("emailTaskExecutor")
     public void sendOwnerUnfulfilledEmail(Raffle raffle) {
         User user = raffle.getUser();
 
@@ -227,7 +227,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async("emailTaskExecutor")
+//    @Async("emailTaskExecutor")
     public void sendOwnerReadyEmail(Delivery delivery) {
         User user = delivery.getUser();
         Raffle raffle = delivery.getRaffle();
@@ -301,7 +301,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async("emailTaskExecutor")
+//    @Async("emailTaskExecutor")
     public void sendOwnerRaffleOpenEmail(Raffle raffle) {
         User user = raffle.getUser();
 

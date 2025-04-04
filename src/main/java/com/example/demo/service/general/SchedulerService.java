@@ -1,5 +1,6 @@
 package com.example.demo.service.general;
 
+import com.example.demo.domain.dto.Scheduler.SchedulerResponseDTO;
 import com.example.demo.entity.Delivery;
 import com.example.demo.entity.Raffle;
 
@@ -15,4 +16,10 @@ public interface SchedulerService {
     void cancelDeliveryJob(Delivery delivery, String type);
 
     void cancelRaffleJob(Raffle raffle);
+
+    SchedulerResponseDTO getJobKeys();
+
+    void scheduleAll();
+
+    void scheduleNew(Long raffleId);
 }

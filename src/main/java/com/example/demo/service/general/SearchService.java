@@ -5,7 +5,7 @@ import com.example.demo.domain.dto.Search.SearchResponseDTO;
 
 public interface SearchService {
 
-    SearchResponseDTO.SearchRaffleListDTO searchRaffles(String keyword, Long userId);
+    SearchResponseDTO.SearchRaffleListDTO searchRaffles(String keyword, Long userId, int page, int size);
 
     SearchResponseDTO.RecentPopularSearchDTO getRecentPopularSearch(Long userId);
 

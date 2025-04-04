@@ -1,6 +1,7 @@
 package com.example.demo.domain.dto.Search;
 
 import com.example.demo.domain.dto.Home.HomeRaffleDTO;
+import com.example.demo.domain.dto.base.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class SearchResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class SearchRaffleListDTO{
+        private PageInfo pageInfo;
         private List<HomeRaffleDTO> searchedRaffles;
     }
 

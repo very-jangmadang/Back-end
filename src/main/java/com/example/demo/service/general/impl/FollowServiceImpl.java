@@ -61,7 +61,6 @@ public class FollowServiceImpl implements FollowService {
         Follow follow = Follow.builder()
                 .user(user)
                 .storeId(storeId) // storeId를 직접 저장
-                .follower(null)
                 .build();
         followRepository.save(follow);
 
