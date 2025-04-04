@@ -112,10 +112,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(pagedRaffles.getContent(), null);
         PageInfo pageInfo = PageConverter.toPageInfo(pagedRaffles);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(result)
-                .pageInfo(pageInfo)
-                .build();
+        return HomeConverter.toHomeRaffleListDTO(result, pageInfo);
     }
 
     @Override
@@ -134,10 +131,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> result = convertToHomeRaffleDTOList(pagedRaffles.getContent(), user);
         PageInfo pageInfo = PageConverter.toPageInfo(pagedRaffles);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(result)
-                .pageInfo(pageInfo)
-                .build();
+        return HomeConverter.toHomeRaffleListDTO(result, pageInfo);
     }
 
     @Override
@@ -151,10 +145,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, null);
         PageInfo pageInfo = PageConverter.toPageInfo(pagedRafflesSortedByEndAt);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(rafflesSortedByEndAtDTO)
-                .pageInfo(pageInfo)
-                .build();
+        return HomeConverter.toHomeRaffleListDTO(rafflesSortedByEndAtDTO, pageInfo);
     }
 
     @Override
@@ -173,10 +164,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, user);
         PageInfo pageInfo = PageConverter.toPageInfo(pagedRafflesSortedByEndAt);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(rafflesSortedByEndAtDTO)
-                .pageInfo(pageInfo)
-                .build();
+        return HomeConverter.toHomeRaffleListDTO(rafflesSortedByEndAtDTO, pageInfo);
 
     }
 
@@ -194,10 +182,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> myFollowingRafflesDTO = convertToHomeRaffleDTOList(myFollowRaffles, user);
         PageInfo pageInfo = PageConverter.toPageInfo(pagedFollowingAllRaffles);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(myFollowingRafflesDTO)
-                .pageInfo(pageInfo)
-                .build();
+        return HomeConverter.toHomeRaffleListDTO(myFollowingRafflesDTO, pageInfo);
     }
 
     @Override
@@ -210,10 +195,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
         PageInfo pageInfo = PageConverter.toPageInfo(pagedRafflesSortedByApply);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(rafflesSortedByApplyListDTO)
-                .pageInfo(pageInfo)
-                .build();
+        return HomeConverter.toHomeRaffleListDTO(rafflesSortedByApplyListDTO, pageInfo);
     }
 
     @Override
@@ -230,10 +212,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, user);
         PageInfo pageInfo = PageConverter.toPageInfo(pagedRafflesSortedByApply);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(rafflesSortedByApplyListDTO)
-                .pageInfo(pageInfo)
-                .build();
+        return HomeConverter.toHomeRaffleListDTO(rafflesSortedByApplyListDTO, pageInfo);
     }
 
     @Override
@@ -249,10 +228,7 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> myLikeRafflesDTO = convertToHomeRaffleDTOList(likedRaffles, user);
         PageInfo pageInfo = PageConverter.toPageInfo(pagedLikedRaffles);
 
-        return HomeRaffleListDTO.builder()
-                .raffles(myLikeRafflesDTO)
-                .pageInfo(pageInfo)
-                .build();
+        return HomeConverter.toHomeRaffleListDTO(myLikeRafflesDTO, pageInfo);
     }
 
 
@@ -292,28 +268,6 @@ public class HomeServiceImpl implements HomeService {
                 })
                 .toList();
     }
-
-    //    private List<HomeRaffleDTO> convertToHomeRaffleDTOList(List<Raffle> raffles, User user) {
-//        List<HomeRaffleDTO> dtoList = new ArrayList<>();
-//
-//        for (Raffle raffle : raffles) {
-//            boolean likeStatus = false;
-//
-//            // 로그인한 경우에만 likeStatus 조회
-//            if (user != null) {
-//                List<Long> likedRaffleIds = user.getLikes().stream()
-//                        .map(like -> like.getRaffle().getId())
-//                        .toList();
-//                likeStatus = likedRaffleIds.contains(raffle.getId());
-//            }
-//
-//            HomeRaffleDTO raffleDTO = HomeConverter.toHomeRaffleDTO(raffle, likeStatus);
-//            dtoList.add(raffleDTO);
-//        }
-//
-//        return dtoList;
-//    }
-
 
 
 }
