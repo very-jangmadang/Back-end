@@ -27,6 +27,7 @@ public class HomeConverter {
                 .ticketNum(raffle.getTicketNum())
                 .timeUntilEnd(duration.toSeconds())
                 .participantNum(raffle.getApplyList().size())
+                .raffleStatus(raffle.getRaffleStatus())
                 .finish(finish)
                 .build();
     }
