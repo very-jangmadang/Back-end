@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -278,6 +279,16 @@ public class SchedulerServiceImpl implements SchedulerService {
         } catch (SchedulerException e) {
             handleSchedulerException(e);
         }
+    }
+
+    @Override
+    public void scheduleInvoiceCheckJob(Delivery delivery) {
+        String jobName = "InvoiceReminder_" + delivery.getId();
+        Class<? extends Job> jobClass = InvoiceCheckJob.class;
+
+        LocalDateTime triggerTime = delivery.getShippingDeadline().minusHours(1); // 1시간 전
+
+        scheduleJob(jobName, jobClass, triggerTime, Map.of("deliveryId", delivery.getId()));
     }
 
 }
