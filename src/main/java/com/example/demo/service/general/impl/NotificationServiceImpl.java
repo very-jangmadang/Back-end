@@ -98,5 +98,41 @@ public class NotificationServiceImpl implements NotificationService {
                 .collect(Collectors.toList());
     }
 
+    // 당첨자용 알림
+    @Override
+    public List<NotificationResponseDTO> getWinnerNotifications() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+        List<Notification> notifications = notificationRepository.findByUserAndCreatedAtAfter(user, twoWeeksAgo);
+
+        return notifications.stream()
+                .map(notificationConverter::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void sendWinnerForEndedRaffle(Raffle raffle) {
+        User winner = raffle.getWinner(); // 개최자
+
+        NotificationRequestDTO.ForHost request = new NotificationRequestDTO.ForHost();
+        request.setUser(winner);
+        request.setEvent(NotificationEvent.RAFFLE_RESULT);
+        request.setTitle("축하합니다!! [" + raffle.getName() + "] 래플에 당첨되셨습니다.");
+        request.setMessage("배송지 입력 후 결제를 완료해 주세요.");
+        request.setAction("/raffles/" + raffle.getId() + "/draw");
+
+        Notification notification = NotificationConverter.toNotification(request, winner);
+        notificationRepository.save(notification);
+    }
+
+
 
 }

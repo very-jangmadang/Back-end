@@ -12,5 +12,6 @@ public interface NotificationService {
     List<NotificationResponseDTO> getHostNotifications();
     void sendHostForUnenteredAddress(Delivery delivery);
     void sendHostForUnenteredInvoice(Delivery delivery);
-
+    List<NotificationResponseDTO> getWinnerNotifications();
+    void sendWinnerForEndedRaffle(Raffle raffle);
 }

@@ -26,4 +26,11 @@ public class NotificationController {
 
         return ApiResponse.of(SuccessStatus._OK, notifications);
     }
+
+    @GetMapping("/winner")
+    public ApiResponse<List<NotificationResponseDTO>> getWinnerNotifications() {
+        List<NotificationResponseDTO> notifications = notificationService.getWinnerNotifications();
+
+        return ApiResponse.of(SuccessStatus._OK, notifications);
+    }
 }
