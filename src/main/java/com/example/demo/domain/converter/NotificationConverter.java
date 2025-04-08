@@ -19,15 +19,16 @@ public class NotificationConverter {
                 .content(request.getMessage())  // content = message
                 .action(request.getAction())
                 .event(request.getEvent())
-                .type(NotificationType.TRADE)
+                .type(request.getEvent().getNotificationType())
                 .targetType(request.getEvent().getTargetType())
                 .build();
     }
 
     public NotificationResponseDTO toResponseDTO(Notification notification) {
         return NotificationResponseDTO.builder()
-                .type(notification.getType().toString().toLowerCase())  // 예: "trade"
-                .role("host")
+                .type(notification.getType().toString().toLowerCase())
+                .targetType(notification.getTargetType().toString().toLowerCase())
+                .role(notification.getEvent().getRole())
                 .event(notification.getEvent().toString().toLowerCase())
                 .title(notification.getTitle())
                 .message(notification.getContent())

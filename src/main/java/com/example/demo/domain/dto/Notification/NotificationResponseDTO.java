@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class NotificationResponseDTO {
 
         private String type;
+        private String targetType;
         private String role;
         private String event;
         private String title;
