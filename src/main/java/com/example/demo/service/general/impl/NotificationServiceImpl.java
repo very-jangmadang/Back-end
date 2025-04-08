@@ -91,7 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 
         LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
-        List<Notification> notifications = notificationRepository.findByUserAndCreatedAtAfter(user, twoWeeksAgo);
+        List<Notification> notifications = notificationRepository.findByUserAndEventInAndCreatedAtAfter(user,HOST_EVENTS, twoWeeksAgo);
 
         return notifications.stream()
                 .map(notificationConverter::toResponseDTO)
@@ -111,7 +111,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
 
         LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
-        List<Notification> notifications = notificationRepository.findByUserAndCreatedAtAfter(user, twoWeeksAgo);
+        List<Notification> notifications = notificationRepository.findByUserAndEventInAndCreatedAtAfter(user,WINNER_EVENTS, twoWeeksAgo);
 
         return notifications.stream()
                 .map(notificationConverter::toResponseDTO)
@@ -134,5 +134,26 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
 
+
+
+
+
+
+
+
+
+    private static final List<NotificationEvent> HOST_EVENTS = List.of(
+            NotificationEvent.RAFFLE_ENDED,
+            NotificationEvent.DELIVERY_ADDRESS_MISSING,
+            NotificationEvent.DELIVERY_INVOICE_MISSING
+    );
+
+    private static final List<NotificationEvent> WINNER_EVENTS = List.of(
+            NotificationEvent.RAFFLE_RESULT,
+            NotificationEvent.DELIVERY_ADDRESS_REQUIRED,
+            NotificationEvent.DELIVERY_DELAYED,
+            NotificationEvent.REVIEW_REQUEST,
+            NotificationEvent.DELIVERY_ADDRESS_DUE
+    );
 
 }
