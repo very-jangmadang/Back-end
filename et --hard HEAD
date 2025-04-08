@@ -1,0 +1,250 @@
+[33mcommit 65d2bb1a13de8ed70e02d7c7da0c957ed58cf1f8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/191[m[33m)[m
+Author: limdodod <rosalim2001@naver.com>
+Date:   Wed Apr 9 00:13:46 2025 +0900
+
+    알림 분리
+
+[33mcommit c64fd74bf5021d067d8dba1ccf2db7beaf8bd415[m
+Author: limdodod <rosalim2001@naver.com>
+Date:   Wed Apr 9 00:09:48 2025 +0900
+
+    당첨자 알림
+
+[33mcommit b1e49f58adf3de5d8a58578d515927d463daa54f[m
+Author: limdodod <rosalim2001@naver.com>
+Date:   Sat Apr 5 23:16:43 2025 +0900
+
+    개최자용 알림
+
+[33mcommit 8a510a503758c82e4b7814144ee90c3cd2cc6386[m
+Merge: a22e4d7 abf734a
+Author: limdodod <rosalim2001@naver.com>
+Date:   Sat Apr 5 19:40:40 2025 +0900
+
+    Merge branch 'develop' of https://github.com/JMarketYard/Back-end into feat/191
+
+[33mcommit abf734a67b40667891cbefafd77ac2ba99394f18[m[33m ([m[1;31morigin/develop[m[33m)[m
+Merge: d2d1693 320dce5
+Author: ajwoong <153069158+ajwoong@users.noreply.github.com>
+Date:   Fri Apr 4 21:54:51 2025 +0900
+
+    Merge pull request #189 from JMarketYard/fix/188
+    
+    [Fix]: ci/cd 스크립트 수정
+
+[33mcommit 320dce5f9c49e00004f9d82c286a5b8ac7aa8d4a[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Fri Apr 4 21:40:57 2025 +0900
+
+    [Fix]: ci/cd 스크립트 수정
+
+[33mcommit a22e4d7af55efc464c0ea5dfa1e4e23766d1a91e[m[33m ([m[1;32mfeat/149[m[33m)[m
+Merge: 014b967 d2d1693
+Author: limdodod <rosalim2001@naver.com>
+Date:   Fri Apr 4 20:46:41 2025 +0900
+
+    Merge branch 'develop' of https://github.com/JMarketYard/Back-end into feat/149
+
+[33mcommit 014b9675cff87bfb1022a93d4805961780dd49e1[m
+Merge: ba5c9ae f234850
+Author: limdodod <rosalim2001@naver.com>
+Date:   Fri Apr 4 20:46:24 2025 +0900
+
+    Merge branch 'develop' of https://github.com/JMarketYard/Back-end into feat/149
+
+[33mcommit d2d169315b40c774920573e992b1466b73233e6b[m
+Merge: a99d2eb 769e189
+Author: ajwoong <153069158+ajwoong@users.noreply.github.com>
+Date:   Fri Apr 4 20:12:27 2025 +0900
+
+    Merge pull request #187 from JMarketYard/fix/186
+    
+    [Fix]: 홈페이지 래플조회 raffleStatus 전송 응답 추가
+
+[33mcommit 769e18988974a8c19b12d74a4d462c799aa73b5f[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Fri Apr 4 14:35:56 2025 +0900
+
+    [Fix]: 홈페이지 래플조회 raffleStatus 전송 응답 추가
+
+[33mcommit 9b40d2dbef5f8974b5e9a377d8ea5d7dfa0b8c2f[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Fri Apr 4 14:28:21 2025 +0900
+
+    [Fix]: 홈페이지 래플조회 raffleStatus 전송 응답 추가
+
+[33mcommit a99d2eb77d1b403fe2d5b0676188902e1c101ba4[m
+Merge: 5f2ad72 21ea770
+Author: Yeohuiju <157028681+Yeohuiju@users.noreply.github.com>
+Date:   Wed Apr 2 16:15:21 2025 +0900
+
+    Merge pull request #185 from JMarketYard/feat/184
+    
+    ✨[FEAT] #184: 운송장 등록 시 택배사 추가
+
+[33mcommit 5f2ad728c4cfe1f7f426ad71838061823f20c035[m
+Merge: 89e7d1b 9272a14
+Author: Yeohuiju <157028681+Yeohuiju@users.noreply.github.com>
+Date:   Wed Apr 2 16:15:06 2025 +0900
+
+    Merge pull request #183 from JMarketYard/feat/180
+    
+    ✨[FEAT] #180: 스케줄링 API
+
+[33mcommit 9272a1400b8dc25ecf55105b2c8ae474eec6bf01[m
+Merge: 7f3c805 89e7d1b
+Author: Yeohuiju <157028681+Yeohuiju@users.noreply.github.com>
+Date:   Sun Mar 30 14:41:01 2025 +0900
+
+    Merge branch 'develop' into feat/180
+
+[33mcommit 21ea77067bc60cbcb07ddbd432794296d154bb34[m
+Author: Yeohuiju <yeohuiju03@gmail.com>
+Date:   Sat Mar 29 05:45:43 2025 +0900
+
+    [FEAT] 운송장 등록 시 택배사 추가
+
+[33mcommit 7f3c805783f965881b11c91bc34c0c8f7e287038[m
+Author: Yeohuiju <yeohuiju03@gmail.com>
+Date:   Sat Mar 29 05:17:36 2025 +0900
+
+    [FEAT] 스케줄링 API
+
+[33mcommit 774b2c2b509ac541f6dc7e797b712a26c09fdc5b[m
+Author: Yeohuiju <yeohuiju03@gmail.com>
+Date:   Sat Mar 29 05:09:50 2025 +0900
+
+    [FEAT] 스케줄링 API
+
+[33mcommit 89e7d1b4efe9f866136f7f6db67d5198d96e37dd[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Thu Mar 27 16:48:29 2025 +0900
+
+    [Fix]: 홈페이지에도 페이징 기능 추가
+
+[33mcommit b8213d5dcd2b2514a7bfb6af76f6735c7ca3b905[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Thu Mar 27 16:34:42 2025 +0900
+
+    [Fix]: 홈페이지에도 페이징 기능 추가
+
+[33mcommit 767b9585e2e082a56b4777b7e473e3832f38e050[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Thu Mar 27 16:25:04 2025 +0900
+
+    [Fix]: 홈페이지에도 페이징 기능 추가
+
+[33mcommit cf7ad8feac10cd2871ebcb32724d7fefcd5a48ee[m
+Merge: b109454 bb05800
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Thu Mar 27 16:17:51 2025 +0900
+
+    Merge remote-tracking branch 'origin/fix/150' into develop
+
+[33mcommit bb05800dde5fac81d5990157e0d51d18e4ccec36[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Thu Mar 27 16:17:04 2025 +0900
+
+    [Fix]: 홈페이지에도 페이징 기능 추가
+
+[33mcommit b1094549dae28cef4a76e02199cc7489c8ae7855[m
+Merge: f234850 647cb48
+Author: ajwoong <153069158+ajwoong@users.noreply.github.com>
+Date:   Thu Mar 27 16:14:19 2025 +0900
+
+    Merge pull request #178 from JMarketYard/fix/150
+    
+    🐛 [FIX] #150: 조회 기능 페이징 추가 + 불필요한 엔티티 칼람 수정
+
+[33mcommit 647cb48a7a160bee937aa1cbb24b2bfc3640deb4[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Thu Mar 27 13:30:30 2025 +0900
+
+    [Fix]: 홈페이지에도 페이징 기능 추가
+
+[33mcommit a7d00472c44be29ee3b128ba4ee5801905551d59[m
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Thu Mar 27 13:25:02 2025 +0900
+
+    [Fix]: 홈페이지에도 페이징 기능 추가
+
+[33mcommit 0b8bdea4a83dd488cbf4144cb7080081443dd628[m
+Merge: 38b94a4 f234850
+Author: ajwoong <sosloahn@gmail.com>
+Date:   Thu Mar 27 13:21:22 2025 +0900
+
+    Merge remote-tracking branch 'origin/develop' into fix/150
+
+[33mcommit f23485065967bb488a7ffd0898c9d96c1f795f74[m
+Author: 신지윤 (Yoon) <108733746+Yoon0221@users.noreply.github.com>
+Date:   Mon Mar 24 19:13:27 2025 +0900
+
+    Update KakaoPayServiceImpl.java
+
+[33mcommit ee5387d90cadfb4bd4b9b06ab1440d30394ef7d2[m
+Author: 신지윤 (Yoon) <108733746+Yoon0221@users.noreply.github.com>
+Date:   Mon Mar 24 19:12:28 2025 +0900
+
+    Update KakaoPayConverter.java
+
+[33mcommit 1adda7b843959261ba2d3184fa5a64c77580cf37[m
+Author: 신지윤 (Yoon) <108733746+Yoon0221@users.noreply.github.com>
+Date:   Mon Mar 24 18:20:00 2025 +0900
+
+    Update application.yml
+
+[33mcommit 20c46610ffdcd66ee8f505304faadad91fcff48b[m
+Author: 신지윤 (Yoon) <108733746+Yoon0221@users.noreply.github.com>
+Date:   Mon Mar 24 18:13:29 2025 +0900
+
+    카카오페이 키 수정
+
+[33mcommit 640af762b9463ecd5dc63206f43605f90126bea1[m
+Author: 신지윤 (Yoon) <108733746+Yoon0221@users.noreply.github.com>
+Date:   Mon Mar 24 18:07:37 2025 +0900
+
+    카카오페이 키 수정
+
+[33mcommit b13204aa3b4ce236f13d0e90becac4bdfe1b2164[m
+Author: Yeohuiju <yeohuiju03@gmail.com>
+Date:   Mon Mar 24 00:02:11 2025 +0900
+
+    [FEAT] 스케줄링 API
+
+[33mcommit ba5c9ae78aee972b38bf1acadd3e3fbdea1f1c39[m
+Merge: 959ab99 df21222
+Author: limdodod <rosalim2001@naver.com>
+Date:   Fri Mar 21 20:52:28 2025 +0900
+
+    Merge branch 'develop' of https://github.com/JMarketYard/Back-end into feat/149
+
+[33mcommit df21222ea9107d02144707107d40f7779adf084c[m
+Merge: 917877d 40f7245
+Author: 신지윤 (Yoon) <108733746+Yoon0221@users.noreply.github.com>
+Date:   Fri Mar 21 19:01:57 2025 +0900
+
+    Merge branch 'develop' of https://github.com/JMarketYard/Back-end into develop
+
+[33mcommit 917877d98b78f6747e727e87f50ac09186a3a6e5[m
+Author: 신지윤 (Yoon) <108733746+Yoon0221@users.noreply.github.com>
+Date:   Fri Mar 21 19:01:42 2025 +0900
+
+    [Fix] 배달비 결제 실패 경로 수정
+
+[33mcommit 40f724511d1a4ad80b9d580d3b30768c12cf624e[m
+Merge: 9ea0212 eb063bd
+Author: 박형진 <90571491+gud0217@users.noreply.github.com>
+Date:   Fri Mar 21 09:34:54 2025 +0900
+
+    Merge pull request #161 from JMarketYard/feat/154
+    
+    ✨[FEAT]: #154 래플 삭제 구현
+
+[33mcommit eb063bd4483f23cf222f0fc6b353559c1d85cb9d[m
+Merge: 07a0981 9ea0212
+Author: parkhyungjin <gud5223@naver.com>
+Date:   Fri Mar 21 09:32:26 2025 +0900
+
+    [FEAT]: 래플 status 따라 삭제 구현 #154
+    
+    RAFFLE_4002 충돌이 있어서 4003,4004로 변경했습니다
