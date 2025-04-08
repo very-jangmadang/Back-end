@@ -2,35 +2,47 @@ package com.example.demo.entity.base.enums.Notification;
 
 public enum NotificationEvent {
 
-    //거래 알림
-    //개최자용
-    RAFFLE_ENDED(NotificationTargetType.RAFFLE),
-    DELIVERY_ADDRESS_MISSING(NotificationTargetType.DELIVERY),
-    DELIVERY_INVOICE_MISSING(NotificationTargetType.DELIVERY),
+    // 거래 알림 - 개최자
+    RAFFLE_ENDED(NotificationTargetType.RAFFLE, NotificationType.TRADE, "host"),
+    DELIVERY_ADDRESS_MISSING(NotificationTargetType.DELIVERY, NotificationType.TRADE, "host"),
+    DELIVERY_INVOICE_MISSING(NotificationTargetType.DELIVERY, NotificationType.TRADE, "host"),
 
-    //당첨자용
-    RAFFLE_RESULT(NotificationTargetType.RAFFLE),
-    DELIVERY_ADDRESS_REQUIRED(NotificationTargetType.DELIVERY),
-    DELIVERY_DELAYED(NotificationTargetType.DELIVERY),
-    REVIEW_REQUEST(NotificationTargetType.REVIEW),
-    DELIVERY_ADDRESS_DUE(NotificationTargetType.DELIVERY),
+    // 거래 알림 - 당첨자
+    RAFFLE_RESULT(NotificationTargetType.RAFFLE, NotificationType.TRADE, "winner"),
+    DELIVERY_ADDRESS_REQUIRED(NotificationTargetType.DELIVERY, NotificationType.TRADE, "winner"),
+    DELIVERY_DELAYED(NotificationTargetType.DELIVERY, NotificationType.TRADE, "winner"),
+    REVIEW_REQUEST(NotificationTargetType.REVIEW, NotificationType.TRADE, "winner"),
+    DELIVERY_ADDRESS_DUE(NotificationTargetType.DELIVERY, NotificationType.TRADE, "winner"),
 
-    //시스템 알림
-    TICKET_CHARGED(NotificationTargetType.PAYMENT),
-    EXCHANGE_REQUIRED(NotificationTargetType.EXCHANGE),
-    EXCHANGE_COMPLETED(NotificationTargetType.EXCHANGE);
+    // 시스템 알림 - 유저
+    TICKET_CHARGED(NotificationTargetType.PAYMENT, NotificationType.SYSTEM, "user"),
+    EXCHANGE_REQUIRED(NotificationTargetType.EXCHANGE, NotificationType.SYSTEM, "user"),
+    EXCHANGE_COMPLETED(NotificationTargetType.EXCHANGE, NotificationType.SYSTEM, "user"),
 
-    //마케팅 알림
+    // 마케팅 알림 (예: 광고성)
+    //MARKETING_COUPON(NotificationTargetType.MARKETING, NotificationType.MARKETING, "user");
 
-
+    ;
 
     private final NotificationTargetType targetType;
+    private final NotificationType notificationType;
+    private final String role;
 
-    NotificationEvent(NotificationTargetType targetType) {
+    NotificationEvent(NotificationTargetType targetType, NotificationType notificationType, String role) {
         this.targetType = targetType;
+        this.notificationType = notificationType;
+        this.role = role;
     }
 
     public NotificationTargetType getTargetType() {
         return targetType;
+    }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public String getRole() {
+        return role;
     }
 }
