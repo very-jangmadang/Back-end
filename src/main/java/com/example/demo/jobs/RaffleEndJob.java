@@ -56,9 +56,9 @@ public class RaffleEndJob implements Job {
 
         raffle.setRaffleStatus(RaffleStatus.ENDED);
 
+        drawService.draw(raffle, applyList);
+
         notificationService.sendHostForEndedRaffle(raffle);
         notificationService.sendWinnerForEndedRaffle(raffle);
-
-        drawService.draw(raffle, applyList);
     }
 }
