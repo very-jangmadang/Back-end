@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface RaffleRepository extends JpaRepository<Raffle, Long> {
 
@@ -65,4 +66,9 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     )
     Page<Raffle> findAllSortedByApply(@Param("now") LocalDateTime now, Pageable pageable);
 
+    @Query("SELECT r FROM Raffle r WHERE r.id = :id")
+    Optional<Raffle> findByIdIncludeDeleted(@Param("id") Long id);
+
 }
+
+
