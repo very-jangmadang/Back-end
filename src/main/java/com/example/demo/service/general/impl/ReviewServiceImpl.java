@@ -10,6 +10,7 @@ import com.example.demo.domain.dto.Review.ReviewWithAverageDTO;
 import com.example.demo.entity.Raffle;
 import com.example.demo.entity.Review;
 import com.example.demo.entity.User;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.repository.ReviewRepository;
 import com.example.demo.repository.UserRepository;
@@ -42,7 +43,7 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewResponseDTO addReview(ReviewRequestDTO.ReviewUploadDTO reviewRequest,Long userId) {
 
         // 0. 업로드 작성자 정보 가져오기
-        Raffle raffle = raffleRepository.findById(reviewRequest.getRaffleId())
+        Raffle raffle = raffleRepository.findByIdIncludeDeleted(reviewRequest.getRaffleId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.RAFFLE_NOT_FOUND));
 
 
@@ -84,12 +85,21 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void deleteReview(Long reviewId, Long userId){
         // 리뷰 내역 조회
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findByIdIncludeDeletedRaffle(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.REVIEW_NOT_FOUND));
 
         // 요청자의 userId와 리뷰 작성자의 reviewerId 비교
         if (!review.getReviewer().getId().equals(userId))
             throw new CustomException(ErrorStatus.NO_DELETE_AUTHORITY);
+
+        //삭제된 래플의 리뷰는 삭제 불가능함
+        if (review.getRaffle() == null) {
+            throw new CustomException(ErrorStatus.RAFFLE_NOT_FOUND); // 혹은 다른 에러 상태로
+        }
+
+        if (review.getRaffle().getRaffleStatus() == RaffleStatus.DELETED) {
+            throw new CustomException(ErrorStatus.DELETED_RAFFLE);
+        }
 
         // 삭제
         reviewRepository.deleteById(reviewId);
