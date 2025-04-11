@@ -1,6 +1,7 @@
 package com.example.demo.domain.dto.Home;
 
 import com.example.demo.entity.Raffle;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class HomeRaffleDTO {
     private int ticketNum;
     private Long timeUntilEnd;
     private boolean finish;
+    private RaffleStatus raffleStatus;
     private int participantNum;
     private boolean like = false;
 

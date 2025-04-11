@@ -1,11 +1,14 @@
 package com.example.demo.domain.converter;
 
 import com.example.demo.domain.dto.Home.HomeRaffleDTO;
+import com.example.demo.domain.dto.Home.HomeRaffleListDTO;
+import com.example.demo.domain.dto.base.PageInfo;
 import com.example.demo.entity.Image;
 import com.example.demo.entity.Raffle;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public class HomeConverter {
@@ -27,7 +30,15 @@ public class HomeConverter {
                 .ticketNum(raffle.getTicketNum())
                 .timeUntilEnd(duration.toSeconds())
                 .participantNum(raffle.getApplyList().size())
+                .raffleStatus(raffle.getRaffleStatus())
                 .finish(finish)
+                .build();
+    }
+
+    public static HomeRaffleListDTO toHomeRaffleListDTO(List<HomeRaffleDTO> raffleList, PageInfo pageInfo){
+        return HomeRaffleListDTO.builder()
+                .raffles(raffleList)
+                .pageInfo(pageInfo)
                 .build();
     }
 
