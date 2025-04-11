@@ -6,7 +6,7 @@ public class Constants {
     public static final int MAX_ADDRESS_COUNT = 6;
 
     // 배송지 입력 기한 (시간 단위)
-    public static final int ADDRESS_DEADLINE = 72;
+    public static final int ADDRESS_DEADLINE = 1;
 
     // 운송장 입력 기한 (시간 단위)
     public static final int SHIPPING_DEADLINE = 96;

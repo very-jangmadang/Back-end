@@ -6,6 +6,7 @@ import com.example.demo.entity.Delivery;
 import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.repository.DeliveryRepository;
 import com.example.demo.service.general.EmailService;
+import com.example.demo.service.general.NotificationService;
 import com.example.demo.service.general.SchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
@@ -20,6 +21,7 @@ public class AddressJob implements Job {
     private final DeliveryRepository deliveryRepository;
     private final SchedulerService schedulerService;
     private final EmailService emailService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -33,6 +35,7 @@ public class AddressJob implements Job {
 
         // TODO: 이메일 내용에 따라 함수 분리 가능성 있음
         emailService.sendOwnerAddressExpiredEmail(delivery);
+        notificationService.sendHostForUnenteredAddress(delivery);
         schedulerService.scheduleDeliveryJob(delivery);
     }
 }
