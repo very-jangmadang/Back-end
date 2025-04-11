@@ -12,7 +12,7 @@ public interface RaffleService {
     Long softDeleteRaffle(Long id);
 
     // 래플 상세조회
-    RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long id);
+    RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long id, String clientId);
 
     // 래플 응모
     RaffleResponseDTO.ApplyResultDTO apply(Long raffleId);
