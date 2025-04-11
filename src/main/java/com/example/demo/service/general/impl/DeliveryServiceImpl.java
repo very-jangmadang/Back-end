@@ -236,8 +236,6 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         schedulerService.scheduleDeliveryJob(delivery);
 
-        notificationService.sendHostForUnenteredAddress(delivery);
-
         return toWaitDto(delivery);
     }
 
