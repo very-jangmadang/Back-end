@@ -38,6 +38,7 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     public HomeResponseDTO getHome(int page, int size) {
+
         // 마감임박인 래플 5개 조회
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime maxTime = now.plusHours(24);
