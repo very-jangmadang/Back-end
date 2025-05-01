@@ -38,4 +38,8 @@ public class Notification extends BaseEntity{
     @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NotificationRead> readStatuses = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
+
 }
