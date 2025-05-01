@@ -63,6 +63,22 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Transactional
+    public void sendWinnerForUnenteredAddress(Delivery delivery){
+        Raffle raffle = delivery.getRaffle();
+        User host = raffle.getWinner(); // 당첨자
+
+        NotificationRequestDTO.ForHost request = new NotificationRequestDTO.ForHost();
+        request.setUser(host);
+        request.setEvent(NotificationEvent.DELIVERY_ADDRESS_CHECK);
+        request.setTitle("["+raffle.getName()+"] 상품 배송지 등록 마감 1시간 전입니다.");
+        request.setMessage("1시간 내에 입력하지 않으면 취소될 수 있습니다. ");
+        request.setAction("/delivery/" + delivery.getId() + "/winner");
+
+        Notification notification = NotificationConverter.toNotification(request, host);
+        notificationRepository.save(notification);
+    }
+
+    @Transactional
     public void sendHostForUnenteredInvoice(Delivery delivery){
         Raffle raffle = delivery.getRaffle();
         User host = raffle.getUser(); // 개최자
@@ -75,6 +91,28 @@ public class NotificationServiceImpl implements NotificationService {
         request.setAction("/delivery/" + delivery.getId() + "/owner");
 
         Notification notification = NotificationConverter.toNotification(request, host);
+        notificationRepository.save(notification);
+    }
+
+    @Transactional
+    public void sendWinnerForUnenteredInvoice(Delivery delivery){
+        Raffle raffle = delivery.getRaffle();
+        User winner = raffle.getWinner(); // 당첨자
+
+        // 중복 알림 체크
+        boolean exists = notificationRepository.existsByDelivery_IdAndEvent(delivery.getId(), NotificationEvent.DELIVERY_INVOICE_MISSING);
+        if (exists) {
+            return; // 이미 존재하는 알림은 보내지 않음
+        }
+
+        NotificationRequestDTO.ForHost request = new NotificationRequestDTO.ForHost();
+        request.setUser(winner);
+        request.setEvent(NotificationEvent.INVOICE_DUE_OVER);
+        request.setTitle("["+raffle.getName()+"상품] . 판매자가 송장을 아직 등록하지 않았어요. ");
+        request.setMessage("당첨자가 조치를 선택할 수 있습니다.");
+        request.setAction("/delivery/" + delivery.getId() + "/winner");
+
+        Notification notification = NotificationConverter.toNotification(request, winner);
         notificationRepository.save(notification);
     }
 
@@ -120,7 +158,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Transactional
     public void sendWinnerForEndedRaffle(Raffle raffle) {
-        User winner = raffle.getWinner(); // 개최자
+        User winner = raffle.getWinner(); // 당첨자
 
         NotificationRequestDTO.ForHost request = new NotificationRequestDTO.ForHost();
         request.setUser(winner);
@@ -151,9 +189,11 @@ public class NotificationServiceImpl implements NotificationService {
     private static final List<NotificationEvent> WINNER_EVENTS = List.of(
             NotificationEvent.RAFFLE_RESULT,
             NotificationEvent.DELIVERY_ADDRESS_REQUIRED,
+            NotificationEvent.DELIVERY_ADDRESS_CHECK,
             NotificationEvent.DELIVERY_DELAYED,
             NotificationEvent.REVIEW_REQUEST,
-            NotificationEvent.DELIVERY_ADDRESS_DUE
+            NotificationEvent.DELIVERY_ADDRESS_DUE,
+            NotificationEvent.INVOICE_DUE_OVER
     );
 
 }

@@ -118,6 +118,18 @@ public class SchedulerServiceImpl implements SchedulerService {
                 jobName += "_Address";
                 jobClass = AddressJob.class;
                 triggerTime = delivery.getAddressDeadline();
+
+
+                // 주소 마감 1시간 전 알림
+                if (delivery.getAddressDeadline().isAfter(LocalDateTime.now().plusHours(1))) {
+                    String checkJobName = "Delivery_" + delivery.getId() + "_Address_Check";
+                    Class<? extends Job> checkJobClass = AddressCheckJob.class;
+                    LocalDateTime checkTriggerTime = delivery.getAddressDeadline().minusHours(1);
+
+                    scheduleJob(checkJobName, checkJobClass, checkTriggerTime, Map.of("deliveryId", delivery.getId()));
+                }
+
+
                 break;
             case READY:
                 jobName += "_Shipping";
@@ -283,12 +295,18 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Override
     public void scheduleInvoiceCheckJob(Delivery delivery) {
-        String jobName = "InvoiceReminder_" + delivery.getId();
-        Class<? extends Job> jobClass = InvoiceCheckJob.class;
 
-        LocalDateTime triggerTime = delivery.getShippingDeadline().minusHours(1); // 1시간 전
+        // 1. 개최자에게 마감 1시간 전 알림
+        String hostJobName = "HostInvoiceCheck_" + delivery.getId();
+        Class<? extends Job> hostJobClass = InvoiceCheckJob.class;
+        LocalDateTime hostTriggerTime = delivery.getShippingDeadline().minusHours(1);
+        scheduleJob(hostJobName, hostJobClass, hostTriggerTime, Map.of("deliveryId", delivery.getId()));
 
-        scheduleJob(jobName, jobClass, triggerTime, Map.of("deliveryId", delivery.getId()));
+        // 2. 당첨자에게 마감 이후 알림
+        String winnerJobName = "WinnerInvoiceOver_" + delivery.getId();
+        Class<? extends Job> winnerJobClass = InvoiceOverJob.class;
+        LocalDateTime winnerTriggerTime = delivery.getShippingDeadline();
+        scheduleJob(winnerJobName, winnerJobClass, winnerTriggerTime, Map.of("deliveryId", delivery.getId()));
     }
 
 }

@@ -13,6 +13,8 @@ public enum NotificationEvent {
     DELIVERY_DELAYED(NotificationTargetType.DELIVERY, NotificationType.TRADE, "winner"),
     REVIEW_REQUEST(NotificationTargetType.REVIEW, NotificationType.TRADE, "winner"),
     DELIVERY_ADDRESS_DUE(NotificationTargetType.DELIVERY, NotificationType.TRADE, "winner"),
+    INVOICE_DUE_OVER(NotificationTargetType.DELIVERY, NotificationType.TRADE, "winner"),
+    DELIVERY_ADDRESS_CHECK(NotificationTargetType.DELIVERY, NotificationType.TRADE, "winner"),
 
     // 시스템 알림 - 유저
     TICKET_CHARGED(NotificationTargetType.PAYMENT, NotificationType.SYSTEM, "user"),

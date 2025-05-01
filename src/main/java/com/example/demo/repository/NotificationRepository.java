@@ -14,4 +14,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     List<Notification> findByUserAndEventInAndCreatedAtAfter(User user, List<NotificationEvent> events, LocalDateTime twoWeeksAgo);
 
+    boolean existsByDelivery_IdAndEvent(Long deliveryId, NotificationEvent event);
 }
