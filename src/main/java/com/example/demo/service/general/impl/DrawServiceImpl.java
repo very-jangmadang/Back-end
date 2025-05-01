@@ -40,6 +40,7 @@ public class DrawServiceImpl implements DrawService {
     private final EmailService emailService;
     private final SchedulerService schedulerService;
     private final DeliveryRepository deliveryRepository;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -217,6 +218,7 @@ public class DrawServiceImpl implements DrawService {
         schedulerService.cancelDrawJob(raffle);
 
         cancel(raffle);
+        notificationService.sendWinnerForCancel(raffle);
 
         return toRaffleResponseDTO(raffle);
     }
@@ -238,7 +240,13 @@ public class DrawServiceImpl implements DrawService {
         if (raffle.isRedrawn())
             throw new CustomException(ErrorStatus.DRAW_ALREADY_REDRAW);
 
+        // 기존 당첨자에게 취소 알림 보내기
         User winner = raffle.getWinner();
+        if (winner != null) {
+            notificationService.sendWinnerForCancel(raffle);
+        }
+
+
         List<Apply> applyList = raffle.getApplyList();
 
         applyList = applyList.stream()

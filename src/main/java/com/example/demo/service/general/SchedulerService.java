@@ -24,4 +24,6 @@ public interface SchedulerService {
     void scheduleNew(Long raffleId);
 
     void scheduleInvoiceCheckJob(Delivery delivery);
+
+    void scheduleAddressCheckJob(Delivery delivery);
 }
