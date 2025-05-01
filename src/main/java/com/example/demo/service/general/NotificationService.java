@@ -16,4 +16,6 @@ public interface NotificationService {
     List<NotificationResponseDTO> getWinnerNotifications();
     void sendWinnerForEndedRaffle(Raffle raffle);
     void sendWinnerForUnenteredInvoice(Delivery delivery);
+    void sendWinnerForExtendedDeliveryDue(Delivery delivery);
+    void sendWinnerForCancel(Raffle raffle);
 }

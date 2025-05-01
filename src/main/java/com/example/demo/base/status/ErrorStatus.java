@@ -66,7 +66,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CANNOT_REVIEW_FOR_DELETED_RAFFLE(HttpStatus.BAD_REQUEST, "REVIEW_4006","삭제된 래플에는 후기 작성 불가합니다."),
     // 9. Dohyun - 문의 관련 에러
     INQUIRY_NOT_FOUND(HttpStatus.BAD_REQUEST, "INQUIRY_4001", "해당 문의를 찾을 수 없습니다."),
-
+    SCHEDULER_START_FAILED(HttpStatus.BAD_REQUEST, "SCHEDULER", "스케줄러실행불가."),
     // 10. Huiju - 응모 관련 에러
     APPLY_INSUFFICIENT_TICKET(HttpStatus.BAD_REQUEST, "APPLY_4001", "보유한 티켓 수가 부족합니다."),
     APPLY_RAFFLE_UNAVAILABLE(HttpStatus.BAD_REQUEST, "APPLY_4002", "응모가 불가능한 래플입니다."),

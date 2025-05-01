@@ -1,5 +1,6 @@
 package com.example.demo.jobs;
 
+import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 
 import com.example.demo.base.code.exception.CustomException;
@@ -9,17 +10,15 @@ import com.example.demo.entity.base.enums.DeliveryStatus;
 import com.example.demo.repository.DeliveryRepository;
 import com.example.demo.service.general.NotificationService;
 import org.quartz.JobExecutionContext;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Component
+@RequiredArgsConstructor
 public class InvoiceOverJob implements Job {
 
     private final DeliveryRepository deliveryRepository;
     private final NotificationService notificationService;
-
-    public InvoiceOverJob(DeliveryRepository deliveryRepository, NotificationService notificationService) {
-        this.deliveryRepository = deliveryRepository;
-        this.notificationService = notificationService;
-    }
 
     @Override
     @Transactional

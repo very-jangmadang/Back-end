@@ -118,19 +118,7 @@ public class SchedulerServiceImpl implements SchedulerService {
                 jobName += "_Address";
                 jobClass = AddressJob.class;
                 triggerTime = delivery.getAddressDeadline();
-
-
-                // 주소 마감 1시간 전 알림
-                if (delivery.getAddressDeadline().isAfter(LocalDateTime.now().plusHours(1))) {
-                    String checkJobName = "Delivery_" + delivery.getId() + "_Address_Check";
-                    Class<? extends Job> checkJobClass = AddressCheckJob.class;
-                    LocalDateTime checkTriggerTime = delivery.getAddressDeadline().minusHours(1);
-
-                    scheduleJob(checkJobName, checkJobClass, checkTriggerTime, Map.of("deliveryId", delivery.getId()));
-                }
-
-
-                break;
+            break;
             case READY:
                 jobName += "_Shipping";
                 jobClass = ShippingJob.class;
@@ -307,6 +295,16 @@ public class SchedulerServiceImpl implements SchedulerService {
         Class<? extends Job> winnerJobClass = InvoiceOverJob.class;
         LocalDateTime winnerTriggerTime = delivery.getShippingDeadline();
         scheduleJob(winnerJobName, winnerJobClass, winnerTriggerTime, Map.of("deliveryId", delivery.getId()));
+    }
+
+    @Override
+    public void scheduleAddressCheckJob(Delivery delivery){
+
+        // 당첨자에게 주소마감 1시간 전 알림
+        String checkJobName = "WinnerAddressCheck_" + delivery.getId();
+        Class<? extends Job> checkJobClass = AddressCheckJob.class;
+        LocalDateTime checkTriggerTime = delivery.getAddressDeadline().minusHours(1);
+        scheduleJob(checkJobName, checkJobClass, checkTriggerTime, Map.of("deliveryId", delivery.getId()));
     }
 
 }

@@ -91,6 +91,8 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .findFirst()
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NO_ADDRESS));
 
+        schedulerService.scheduleAddressCheckJob(delivery);
+
         delivery.setAddress(defaultAddress);
         delivery.setDeliveryStatus(DeliveryStatus.READY);
         delivery.setShippingDeadline();
@@ -235,6 +237,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.extendAddressDeadline();
 
         schedulerService.scheduleDeliveryJob(delivery);
+
+        notificationService.sendWinnerForExtendedDeliveryDue(delivery);
 
         return toWaitDto(delivery);
     }
