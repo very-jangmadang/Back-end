@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificationConverter {
 
-    public static Notification toNotification(NotificationRequestDTO.ForHost request, User user) {
+    public static Notification toNotification(NotificationRequestDTO request) {
         return Notification.builder()
-                .user(user)
+                .user(request.getUser())
                 .title(request.getTitle())
                 .content(request.getMessage())  // content = message
                 .action(request.getAction())
