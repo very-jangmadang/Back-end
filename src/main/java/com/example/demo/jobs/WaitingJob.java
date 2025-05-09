@@ -10,6 +10,7 @@ import com.example.demo.repository.DeliveryRepository;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
 import com.example.demo.service.general.KakaoPayService;
+import com.example.demo.service.general.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -23,6 +24,7 @@ public class WaitingJob implements Job {
     private final DeliveryRepository deliveryRepository;
     private final DrawService drawService;
     private final EmailService emailService;
+    private final NotificationService notificationService;
     private final KakaoPayService kakaoPayService;
     private final BaseController baseController;
 
@@ -48,5 +50,6 @@ public class WaitingJob implements Job {
         drawService.cancel(raffle);
 
         emailService.sendOwnerCancelEmail(raffle);
+
     }
 }

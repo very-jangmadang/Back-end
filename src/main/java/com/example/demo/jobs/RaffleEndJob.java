@@ -9,6 +9,7 @@ import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.service.general.DrawService;
 import com.example.demo.service.general.EmailService;
+import com.example.demo.service.general.NotificationService;
 import com.example.demo.service.general.SchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
@@ -26,6 +27,7 @@ public class RaffleEndJob implements Job {
     private final EmailService emailService;
     private final DrawService drawService;
     private final SchedulerService schedulerService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -55,5 +57,8 @@ public class RaffleEndJob implements Job {
         raffle.setRaffleStatus(RaffleStatus.ENDED);
 
         drawService.draw(raffle, applyList);
+
+        notificationService.sendHostForEndedRaffle(raffle);
+        notificationService.sendWinnerForEndedRaffle(raffle);
     }
 }

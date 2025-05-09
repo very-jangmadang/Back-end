@@ -35,6 +35,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final KakaoPayService kakaoPayService;
     private final BaseController baseController;
     private final CourierRepository courierRepository;
+    private final NotificationService notificationService;
 
     @Override
     public DeliveryResponseDTO.WinnerResultDto getDelivery(Long deliveryId) {
@@ -90,9 +91,13 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .findFirst()
                 .orElseThrow(() -> new CustomException(ErrorStatus.DELIVERY_NO_ADDRESS));
 
+        schedulerService.scheduleAddressCheckJob(delivery);
+
         delivery.setAddress(defaultAddress);
         delivery.setDeliveryStatus(DeliveryStatus.READY);
         delivery.setShippingDeadline();
+
+        schedulerService.scheduleInvoiceCheckJob(delivery);
 
         schedulerService.cancelDeliveryJob(delivery, "Address");
         schedulerService.scheduleDeliveryJob(delivery);
@@ -232,6 +237,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.extendAddressDeadline();
 
         schedulerService.scheduleDeliveryJob(delivery);
+
+        notificationService.sendWinnerForExtendedDeliveryDue(delivery);
 
         return toWaitDto(delivery);
     }

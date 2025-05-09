@@ -1,18 +1,25 @@
 package com.example.demo.base;
 
 public class Constants {
-  
+
     // 최대 주소 갯수
     public static final int MAX_ADDRESS_COUNT = 6;
 
     // 배송지 입력 기한 (시간 단위)
-    public static final int ADDRESS_DEADLINE = 72;
+    //public static final int ADDRESS_DEADLINE = 72;
+    //테스트용
+    public static final int ADDRESS_DEADLINE = 1;
 
     // 운송장 입력 기한 (시간 단위)
-    public static final int SHIPPING_DEADLINE = 96;
+    //public static final int SHIPPING_DEADLINE = 96;
+    // 테스트용
+    public static final int SHIPPING_DEADLINE = 1;
+
 
     // 배송지/운송장 입력 기한 연장 (시간 단위)
-    public static final int EXTENSION_HOURS = 24;
+    //public static final int EXTENSION_HOURS = 24;
+    //테스트용
+    public static final int EXTENSION_HOURS = 1;
 
     // 선택 가능 기한 (시간 단위)
     public static final int CHOICE_PERIOD = 24;
