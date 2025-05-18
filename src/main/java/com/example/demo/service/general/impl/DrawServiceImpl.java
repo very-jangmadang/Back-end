@@ -160,6 +160,8 @@ public class DrawServiceImpl implements DrawService {
             throw new CustomException(ErrorStatus.DRAW_ALREADY_CHECKED);
 
         apply.setChecked();
+        if (user.equals(raffle.getWinner())){
+            notificationService.sendWinnerForEndedRaffle(user,raffle);}
     }
 
     @Override
