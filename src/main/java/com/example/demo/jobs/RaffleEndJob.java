@@ -60,5 +60,6 @@ public class RaffleEndJob implements Job {
 
         notificationService.sendHostForEndedRaffle(raffle);
         notificationService.sendWinnerForEndedRaffle(raffle);
+        notificationService.sendApplicantForEnd((raffle));
     }
 }

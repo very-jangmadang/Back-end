@@ -2,6 +2,12 @@ package com.example.demo.entity.base.enums.Notification;
 
 public enum NotificationEvent {
 
+    // 거래 알림 - 모두
+    RAFFLE_OPENED(NotificationTargetType.RAFFLE, NotificationType.TRADE, "user"),
+
+    //거래 알림 - 응모자
+    RAFFLE_FINISHED(NotificationTargetType.RAFFLE, NotificationType.TRADE, "applicant"),
+
     // 거래 알림 - 개최자
     RAFFLE_ENDED(NotificationTargetType.RAFFLE, NotificationType.TRADE, "host"),
     DELIVERY_ADDRESS_MISSING(NotificationTargetType.DELIVERY, NotificationType.TRADE, "host"),

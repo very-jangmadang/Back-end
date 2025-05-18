@@ -33,4 +33,18 @@ public class NotificationController {
 
         return ApiResponse.of(SuccessStatus._OK, notifications);
     }
+
+    @GetMapping("/user")
+    public ApiResponse<List<NotificationResponseDTO>> getUserNotifications() {
+        List<NotificationResponseDTO> notifications = notificationService.getUserNotifications();
+
+        return ApiResponse.of(SuccessStatus._OK, notifications);
+    }
+
+    @GetMapping("/applicants")
+    public ApiResponse<List<NotificationResponseDTO>> getApplicantNotifications() {
+        List<NotificationResponseDTO> notifications = notificationService.getApplicantNotifications();
+
+        return ApiResponse.of(SuccessStatus._OK, notifications);
+    }
 }
