@@ -28,4 +28,8 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     @Modifying
     @Query("UPDATE Apply a SET a.isChecked = false WHERE a.raffle = :raffle")
     void updateUncheckedByRaffle(@Param("raffle") Raffle raffle);
+
+    @Query("SELECT a.user FROM Apply a WHERE a.raffle = :raffle")
+    List<User> findUsersByRaffle(@Param("raffle") Raffle raffle);
+
 }
