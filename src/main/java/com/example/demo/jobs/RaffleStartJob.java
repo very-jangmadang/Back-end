@@ -9,6 +9,7 @@ import com.example.demo.entity.base.enums.RaffleStatus;
 import com.example.demo.repository.LikeRepository;
 import com.example.demo.repository.RaffleRepository;
 import com.example.demo.service.general.EmailService;
+import com.example.demo.service.general.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -25,6 +26,7 @@ public class RaffleStartJob implements Job {
     private final RaffleRepository raffleRepository;
     private final LikeRepository likeRepository;
     private final EmailService emailService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -52,6 +54,7 @@ public class RaffleStartJob implements Job {
         }
 
         emailService.sendOwnerRaffleOpenEmail(raffle);
+        notificationService.sendAllForOpen(raffle);
 
     }
 }

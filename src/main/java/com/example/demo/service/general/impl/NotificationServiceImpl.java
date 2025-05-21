@@ -8,10 +8,10 @@ import com.example.demo.domain.dto.Notification.NotificationResponseDTO;
 import com.example.demo.entity.*;
 import com.example.demo.entity.base.enums.Notification.NotificationEvent;
 import com.example.demo.entity.base.enums.Notification.NotificationType;
-import com.example.demo.repository.NotificationRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.*;
 import com.example.demo.service.general.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
     private final NotificationConverter notificationConverter;
+    private final ApplyRepository applyRepository;
 
     // 공통 알림 생성 메서드
     private void sendNotification(User user, NotificationEvent event, String title, String message, String action) {
@@ -107,13 +109,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Transactional
-    public void sendWinnerForEndedRaffle(Raffle raffle) {
+    public void sendWinnerForEndedRaffle(User user,Raffle raffle) {
         User winner = raffle.getWinner(); // 당첨자
         String title = "축하합니다!! [" + raffle.getName() + "] 래플에 당첨되셨습니다.";
         String message = "배송지 입력 후 결제를 완료해 주세요.";
         String action = "/raffles/" + raffle.getId() + "/draw";
 
-        sendNotification(winner, NotificationEvent.RAFFLE_RESULT, title, message, action);
+        sendNotification(user, NotificationEvent.RAFFLE_RESULT, title, message, action);
     }
 
     @Transactional
@@ -136,6 +138,75 @@ public class NotificationServiceImpl implements NotificationService {
 
         sendNotification(winner, NotificationEvent.DELIVERY_DUE_CANCELLED, title, message, action);
     }
+
+    //찜한 사람에게 오픈 알림
+    @Transactional
+    public void sendAllForOpen(Raffle raffle) {
+        List<Like> likes = likeRepository.findByRaffleWithUser(raffle);
+        List<User> users = likes.stream()
+                .map(Like::getUser)
+                .collect(Collectors.toList());
+
+        String title = "[" + raffle.getName() + "] 찜한 래플이 시작되었습니다!";
+        String message = "지금 바로 참여해보세요!";
+        String action = "/raffle/" + raffle.getId()+"/apply";
+
+        for (User user : users) {
+            sendNotification(user, NotificationEvent.RAFFLE_OPENED, title, message, action);
+        }
+    }
+
+    @Transactional
+    public void sendApplicantForEnd(Raffle raffle) {
+        List<User> applicants = applyRepository.findUsersByRaffle(raffle);
+        String title = "[" + raffle.getName() + "] 응모한 래플이 종료되었습니다!";
+        String message = "지금 바로 결과를 확인하세요!";
+        String action = "/raffle/" + raffle.getId()+"/draw";
+
+        for (User user : applicants) {
+            sendNotification(user, NotificationEvent.RAFFLE_FINISHED, title, message, action);
+        }
+    }
+
+    @Override
+    public List<NotificationResponseDTO> getUserNotifications() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+        List<Notification> notifications = notificationRepository.findByUserAndEventInAndCreatedAtAfter(user, ALL_EVENTS, twoWeeksAgo);
+
+        return notifications.stream()
+                .map(notificationConverter::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NotificationResponseDTO> getApplicantNotifications() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+        List<Notification> notifications = notificationRepository.findByUserAndEventInAndCreatedAtAfter(user, APPLICANT_EVENTS, twoWeeksAgo);
+
+        return notifications.stream()
+                .map(notificationConverter::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
     @Override
     public List<NotificationResponseDTO> getHostNotifications() {
@@ -175,6 +246,15 @@ public class NotificationServiceImpl implements NotificationService {
                 .collect(Collectors.toList());
     }
 
+
+
+    private static final List<NotificationEvent> ALL_EVENTS = List.of(
+            NotificationEvent.RAFFLE_OPENED
+    );
+
+    private static final List<NotificationEvent> APPLICANT_EVENTS = List.of(
+            NotificationEvent.RAFFLE_FINISHED
+    );
 
     private static final List<NotificationEvent> HOST_EVENTS = List.of(
             NotificationEvent.RAFFLE_ENDED,

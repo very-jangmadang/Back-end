@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -68,6 +69,7 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
 
     @Query("SELECT r FROM Raffle r WHERE r.id = :id")
     Optional<Raffle> findByIdIncludeDeleted(@Param("id") Long id);
+
 
 }
 
