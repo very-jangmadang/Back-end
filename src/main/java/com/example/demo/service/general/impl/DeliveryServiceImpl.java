@@ -220,6 +220,42 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
+    public DeliveryResponseDTO.ResponseDto editInvoice(
+            Long deliveryId, DeliveryRequestDTO deliveryRequestDTO) {
+
+        User user = getUser();
+        Delivery delivery = getDeliveryById(deliveryId);
+        validateOwner(delivery, user);
+
+        Courier courier = courierRepository.findByName(deliveryRequestDTO.getCourierName())
+                .orElseThrow(() -> new CustomException(ErrorStatus.COMMON_WRONG_PARAMETER));
+
+        // 배송 상태가 SHIPPED 또는 READY일 경우만 운송장 정보 수정 가능
+        if (delivery.getDeliveryStatus() != DeliveryStatus.READY &&
+                delivery.getDeliveryStatus() != DeliveryStatus.SHIPPED) {
+            throw new CustomException(ErrorStatus.DELIVERY_FAIL);
+        }
+
+        // 기존 배송 스케줄러 작업 취소
+        schedulerService.cancelDeliveryJob(delivery, "Shipping");
+
+        // 운송장 정보 및 택배사 정보 수정
+        delivery.setCourier(courier);
+        delivery.setInvoiceNumber(deliveryRequestDTO.getInvoiceNumber());
+
+        // 배송 상태가 READY였을 경우에만 SHIPPED로 상태 변경
+        if (delivery.getDeliveryStatus() == DeliveryStatus.READY) {
+            delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
+        }
+
+        // 새로운 스케줄러 작업 등록
+        schedulerService.scheduleDeliveryJob(delivery);
+
+        return toDeliveryResponseDto(deliveryId);
+    }
+
+    @Override
+    @Transactional
     public DeliveryResponseDTO.WaitDto waitAddress(Long deliveryId) {
         User user = getUser();
         Delivery delivery = getDeliveryById(deliveryId);
