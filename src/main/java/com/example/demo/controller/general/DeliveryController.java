@@ -68,6 +68,14 @@ public class DeliveryController {
         return ApiResponse.of(_OK, deliveryService.addInvoice(deliveryId, deliveryRequestDTO));
     }
 
+    @Operation(summary = "개최자 - 운송장 수정하기")
+    @PatchMapping("{deliveryId}/owner")
+    public ApiResponse<DeliveryResponseDTO.ResponseDto> editInvoice(
+            @PathVariable Long deliveryId, @RequestBody DeliveryRequestDTO deliveryRequestDTO) {
+
+        return ApiResponse.of(_OK, deliveryService.editInvoice(deliveryId, deliveryRequestDTO));
+    }
+
     @Operation(summary = "개최자 - 배송지 입력 기한 연장하기")
     @PostMapping("{deliveryId}/owner/wait")
     public ApiResponse<DeliveryResponseDTO.WaitDto> WaitAddress(@PathVariable Long deliveryId) {
