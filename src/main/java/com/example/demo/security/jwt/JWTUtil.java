@@ -28,6 +28,18 @@ public class JWTUtil {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
 
     }
+    // 무한 엑세스 토큰 생성
+    public String createToken(String category, Long id, String email) {
+        return Jwts.builder()
+                .claim("category", category)
+                .claim("id", id.toString())
+                .claim("email", email)
+                .claim("role", "USER")
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .signWith(secretKey)
+                .compact();
+    }
+
     // 엑세스 토큰 생성
     public String createAccessToken(String category, Long id, String email) {
         return Jwts.builder()
@@ -105,13 +117,14 @@ public class JWTUtil {
     }
     // 토큰 만료 시간 지나면 true
     public Boolean isExpired(String token) {
-        return Jwts.parser()
+        Date expiration = Jwts.parser()
                 .verifyWith((SecretKey) secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .getExpiration()
-                .before(new Date());
+                .getExpiration();
+
+                return expiration != null && expiration.before(new Date());
     }
 
     public Cookie createCookie(String name, String value, int maxAge) {
