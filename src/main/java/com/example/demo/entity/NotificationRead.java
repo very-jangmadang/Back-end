@@ -20,5 +20,5 @@ public class NotificationRead extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    private boolean read;
+    private boolean isRead;
 }

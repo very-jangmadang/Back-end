@@ -172,7 +172,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         List<String> allowedOrigins = List.of("https://www.jangmadang.site", "http://localhost:8080");
 
         // 요청한 Origin이 허용된 경우에만 응답 헤더 추가
-        if (allowedOrigins.contains(origin)) {
+        if (origin != null && allowedOrigins.contains(origin)) {
             response.setHeader("Access-Control-Allow-Origin", origin);
         }
         response.setHeader("Access-Control-Allow-Credentials", "true");
