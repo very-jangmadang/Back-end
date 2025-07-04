@@ -34,12 +34,10 @@ public class RaffleController {
 
     @Operation(summary = "래플 상세보기")
     @GetMapping("/api/permit/raffles/{raffleId}")
-    public ApiResponse<RaffleResponseDTO.RaffleDetailDTO> getPostById(
-            @PathVariable Long raffleId,
-            @RequestHeader(value = "X-Client-ID", required = false) String clientId) {
+    public ApiResponse<RaffleResponseDTO.RaffleDetailDTO> getPostById(@PathVariable Long raffleId) {
 
         // 1. 래플id로 해당 detailDTO 받아오기
-        RaffleResponseDTO.RaffleDetailDTO result = raffleService.getRaffleDetailsDTO(raffleId, clientId);
+        RaffleResponseDTO.RaffleDetailDTO result = raffleService.getRaffleDetailsDTO(raffleId);
 
         // 2. 성공 응답 + 해당 detailDTO 반환
         return ApiResponse.of(SuccessStatus.RAFFLE_FETCH_SUCCESS, result);

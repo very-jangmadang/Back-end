@@ -12,13 +12,11 @@ import com.example.demo.repository.*;
 import com.example.demo.service.general.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +39,6 @@ public class RaffleServiceImpl implements RaffleService {
     private final DeliveryRepository deliveryRepository;
     private final FollowRepository followRepository;
     private final LikeRepository likeRepository;
-    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     @Transactional
@@ -126,7 +123,7 @@ public class RaffleServiceImpl implements RaffleService {
 
     @Override
     @Transactional
-    public RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long raffleId, String clientId) {
+    public RaffleResponseDTO.RaffleDetailDTO getRaffleDetailsDTO(Long raffleId) {
 
         // 요청받은 래플 id로 엔티티 조회
         Raffle raffle = raffleRepository.findById(raffleId)
@@ -212,25 +209,10 @@ public class RaffleServiceImpl implements RaffleService {
 
 
         // 3. 조회 수 증가
-        if (!hasRecentlyViewed(raffleId, clientId)) {
-            raffle.addView();
-            recordViewHistory(raffleId, clientId);
-        }
+        raffle.addView();
 
         // 4. DTO 변환 및 반환
         return RaffleConverter.toDetailDTO(raffle, likeCount, applyCount, followCount, reviewCount, state, isWinner, raffleStatus, deliveryId, followStatus,likeStatus);
-    }
-
-    private void recordViewHistory(Long raffleId, String clientId) {
-        String key = "raffle:view:" + raffleId + ":client:" + clientId;
-        redisTemplate.opsForValue().set(key, "1", Duration.ofMinutes(30));
-        log.info("key 기록 :{}", key);
-    }
-
-    private boolean hasRecentlyViewed(Long raffleId, String clientId) {
-        String key = "raffle:view:" + raffleId + ":client:" + clientId;
-        log.info("key 확인 :{}",key);
-        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
     @Override
