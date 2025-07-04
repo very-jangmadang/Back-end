@@ -78,8 +78,11 @@ public class UserServiceImpl implements UserService {
             log.info("비회원");
             return "guest";
         }
-        log.info("사용자 아이디: {}", authentication.getName());
-        log.info("유저");
+
+        User user = userRepository.findById(Long.valueOf(authentication.getName()))
+                .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
+
+        log.info("유저 닉네임: {}", user.getNickname());
         return "user";
     }
 }

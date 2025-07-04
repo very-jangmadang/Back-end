@@ -54,6 +54,7 @@ public interface RaffleRepository extends JpaRepository<Raffle, Long> {
     @Query("SELECT r FROM Raffle r WHERE r.endAt BETWEEN :now AND :maxTime ORDER BY r.endAt ASC")
     Page<Raffle> findRafflesEndingSoon(@Param("now") LocalDateTime now, @Param("maxTime") LocalDateTime maxTime, Pageable pageable);
 
+    Page<Raffle> findByEndAtBetweenOrderByEndAtAsc(LocalDateTime now, LocalDateTime maxTime, Pageable pageable);
 
     // 응모자순 래플 조회(응모가 안마감된 것들 우선으로)
     @Query(

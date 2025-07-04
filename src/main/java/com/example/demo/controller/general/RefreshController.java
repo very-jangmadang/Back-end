@@ -76,4 +76,11 @@ public class RefreshController {
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }
+
+    @Operation(summary = "무제한 토큰 생성")
+    @PostMapping("/access")
+    public ApiResponse<?> develop(Long id, String email) {
+
+        return ApiResponse.of(SuccessStatus._OK, jwtUtil.createToken("access", id, email));
+    }
 }

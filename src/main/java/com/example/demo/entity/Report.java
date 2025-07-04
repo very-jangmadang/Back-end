@@ -1,7 +1,11 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.base.enums.ReasonType;
+import com.example.demo.entity.base.enums.ReportStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,11 +26,14 @@ public class Report extends BaseEntity{
     @JoinColumn(name = "reported_user_id")
     private User reportedUser;
 
-    private String content;
+    @Enumerated(EnumType.STRING)
+    private ReasonType reasonType;
 
-    @Column(length = 50)
-    private String status;
+    private String reasonDetail;
 
-    private boolean resolved;
+    @Enumerated(EnumType.STRING)
+    private ReportStatus reportStatus;
 
+    @ElementCollection
+    private List<String> imageUrls;
 }
