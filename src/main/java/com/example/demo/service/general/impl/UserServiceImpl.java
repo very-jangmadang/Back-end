@@ -85,4 +85,21 @@ public class UserServiceImpl implements UserService {
         log.info("유저 닉네임: {}", user.getNickname());
         return "user";
     }
+
+    @Override
+    public void registerBusiness(){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+        log.info("작성자 id {}", userId);
+
+        User user = userRepository.findById(userId).orElseThrow();
+
+        user.setIsBusiness(true);
+
+        userRepository.save(user);
+    }
 }

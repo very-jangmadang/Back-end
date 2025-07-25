@@ -163,6 +163,11 @@ public class MypageController {
         return ApiResponse.of(_OK, null);
     }
 
+    @Operation(summary = "사업자 여부 확인")
+    @GetMapping("/api/member/mypage/business")
+    public ApiResponse<MypageResponseDTO.CheckBusinessDto> isBusiness(){
+        return ApiResponse.of(_OK, mypageService.checkBusiness());
+    }
 }
 
 

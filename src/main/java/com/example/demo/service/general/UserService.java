@@ -20,4 +20,7 @@ public interface UserService {
 
     // 로그인 정보 확인
     String isLogin();
+
+    // 사업자 등록
+    void registerBusiness();
 }

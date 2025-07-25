@@ -33,4 +33,6 @@ public interface MypageService {
     MypageResponseDTO.ProfileInfoDto getProfileHostRaffles(Long userId);
 
     MypageResponseDTO.ProfileInfoWithReviewsDto getProfileReviews(Long userId);
+
+    MypageResponseDTO.CheckBusinessDto checkBusiness();
 }

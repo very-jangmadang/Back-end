@@ -18,7 +18,7 @@ public class RaffleRequestDTO {
         List<MultipartFile> files;
         String category;
         String name;
-        ItemStatus itemStatus;
+//        ItemStatus itemStatus;
         String description;
         int ticketNum;
         int minTicket;

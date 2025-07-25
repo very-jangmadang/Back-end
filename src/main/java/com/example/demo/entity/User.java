@@ -67,6 +67,9 @@ public class User extends BaseEntity{
     private String refreshToken;
 
     @Builder.Default
+    private Boolean isBusiness = false;
+
+    @Builder.Default
     @Column(name="follower_visible")
     private Boolean followerVisible=true;
 
@@ -87,6 +90,10 @@ public class User extends BaseEntity{
 
     public void setFollowerVisible(boolean followerVisible) {
         this.followerVisible = followerVisible;
+    }
+
+    public void setIsBusiness(Boolean isBusiness) {
+        this.isBusiness = isBusiness;
     }
 
 }

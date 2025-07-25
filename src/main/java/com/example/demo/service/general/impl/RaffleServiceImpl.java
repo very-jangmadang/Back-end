@@ -53,6 +53,12 @@ public class RaffleServiceImpl implements RaffleService {
         log.info("작성자 id {}", userId);
 
         User user = userRepository.findById(userId).orElseThrow();
+
+        // a. 사업자가 아닐 시 래플 업로드 불가능
+        if (!user.getIsBusiness()){
+            throw new CustomException(ErrorStatus.RAFFLE_ONLY_BUSINESS);
+        }
+
         // 1. 요청받은 카테고리 이름으로 Category 엔티티 가져오기
         Category category = categoryRepository.findByName(request.getCategory())
                 .orElseThrow(() -> new CustomException(ErrorStatus.CATEGORY_NOT_FOUND));

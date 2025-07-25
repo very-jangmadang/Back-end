@@ -93,5 +93,14 @@ public class MypageResponseDTO {
         private double avgScore;
         List<ReviewResponseDTO> reviews;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CheckBusinessDto {
+        private String nickname;
+        private boolean isBusiness;
+    }
   
 }

@@ -1,11 +1,13 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
+import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.User.UserRequestDTO;
 import com.example.demo.domain.dto.User.UserResponseDTO;
 import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JWTUtil;
 import com.example.demo.service.general.UserService;
 import com.example.demo.service.handler.NicknameGenerator;
@@ -19,6 +21,7 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
 
     @Operation(summary = "로그인 확인")
@@ -95,5 +99,15 @@ public class UserController {
         UserResponseDTO.SignUpResponseDTO result = userService.randomNickname();
 
         return ApiResponse.of(SuccessStatus._OK, result);
+    }
+
+    // 임시 사업자 등록
+    @Operation(summary = "사업자 임시 등록")
+    @GetMapping("api/permit/business")
+    public ApiResponse<?> registerBusiness(){
+
+        userService.registerBusiness();
+
+        return ApiResponse.of(SuccessStatus._OK, null);
     }
 }

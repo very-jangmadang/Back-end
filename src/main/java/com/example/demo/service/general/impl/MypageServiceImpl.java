@@ -351,6 +351,16 @@ public class MypageServiceImpl implements MypageService {
                 .build();
     }
 
+    @Override
+    public MypageResponseDTO.CheckBusinessDto checkBusiness(){
+        User user = getUser();
+
+        return MypageResponseDTO.CheckBusinessDto
+                .builder()
+                .isBusiness(user.getIsBusiness())
+                .nickname(user.getNickname())
+                .build();
+    }
 
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -360,5 +370,6 @@ public class MypageServiceImpl implements MypageService {
         return userRepository.findById(Long.parseLong(authentication.getName()))
                 .orElseThrow(() -> new CustomException(ErrorStatus.USER_NOT_FOUND));
     }
+
 
 }
