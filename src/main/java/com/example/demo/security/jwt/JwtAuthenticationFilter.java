@@ -114,7 +114,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/webjars") ||
                 requestURI.startsWith("/api/permit/") ||
                 requestURI.startsWith("/login") ||
-                requestURI.equals("/favicon.ico");
+                requestURI.equals("/favicon.ico") ||
+                requestURI.startsWith("/oauth2/") ||
+                requestURI.startsWith("/login/oauth2/");
     }
 
     // 쿠키에서 토큰 추출
