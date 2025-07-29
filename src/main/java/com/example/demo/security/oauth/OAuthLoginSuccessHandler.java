@@ -49,7 +49,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             log.info("세션아이디 {}", session);
             session.setAttribute("oauthEmail", email);
             log.info("세션값 {}", session.getAttribute("oauthEmail"));
-            response.sendRedirect("https://www.jangmadang.site/kakao");
+            response.sendRedirect("https://jmd-fe.vercel.app//kakao");
             return;
         }
 
@@ -64,7 +64,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         response.addCookie(jwtUtil.createCookie("refresh", refreshToken, 7 * 24 * 60 * 60)); // 1주일(개발용)
         log.info("쿠키 전달 완료");
 
-        response.sendRedirect("https://www.jangmadang.site");
+        response.sendRedirect("https://jmd-fe.vercel.app/");
 
     }
 }
