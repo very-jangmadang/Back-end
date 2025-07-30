@@ -4,6 +4,7 @@ import com.example.demo.security.jwt.JWTUtil;
 import com.example.demo.security.jwt.JwtAuthenticationFilter;
 import com.example.demo.security.oauth.OAuthLoginFailureHandler;
 import com.example.demo.security.oauth.OAuthLoginSuccessHandler;
+import com.example.demo.service.general.impl.CustomOidcUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,12 @@ public class SecurityConfig {
     private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
     private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomOidcUserService customOidcUserService;
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtUtil);
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -45,7 +52,7 @@ public class SecurityConfig {
 
                 .csrf(AbstractHttpConfigurer::disable)
 
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeHttpRequests(authorize -> {
                     authorize
@@ -59,7 +66,10 @@ public class SecurityConfig {
 
                 .oauth2Login(oauth -> {
                     oauth
-                            // 여기서 Spring Security가 DefaultOAuth2UserSerivce 사용해 자동으로 사용자 정보 처리.
+                            //기본 OAuthUserService아닌 OidcUserService로 설정
+                            .userInfoEndpoint(userInfo -> userInfo
+                                    .oidcUserService(customOidcUserService)
+                            )
                             // 처리한 정보는 SecurityContext에 OAuth2User로 기록되어있음
                             .successHandler(oAuthLoginSuccessHandler) // 로그인 성공시 수행
                             .failureHandler(oAuthLoginFailureHandler); // 로그인 실패시 수행
