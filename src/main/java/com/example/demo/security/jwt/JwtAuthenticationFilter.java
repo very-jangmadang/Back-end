@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -114,9 +115,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/webjars") ||
                 requestURI.startsWith("/api/permit/") ||
                 requestURI.startsWith("/login") ||
-                requestURI.equals("/favicon.ico") ||
-                requestURI.startsWith("/oauth2/") ||
-                requestURI.startsWith("/login/oauth2/");
+                requestURI.equals("/favicon.ico");
+//                requestURI.startsWith("/oauth2/") ||
+//                requestURI.startsWith("/login/oauth2/");
     }
 
     // 쿠키에서 토큰 추출
