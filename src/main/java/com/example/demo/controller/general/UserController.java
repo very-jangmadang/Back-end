@@ -80,6 +80,7 @@ public class UserController {
         String nickname = request.getNickname();
         userService.createUser(nickname, email);
 
+
         Long userId = userService.findIdByEmail(email);
         String accessToken = jwtUtil.createAccessToken("access", userId, email);
         String refreshToken = jwtUtil.createRefreshToken("refresh", userId, email);
