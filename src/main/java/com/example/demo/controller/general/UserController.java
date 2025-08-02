@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -61,12 +62,21 @@ public class UserController {
     public ApiResponse<UserResponseDTO.SignUpResponseDTO> saveNickname(HttpServletRequest httpServletRequestequest,
                                                                        HttpServletResponse httpServletResponse,
                                                                        @Valid @RequestBody UserRequestDTO.nicknameDTO request) {
+        HttpSession session = httpServletRequestequest.getSession(false); // 세션이 없으면 null 반환
 
-        if(httpServletRequestequest.getSession().getAttribute("oauthEmail") == null){
-            log.info("세션아이디 {}",httpServletRequestequest.getSession());
+        if (session == null) {
+            log.warn("세션이 존재하지 않음");
+            return ApiResponse.onFailure(
+                    ErrorStatus.USER_WITHOUT_SESSION, null);
         }
 
-        String email = httpServletRequestequest.getSession().getAttribute("oauthEmail").toString();
+        String email = session.getAttribute("oauthEmail").toString();
+
+        if (email == null) {
+            log.warn("[닉네임 입력] 세션 있음 - 하지만 oauthEmail 없음. 세션 ID: {}", session.getId());
+            return ApiResponse.onFailure(ErrorStatus.USER_WITHOUT_OAUTHEMAIL, null);
+        }
+
         String nickname = request.getNickname();
         userService.createUser(nickname, email);
 
