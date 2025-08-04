@@ -53,6 +53,15 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             log.info("세션아이디 {}", session);
             session.setAttribute("oauthEmail", email);
             log.info("세션값 {}", session.getAttribute("oauthEmail"));
+
+            Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
+            sessionCookie.setDomain(".jangmadang.site");
+            sessionCookie.setPath("/");
+            sessionCookie.setHttpOnly(true);
+            sessionCookie.setSecure(true);
+            sessionCookie.setMaxAge(60 * 60); // 선택 사항
+            response.addCookie(sessionCookie);
+
             response.sendRedirect("https://jmd-fe.vercel.app//kakao");
             return;
         }
