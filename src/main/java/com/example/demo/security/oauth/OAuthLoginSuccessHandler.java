@@ -79,7 +79,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         try {
             String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
             String cookieString = String.format(
-                    "%s=%s; Max-Age=%d; Path=/; Domain=api.jangmadang.site; SameSite=None; Secure; HttpOnly",
+                    "%s=%s; Max-Age=%d; Path=/; Domain=.jangmadang.site; SameSite=None; Secure; HttpOnly",
                     name, encodedValue, maxAgeSeconds
             );
             response.addHeader("Set-Cookie", cookieString);
