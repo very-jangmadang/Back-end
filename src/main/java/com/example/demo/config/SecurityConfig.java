@@ -89,7 +89,7 @@ public class SecurityConfig {
             configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
             configuration.setMaxAge(3600L);
 
-            configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "access", "refresh"));
+            configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "access", "refresh", "idToken"));
             return configuration;
         };
     }
