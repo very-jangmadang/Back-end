@@ -119,6 +119,6 @@ public class UserController {
 
         userService.registerBusiness();
 
-        return ApiResponse.of(SuccessStatus._OK, null);
+        return ApiResponse.of(SuccessStatus._OK, "사업자 임시등록 완료");
     }
 }
