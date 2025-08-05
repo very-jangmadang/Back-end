@@ -65,13 +65,13 @@ jobs:
             sudo chmod 666 /var/run/docker.sock
 
             # 기존 컨테이너 정리
-            sudo docker stop jangmadang-app || true
-            sudo docker rm -f jangmadang-app || true
+            sudo docker stop jangmadang-app-vary || true
+            sudo docker rm -f jangmadang-app-vary || true
 
             # 최신 이미지 pull 후 컨테이너 실행
             sudo docker pull ${{ env.DOCKER_IMAGE_NAME }}
             sudo docker run -d \
-              --name jangmadang-app \
+              --name jangmadang-app-vary \
               --network jangmadang-net \
               -p 8081:8081 \
               -e TZ=Asia/Seoul \
