@@ -53,47 +53,23 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             log.info("세션아이디 {}", session);
             session.setAttribute("oauthEmail", email);
             log.info("세션값 {}", session.getAttribute("oauthEmail"));
-
-//            Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
-//            sessionCookie.setDomain(".jangmadang.site");
-//            sessionCookie.setPath("/");
-//            sessionCookie.setHttpOnly(true);
-//            sessionCookie.setSecure(true);
-//            sessionCookie.setMaxAge(60 * 60); // 선택 사항
-//            response.addCookie(sessionCookie);
-
-            response.sendRedirect("https://jmd-fe.vercel.app//kakao");
+            response.sendRedirect("https://beta.jangmadang.site/kakao");
             return;
         }
 
-        // JWT 액세스/리프레시 토큰 생성
+        // 엑세스 토큰 생성
         Long userId = userService.findIdByEmail(email);
         String accessToken = jwtUtil.createAccessToken("access", userId, email);
         String refreshToken = jwtUtil.createRefreshToken("refresh", userId, email);
 
-        userService.addRefreshToken(userId, refreshToken);
+        userService.addRefreshToken(userId, refreshToken); // 리프레시 토큰 저장
 
-        log.info("accessToken: {}", accessToken);
-        log.info("refreshToken: {}", refreshToken);
+        response.addCookie(jwtUtil.createCookie("access", accessToken, 24 * 60 * 60)); // 24시간(개발용)
+        response.addCookie(jwtUtil.createCookie("refresh", refreshToken, 7 * 24 * 60 * 60)); // 1주일(개발용)
+        response.addCookie(jwtUtil.createCookie("idToken", idToken, 24 * 60 * 60));
+        log.info("쿠키 전달 완료");
 
-        // 쿠키 세팅
-        addCookie(response, "idToken", idToken, 3600);
-        addCookie(response, "access", accessToken, 3600);
-        addCookie(response, "refresh", refreshToken, 3600 * 24 * 7);
-
-        response.sendRedirect("https://jmd-fe.vercel.app");
+        response.sendRedirect("https://beta.jangmadang.site");
     }
 
-    private void addCookie(HttpServletResponse response, String name, String value, int maxAgeSeconds) {
-        try {
-            String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
-            String cookieString = String.format(
-                    "%s=%s; Max-Age=%d; Path=/; Domain=.jangmadang.site; SameSite=None; Secure; HttpOnly",
-                    name, encodedValue, maxAgeSeconds
-            );
-            response.addHeader("Set-Cookie", cookieString);
-        } catch (Exception e) {
-            log.error("쿠키 설정 실패: {}", name, e);
-        }
-    }
 }

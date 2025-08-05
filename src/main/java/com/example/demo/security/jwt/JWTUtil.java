@@ -132,7 +132,7 @@ public class JWTUtil {
         cookie.setMaxAge(maxAge); // 초 단위
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setDomain("api.jangmadang.site");
+        cookie.setDomain("beta.jangmadang.site");
         cookie.setSecure(true); // HTTPS 필수
         return cookie;
     }
