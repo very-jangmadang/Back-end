@@ -83,7 +83,7 @@ public class SecurityConfig {
         return request -> {
             CorsConfiguration configuration = new CorsConfiguration();
 
-            configuration.setAllowedOrigins(Arrays.asList("https://jmd-fe.vercel.app", "https://www.jangmadang.site", "https://jangmadang.site", "https://api.jangmadang.site", "http://localhost:5173"));
+            configuration.setAllowedOrigins(Arrays.asList("https://beta.jangmadang.site", "https://www.jangmadang.site", "https://jangmadang.site", "https://api.jangmadang.site", "http://localhost:5173"));
             configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
             configuration.setAllowCredentials(true);
             configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
