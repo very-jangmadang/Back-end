@@ -48,9 +48,12 @@ public class UserController {
     public ApiResponse<?> logout(HttpServletResponse response) {
         Cookie cookie1 = jwtUtil.createCookie("access", null, 0);
         Cookie cookie2 = jwtUtil.createCookie("refresh", null, 0);
+        Cookie cookie3 = jwtUtil.createCookie("idToken", null, 0);
 
         response.addCookie(cookie1);
         response.addCookie(cookie2);
+        response.addCookie(cookie3);
+
         log.info("브라우저 쿠키 삭제 완료");
 
         return ApiResponse.of(SuccessStatus.USER_LOGOUT_SUCCESS, null);
