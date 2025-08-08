@@ -22,11 +22,11 @@ public class RaffleConverter {
 //                .itemStatus(request.getItemStatus())
                 .description(request.getDescription())
                 .ticketNum(request.getTicketNum())
-                .minTicket(request.getMinTicket())
+//                .minTicket(request.getMinTicket())
                 .startAt(request.getStartAt().withSecond(0).withNano(0))
                 .endAt(request.getEndAt().withSecond(0).withNano(0))
                 .raffleStatus(RaffleStatus.UNOPENED)
-                .shippingFee(BigDecimal.valueOf(request.getDeliveryFee()))
+//                .shippingFee(BigDecimal.valueOf(request.getDeliveryFee()))
                 .build();
     }
 

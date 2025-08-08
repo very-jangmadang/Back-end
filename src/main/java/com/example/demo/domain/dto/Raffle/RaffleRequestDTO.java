@@ -14,8 +14,8 @@ public class RaffleRequestDTO {
     @Builder
     public static class UploadDTO {
 
-        int minTicket;
-        int deliveryFee;
+//        int minTicket;
+//        int deliveryFee;
 
         @NotNull
         List<MultipartFile> files;
