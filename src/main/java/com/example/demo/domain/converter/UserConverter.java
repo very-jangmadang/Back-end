@@ -7,10 +7,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserConverter {
 
-    public static User toUser(String nickname, String email) {
+    public static User toUser(String nickname, String email, Boolean isBusiness) {
         return User.builder()
                 .nickname(nickname)
                 .email(email)
+                .isBusiness(isBusiness)
                 .build();
     }
 

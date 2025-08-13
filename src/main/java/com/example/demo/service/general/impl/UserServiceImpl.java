@@ -38,13 +38,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createUser(String nickname, String email) {
+    public void createUser(String nickname, String email, Boolean isBusiness) {
         // 1. 닉네임 중복 검사
         if (userRepository.existsByNickname(nickname)) {
             throw new CustomException(ErrorStatus.USER_NICKNAME_ALREADY_EXISTS);
         }
         // 2. 유저 등록
-        User user = UserConverter.toUser(nickname, email);
+        User user = UserConverter.toUser(nickname, email, isBusiness);
         // 3. 유저 저장
         userRepository.save(user);
     }

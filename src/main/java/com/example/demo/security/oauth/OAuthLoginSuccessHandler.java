@@ -47,9 +47,12 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String email = oidcUser.getEmail();
         log.info("카카오 로그인 이메일: {}", email);
 
+        HttpSession session = request.getSession();
+
+        session.setAttribute("oidcIdToken", idToken);
+
         // 신규 회원
         if (!userService.isExistUserByEmail(email)) {
-            HttpSession session = request.getSession();
             log.info("세션아이디 {}", session);
             session.setAttribute("oauthEmail", email);
             log.info("세션값 {}", session.getAttribute("oauthEmail"));
@@ -66,7 +69,6 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
         response.addCookie(jwtUtil.createCookie("access", accessToken, 24 * 60 * 60)); // 24시간(개발용)
         response.addCookie(jwtUtil.createCookie("refresh", refreshToken, 7 * 24 * 60 * 60)); // 1주일(개발용)
-        response.addCookie(jwtUtil.createCookie("idToken", idToken, 24 * 60 * 60));
         log.info("쿠키 전달 완료");
 
         response.sendRedirect("https://beta.jangmadang.site");
