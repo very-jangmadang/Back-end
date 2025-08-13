@@ -57,15 +57,16 @@ public class UserController {
 
     @Operation(summary = "프론트에게 idToken 반환하는 1회성 api")
     @GetMapping("/api/permit/idtoken")
-    public ResponseEntity<Map<String, String>> getIdToken(HttpServletRequest req) {
+    public ApiResponse<?> getIdToken(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
-        if (session == null) return ResponseEntity.status(401).build();
+        if (session == null) return ApiResponse.onFailure(ErrorStatus.USER_WITHOUT_SESSION, null);
 
         String idToken = (String) session.getAttribute("oidcIdToken");
-        if (idToken == null) return ResponseEntity.status(404).build();
+        if (idToken == null) return ApiResponse.onFailure(ErrorStatus.TOKEN_NOT_FOUND, null);
 
         session.removeAttribute("oidcIdToken"); // 1회성
-        return ResponseEntity.ok(Map.of("idToken", idToken));
+
+        return ApiResponse.of(SuccessStatus._OK, idToken);
     }
 
     @Operation(summary = "로그아웃")
