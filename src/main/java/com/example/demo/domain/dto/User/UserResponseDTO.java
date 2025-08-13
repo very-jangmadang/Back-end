@@ -22,4 +22,14 @@ public class UserResponseDTO {
     public static class nicknameResponseDTO {
         private String nickname;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MeDTO {
+        private String email;
+        private String nickname;
+        private boolean isBusiness;
+    }
 }

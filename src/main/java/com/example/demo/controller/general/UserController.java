@@ -46,14 +46,25 @@ public class UserController {
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
-//    @Operation(summary = "사용자 정보 확인, 사업자 여부 프론트에서 알기 위한 api")
-//    @GetMapping("api/permit/me")
-//    public ApiResponse<MeDTO> Me() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
-//        }
-//    }
+    @Operation(summary = "사용자 정보 확인, 사업자 여부 프론트에서 알기 위한 api")
+    @GetMapping("api/permit/me")
+    public ApiResponse<?> Me() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        User user = userRepository.findById(userId).orElseThrow();
+
+        UserResponseDTO.MeDTO dto = UserResponseDTO.MeDTO.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .isBusiness(Boolean.TRUE.equals(user.getIsBusiness()))
+                .build();
+
+        return ApiResponse.of(SuccessStatus._OK, dto);
+    }
 
     @Operation(summary = "프론트에게 idToken 반환하는 1회성 api")
     @GetMapping("/api/permit/idtoken")
@@ -144,10 +155,21 @@ public class UserController {
 
     // 임시 사업자 등록
     @Operation(summary = "사업자 임시 등록")
-    @GetMapping("api/permit/business")
-    public ApiResponse<?> registerBusiness(){
+    @PostMapping("api/permit/business")
+    public ApiResponse<?> registerBusiness(HttpServletRequest httpServletRequest,
+                                           @Valid @RequestBody UserRequestDTO.businessCodeDTO request) {
 
-        userService.registerBusiness();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        }
+        Long userId = Long.parseLong(authentication.getName());
+        log.info("작성자 id {}", userId);
+
+        User user = userRepository.findById(userId).orElseThrow();
+
+        user.setBusinessCode(request.getBusinessCode());
+        userRepository.save(user);
 
         return ApiResponse.of(SuccessStatus._OK, "사업자 임시등록 완료");
     }
