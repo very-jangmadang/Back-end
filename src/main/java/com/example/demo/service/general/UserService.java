@@ -11,7 +11,7 @@ public interface UserService {
     Long findIdByEmail(String email);
 
     // 신규 회원 등록
-    void createUser(String nickname, String email);
+    void createUser(String nickname, String email, Boolean isBusiness);
 
     // 리프레시 토큰 저장
     void addRefreshToken(Long userId, String token);

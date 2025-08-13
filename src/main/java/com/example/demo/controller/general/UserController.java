@@ -21,10 +21,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -41,6 +44,28 @@ public class UserController {
         String result = userService.isLogin();
 
         return ApiResponse.of(SuccessStatus._OK, result);
+    }
+
+//    @Operation(summary = "사용자 정보 확인, 사업자 여부 프론트에서 알기 위한 api")
+//    @GetMapping("api/permit/me")
+//    public ApiResponse<MeDTO> Me() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            return ApiResponse.onFailure(ErrorStatus.COMMON_UNAUTHORIZED, null);
+//        }
+//    }
+
+    @Operation(summary = "프론트에게 idToken 반환하는 1회성 api")
+    @GetMapping("/api/permit/idtoken")
+    public ResponseEntity<Map<String, String>> getIdToken(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        if (session == null) return ResponseEntity.status(401).build();
+
+        String idToken = (String) session.getAttribute("oidcIdToken");
+        if (idToken == null) return ResponseEntity.status(404).build();
+
+        session.removeAttribute("oidcIdToken"); // 1회성
+        return ResponseEntity.ok(Map.of("idToken", idToken));
     }
 
     @Operation(summary = "로그아웃")
@@ -81,7 +106,8 @@ public class UserController {
         }
 
         String nickname = request.getNickname();
-        userService.createUser(nickname, email);
+        boolean isBusiness = Boolean.TRUE.equals(request.getIsBusiness());
+        userService.createUser(nickname, email, isBusiness);
 
 
         Long userId = userService.findIdByEmail(email);
