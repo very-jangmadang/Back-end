@@ -10,6 +10,7 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JWTUtil;
 import com.example.demo.service.general.UserService;
+import com.example.demo.service.general.impl.UserServiceImpl;
 import com.example.demo.service.handler.NicknameGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
@@ -37,6 +38,7 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
+    private final UserServiceImpl userServiceImpl;
 
     @Operation(summary = "로그인 확인")
     @GetMapping("api/permit/user-info")
@@ -117,9 +119,16 @@ public class UserController {
             return ApiResponse.onFailure(ErrorStatus.USER_WITHOUT_OAUTHEMAIL, null);
         }
 
+        Boolean isBusiness = (Boolean) session.getAttribute("is_business");
+        String businessCode = (String) session.getAttribute("business_code");
+
+        if (isBusiness == null) {
+            // 사업자/일반 선택 단계 없이 넘어온 케이스 방지
+            isBusiness = Boolean.FALSE;
+        }
+
         String nickname = request.getNickname();
-        boolean isBusiness = Boolean.TRUE.equals(request.getIsBusiness());
-        userService.createUser(nickname, email, isBusiness);
+        userService.createUser(nickname, email, isBusiness, businessCode);
 
 
         Long userId = userService.findIdByEmail(email);
@@ -130,6 +139,10 @@ public class UserController {
 
         httpServletResponse.addCookie(jwtUtil.createCookie("access", accessToken, 24 * 60 * 60)); // 24시간(개발용)
         httpServletResponse.addCookie(jwtUtil.createCookie("refresh", refreshToken, 7 * 24 * 60 * 60)); // 1주일(개발용)
+
+        session.removeAttribute("oauthEmail");
+        session.removeAttribute("is_business");
+        session.removeAttribute("business_code");
 
         return ApiResponse.of(SuccessStatus._OK, null);
     }
@@ -153,24 +166,14 @@ public class UserController {
         return ApiResponse.of(SuccessStatus._OK, result);
     }
 
-    // 임시 사업자 등록
-    @Operation(summary = "사업자 임시 등록")
+    // 사업자 등록번호, 사업자 여부 요청받아서 세션에 저장 -> 이후 닉네임 입력받는 api로 이어짐
+    @Operation(summary = "사업자 등록번호, 사업자 여부 입력받아서 세션에 저장, 이후 닉네임 입력받는 api로 이어짐")
     @PostMapping("api/permit/business")
-    public ApiResponse<?> registerBusiness(HttpServletRequest httpServletRequest,
+    public ApiResponse<Void> registerBusiness(HttpServletRequest httpServletRequest,
                                            @Valid @RequestBody UserRequestDTO.businessCodeDTO request) {
+        HttpSession session = httpServletRequest.getSession();
+        userService.registerBusiness(session, request);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
-        }
-        Long userId = Long.parseLong(authentication.getName());
-        log.info("작성자 id {}", userId);
-
-        User user = userRepository.findById(userId).orElseThrow();
-
-        user.setBusinessCode(request.getBusinessCode());
-        userRepository.save(user);
-
-        return ApiResponse.of(SuccessStatus._OK, "사업자 임시등록 완료");
+        return ApiResponse.of(SuccessStatus._OK, null);
     }
 }

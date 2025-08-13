@@ -28,6 +28,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_NICKNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "USER_4008", "이미 존재하는 유저 닉네임입니다."),
     USER_WITHOUT_SESSION(HttpStatus.BAD_REQUEST, "USER_4009", "요청시 세션이 없습니다."),
     USER_WITHOUT_OAUTHEMAIL(HttpStatus.BAD_REQUEST, "USER_4010", "세션은 존재하지만 oauthEmail이 세션에 없습니다."),
+    USER_NOT_BUSINESS(HttpStatus.BAD_REQUEST, "USER_4011", "사업자가 아닙니다."),
 
     // 2. Yoon - 토큰 관련 에러
     TOKEN_MISSING(HttpStatus.UNAUTHORIZED, "TOKEN_4001", "토큰이 누락되었습니다."),
@@ -150,8 +151,9 @@ public enum ErrorStatus implements BaseErrorCode {
     TRADE_USER_PAYMENT_INVALID_PERIOD(HttpStatus.BAD_REQUEST, "TRADE_4001", "유효하지 않은 기간입니다."),
     TRADE_INVALID_TICKET_COUNT(HttpStatus.BAD_REQUEST, "TRADE_4002", "티켓 개수는 1 이상이어야 합니다."),
     TRADE_INSUFFICIENT_TICKETS(HttpStatus.BAD_REQUEST, "TRADE_4003", "보유한 티켓이 부족합니다."),
-    TRADE_INVALID_ROLE(HttpStatus.BAD_REQUEST, "TRADE_4004", "유효하지 않은 역할입니다. '구매자' 또는 '판매자'만 가능합니다.");
+    TRADE_INVALID_ROLE(HttpStatus.BAD_REQUEST, "TRADE_4004", "유효하지 않은 역할입니다. '구매자' 또는 '판매자'만 가능합니다."),
 
+    BUSINESS_CODE_REQUIRED(HttpStatus.BAD_REQUEST, "BUSINESS_4001", "사업자 번호 입력은 필수입니다.");
 
     ;
 
