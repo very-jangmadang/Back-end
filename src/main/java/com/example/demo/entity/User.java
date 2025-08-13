@@ -49,6 +49,12 @@ public class User extends BaseEntity{
 
     private LocalDateTime withdrawTime;
 
+    @Builder.Default
+    private Boolean isBusiness = false;
+
+    @Setter
+    private String businessCode;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes;
 
@@ -66,8 +72,7 @@ public class User extends BaseEntity{
 
     private String refreshToken;
 
-    @Builder.Default
-    private Boolean isBusiness = false;
+
 
     @Builder.Default
     @Column(name="follower_visible")
