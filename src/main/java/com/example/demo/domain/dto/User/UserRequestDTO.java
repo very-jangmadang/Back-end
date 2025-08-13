@@ -42,6 +42,9 @@ public class UserRequestDTO {
         @Size(min = 5, max = 20, message = "사업자번호는 최소 5자, 최대 20자여야 합니다")
         @Pattern(regexp = "^[0-9]{5,20}$", message = "사업자번호는 5~20자의 숫자만 사용 가능합니다.")
         private String businessCode;
+
+        @NotNull
+        private Boolean isBusiness;
     }
 
 }

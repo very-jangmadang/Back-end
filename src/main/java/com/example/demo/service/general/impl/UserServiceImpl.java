@@ -3,6 +3,7 @@ package com.example.demo.service.general.impl;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.domain.converter.UserConverter;
+import com.example.demo.domain.dto.User.UserRequestDTO;
 import com.example.demo.domain.dto.User.UserResponseDTO;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -38,13 +40,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createUser(String nickname, String email, Boolean isBusiness) {
+    public void createUser(String nickname, String email, Boolean isBusiness, String businessCode) {
         // 1. 닉네임 중복 검사
         if (userRepository.existsByNickname(nickname)) {
             throw new CustomException(ErrorStatus.USER_NICKNAME_ALREADY_EXISTS);
         }
         // 2. 유저 등록
-        User user = UserConverter.toUser(nickname, email, isBusiness);
+        User user = UserConverter.toUser(nickname, email, isBusiness, businessCode);
+
         // 3. 유저 저장
         userRepository.save(user);
     }
@@ -87,19 +90,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerBusiness(){
+    public void registerBusiness(HttpSession session, UserRequestDTO.businessCodeDTO request){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new CustomException(ErrorStatus.USER_NOT_FOUND);
+        if (session == null) {
+            throw new CustomException(ErrorStatus.USER_WITHOUT_SESSION);
         }
-        Long userId = Long.parseLong(authentication.getName());
-        log.info("작성자 id {}", userId);
 
-        User user = userRepository.findById(userId).orElseThrow();
+        boolean isBusiness = Boolean.TRUE.equals(request.getIsBusiness());
+        session.setAttribute("is_business", isBusiness);
 
-        user.setIsBusiness(true);
 
-        userRepository.save(user);
+
+        if (isBusiness) {
+            if (!StringUtils.hasText(request.getBusinessCode())) {
+                throw new CustomException(ErrorStatus.BUSINESS_CODE_REQUIRED);
+            }
+            session.setAttribute("business_code", request.getBusinessCode());
+        } else {
+            // 일반 사용자면 혹시 이전 단계에서 들어간 값 정리
+            session.removeAttribute("business_code");
+        }
     }
 }
