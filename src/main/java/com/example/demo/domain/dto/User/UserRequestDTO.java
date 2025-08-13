@@ -29,8 +29,6 @@ public class UserRequestDTO {
         @Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "닉네임은 2~10자의 한글,숫자,영어만 사용 가능합니다.")
         private String nickname;
 
-        @NotNull
-        private Boolean isBusiness;
     }
 
     @Getter
