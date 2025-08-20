@@ -1,7 +1,6 @@
 package com.example.demo.controller.general;
 
 import com.example.demo.base.ApiResponse;
-import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.domain.dto.User.UserRequestDTO;
@@ -11,7 +10,6 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JWTUtil;
 import com.example.demo.service.general.UserService;
 import com.example.demo.service.general.impl.UserServiceImpl;
-import com.example.demo.service.handler.NicknameGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,16 +17,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -70,8 +62,8 @@ public class UserController {
 
     @Operation(summary = "프론트에게 idToken 반환하는 1회성 api")
     @GetMapping("/api/permit/idtoken")
-    public ApiResponse<?> getIdToken(HttpServletRequest req) {
-        HttpSession session = req.getSession(false);
+    public ApiResponse<?> getIdToken(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         if (session == null) return ApiResponse.onFailure(ErrorStatus.USER_WITHOUT_SESSION, null);
 
         String idToken = (String) session.getAttribute("oidcIdToken");
