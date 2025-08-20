@@ -15,6 +15,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
@@ -62,6 +63,18 @@ public class JWTUtil {
                 .claim("role", "USER")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // 1주일(개발용)
+                .signWith(secretKey)
+                .compact();
+    }
+
+    //orderToken 생성
+    public String createOrderToken(Long userId, int qty, String jti) {
+        return Jwts.builder()
+                .claim("userId", userId.toString())
+                .claim("qty", qty)
+                .claim("jti", jti)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 10 * 60 * 1000)) // 10분
                 .signWith(secretKey)
                 .compact();
     }
