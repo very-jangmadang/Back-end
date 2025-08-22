@@ -4,12 +4,15 @@ import com.example.demo.base.ApiResponse;
 import com.example.demo.base.code.exception.CustomException;
 import com.example.demo.base.status.ErrorStatus;
 import com.example.demo.base.status.SuccessStatus;
+import com.example.demo.domain.converter.TopUpConverter;
 import com.example.demo.domain.converter.UserPaymentConverter;
 import com.example.demo.domain.dto.Payment.*;
-import com.example.demo.entity.Payment.Payment;
+import com.example.demo.domain.dto.TopUp.TopUpResponse;
+import com.example.demo.entity.Payment.TopUp;
 import com.example.demo.entity.Payment.UserPayment;
 import com.example.demo.entity.User;
 import com.example.demo.repository.PaymentRepository;
+import com.example.demo.repository.TopUpRepository;
 import com.example.demo.repository.UserPaymentRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.general.UserPaymentService;
@@ -32,12 +35,16 @@ public class UserPaymentServiceImpl implements UserPaymentService {
     private final PaymentRepository paymentRepository;
     private final UserPaymentConverter userPaymentConverter;
     private final UserRepository userRepository;
+    private final TopUpRepository topUpRepository;
+    private final TopUpConverter topUpConverter;
 
-    public UserPaymentServiceImpl (UserRepository userRepository, UserPaymentRepository userPaymentRepository, PaymentRepository paymentRepository, UserPaymentConverter userPaymentConverter) {
+    public UserPaymentServiceImpl (UserRepository userRepository, UserPaymentRepository userPaymentRepository, PaymentRepository paymentRepository, UserPaymentConverter userPaymentConverter, TopUpRepository topUpRepository, TopUpConverter topUpConverter) {
         this.userPaymentRepository = userPaymentRepository;
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
         this.userPaymentConverter = userPaymentConverter;
+        this.topUpRepository = topUpRepository;
+        this.topUpConverter = topUpConverter;
     }
 
 
@@ -94,7 +101,7 @@ public class UserPaymentServiceImpl implements UserPaymentService {
     }
 
     @Override
-    public ApiResponse<List<PaymentResponse>> getPaymentHistory(Long userId, String period) {
+    public ApiResponse<List<TopUpResponse>> getTopUpHistory(Long userId, String period) {
         try {
             // 현재 시간 기준으로 조회할 기간 설정
             LocalDateTime now = LocalDateTime.now();
@@ -108,16 +115,16 @@ public class UserPaymentServiceImpl implements UserPaymentService {
             };
 
             Pageable pageable = period.equals("recent") ? PageRequest.of(0, 1) : PageRequest.of(0, 50);
-            Page<Payment> payments = paymentRepository.findByUserIdAndApprovedAtAfterOrderByApprovedAtDesc(
+            Page<TopUp> topups = topUpRepository.findByUserIdAndConfirmedAtAfterOrderByConfirmedAtDesc(
                     userId, startDate, pageable);
 
             User user = findUser(userId);
-            List<PaymentResponse> paymentHistory = payments.stream()
-                    .map(payment -> userPaymentConverter.toPaymentResponse(
-                            payment, user))
+            List<TopUpResponse> topUpHistory = topups.stream()
+                    .map(topup -> topUpConverter.toTopUpResponse(
+                            topup, user))
                     .collect(Collectors.toList());
 
-            return ApiResponse.of(SuccessStatus.PAYMENT_HISTORY_SUCCESS, paymentHistory);
+            return ApiResponse.of(SuccessStatus.PAYMENT_HISTORY_SUCCESS, topUpHistory);
         } catch (Exception e) {
             logger.error("결제 내역 조회 중 오류 발생: {}", e.getMessage(), e);
             throw new CustomException(ErrorStatus.PAYMENT_HISTORY_ERROR);

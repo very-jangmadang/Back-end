@@ -3,6 +3,7 @@ package com.example.demo.controller.general;
 import com.example.demo.base.ApiResponse;
 import com.example.demo.controller.BaseController;
 import com.example.demo.domain.dto.Payment.*;
+import com.example.demo.domain.dto.TopUp.TopUpResponse;
 import com.example.demo.service.general.UserPaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +37,9 @@ public class PaymentController {
     }
 
     @GetMapping("/history/charge")
-    public ApiResponse<List<PaymentResponse>> getPaymentHistory(@RequestParam String period) {
+    public ApiResponse<List<TopUpResponse>> getPaymentHistory(@RequestParam String period) {
         Long userId = baseController.getCurrentUserId();
-        return userPaymentService.getPaymentHistory(userId, period);
+        return userPaymentService.getTopUpHistory(userId, period);
     }
 
     @PostMapping("/trade")
