@@ -39,7 +39,7 @@ public class VaryTicketOrderController {
     @Operation(summary = "txid 받아서 티켓 구매내역 저장 및 디비 반영")
     @PostMapping("/vary")
     public ApiResponse<?> createTicket(@RequestBody VeryscanTxRequest request) {
-        Long userId = 24L;
+        Long userId = baseController.getCurrentUserId();
         String txid = request.getTxid();
         if (txid == null || txid.isBlank()) {
             return ApiResponse.onFailure(ErrorStatus.PAYMENT_HISTORY_ERROR, null);
