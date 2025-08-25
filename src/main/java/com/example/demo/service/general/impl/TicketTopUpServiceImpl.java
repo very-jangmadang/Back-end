@@ -69,13 +69,13 @@ public class TicketTopUpServiceImpl {
             throw new CustomException(ErrorStatus.PAYMENT_HISTORY_ERROR); // 적절한 에러로 교체
         }
 
-        // 2) 상태 검증
-        if (!"ok".equalsIgnoreCase(body.getStatus())) {
-            // 실패 영수증 저장
-            TopUp failed = saveTopUp(userId, txid, body, 0, OrderStatus.FAILED);
-            return new TopUpResult(failed.getStatus().name(), 0, user.getTicket_num(), false,
-                    failed.getFromAddress(), failed.getToAddress(), failed.getTxId(), "트랜잭션이 실패하였습니다.");
-        }
+//        // 2) 상태 검증
+//        if (!"ok".equalsIgnoreCase(body.getStatus())) {
+//            // 실패 영수증 저장
+//            TopUp failed = saveTopUp(userId, txid, body, 0, OrderStatus.FAILED);
+//            return new TopUpResult(failed.getStatus().name(), 0, user.getTicket_num(), false,
+//                    failed.getFromAddress(), failed.getToAddress(), failed.getTxId(), "트랜잭션이 실패하였습니다.");
+//        }
 
 //        // 3) 수신 주소 검증(옵션)
 //        if (expectedToAddress != null && !expectedToAddress.isBlank()) {
