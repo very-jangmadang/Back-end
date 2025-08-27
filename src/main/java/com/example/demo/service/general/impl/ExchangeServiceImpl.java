@@ -51,11 +51,11 @@ public class ExchangeServiceImpl implements ExchangeService {
         user.setTicket_num(user.getTicket_num() - request.getAmount());
         userRepository.save(user);
 
-        Exchange exchange = exchangeConverter.toEntity(findUser(userId), request);
+        Exchange exchange = exchangeConverter.toEntity(user, request);
         exchangeRepository.save(exchange);
 
         // API 응답 반환
-        ExchangeResponse exchangeResponse = new ExchangeResponse("환전 성공!!", exchange.getExchangedAt());
+        ExchangeResponse exchangeResponse = new ExchangeResponse("환전 성공", exchange.getExchangedAt());
        
         return ApiResponse.of(SuccessStatus.PAYMENT_APPROVE_SUCCESS, exchangeResponse);
     }

@@ -6,7 +6,9 @@ import com.example.demo.base.status.SuccessStatus;
 import com.example.demo.controller.BaseController;
 import com.example.demo.domain.dto.Intent.OrderIntentRequestDTO;
 import com.example.demo.domain.dto.Intent.OrderIntentResponseDTO;
+import com.example.demo.domain.dto.Payment.ExchangeRequest;
 import com.example.demo.domain.dto.VeryscanTx.VeryscanTxRequest;
+import com.example.demo.service.general.impl.ExchangeServiceImpl;
 import com.example.demo.service.general.impl.OrderServiceImpl;
 import com.example.demo.service.general.impl.TicketTopUpServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,7 @@ public class VaryTicketOrderController {
     private final BaseController baseController;
     private final OrderServiceImpl orderServiceImpl;
     private final TicketTopUpServiceImpl ticketTopUpServiceImpl;
+    private final ExchangeServiceImpl exchangeServiceImpl;
 
     @Operation(summary = "주문 의도 생성(사용하지 않는 api)")
     @PostMapping("/intent")
@@ -49,4 +52,12 @@ public class VaryTicketOrderController {
         return ApiResponse.of(SuccessStatus._OK, result);
 
     }
+
+//    @Operation(summary = "티켓 환전 개수 입력받아 디비에 반영")
+//    @PostMapping("/exchange")
+//    public ApiResponse<?> exchangeTicket(@RequestBody ExchangeRequest request) {
+//        Long userId = baseController.getCurrentUserId();
+//
+//        return exchangeServiceImpl.exchange(userId, request);
+//    }
 }
