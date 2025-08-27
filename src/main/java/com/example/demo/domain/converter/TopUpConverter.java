@@ -15,7 +15,7 @@ public class TopUpConverter {
                 topUp.getId(),
                 topUp.getConfirmedAt(),
                 user.getTicket_num(),
-                "베리코인",
+                "VERY",
                 topUp.getTickets()
         );
     }
