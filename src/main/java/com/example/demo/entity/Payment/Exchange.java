@@ -27,8 +27,6 @@ public class Exchange extends BaseEntity {
     @NotNull
     private int amount; // 환전 금액
 
-    @NotNull
-    @Column(nullable = false)
     private int quantity; // 환전 수량
 
     @NotNull

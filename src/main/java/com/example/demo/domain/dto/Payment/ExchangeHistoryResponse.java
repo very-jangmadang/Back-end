@@ -15,5 +15,5 @@ public class ExchangeHistoryResponse {
     private LocalDateTime exchangedDate; // 환전 일자
     private int user_ticket; // 현재 유저 티켓
     private String exchangeMethod; // 환전 수단
-    private int amount; // 환전 금액
+    private int amount; // 환전 티켓 수량
 }

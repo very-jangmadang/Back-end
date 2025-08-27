@@ -17,7 +17,7 @@ public class ExchangeConverter {
                 exchange.getId(),
                 exchange.getExchangedAt(),
                 user.getTicket_num(),
-                "통장입금",
+                "VERY",
                 exchange.getAmount()
         );
     }
@@ -26,8 +26,8 @@ public class ExchangeConverter {
         Exchange exchange = new Exchange();
         exchange.setUser(user);
         exchange.setAmount(request.getAmount());
-        exchange.setQuantity(request.getQuantity());
-        exchange.setExchangeMethod("통장 입금");
+//        exchange.setQuantity(request.getQuantity());
+        exchange.setExchangeMethod("VERY");
         exchange.setExchangedAt(LocalDateTime.now());
         return exchange;
     }
