@@ -67,7 +67,8 @@ public class RaffleServiceImpl implements RaffleService {
         List<String> imageUrls = s3UploadService.saveFile(request.getFiles());
 
         // 3. 래플 생성
-        Raffle raffle = RaffleConverter.toRaffle(request, category ,user);
+        int minUser = (request.getMinTicket() + request.getTicketNum() - 1)/ request.getTicketNum();
+        Raffle raffle = RaffleConverter.toRaffle(request, category ,user, minUser);
 
         // 4. 이미지 엔티티 생성
         List<Image> images = imageService.saveImages(imageUrls);

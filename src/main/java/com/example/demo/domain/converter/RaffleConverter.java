@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class RaffleConverter {
 
-    public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, Category category, User user) {
+    public static Raffle toRaffle(RaffleRequestDTO.UploadDTO request, Category category, User user, int minUser) {
 
         return Raffle.builder()
                 .user(user)
@@ -22,7 +22,8 @@ public class RaffleConverter {
 //                .itemStatus(request.getItemStatus())
                 .description(request.getDescription())
                 .ticketNum(request.getTicketNum())
-//                .minTicket(request.getMinTicket())
+                .minTicket(request.getMinTicket())
+                .minUser(minUser)
                 .startAt(request.getStartAt().withSecond(0).withNano(0))
                 .endAt(request.getEndAt().withSecond(0).withNano(0))
                 .raffleStatus(RaffleStatus.UNOPENED)
@@ -44,12 +45,13 @@ public class RaffleConverter {
                 .description(raffle.getDescription()) // 상품설명
                 .category(raffle.getCategory().getName()) // 카테고리명
                 .ticketNum(raffle.getTicketNum()) // 응모에 필요한 티켓 수
+                .minTicket(raffle.getMinTicket())
                 .startAt(raffle.getStartAt()) // 응모 오픈
                 .endAt(raffle.getEndAt()) // 응모 마감
                 .view(raffle.getView()) // 조회 수
                 .likeCount(likeCount) // 찜 수
                 .applyCount(applyCount) // 응모 수
-                .minUser((int) Math.ceil((float)raffle.getMinTicket() / raffle.getTicketNum())) // 판매자 희망 최소 참여자 수
+                .minUser(raffle.getMinUser()) // 최소 참가 인원
                 .nickname(raffle.getUser().getNickname()) // 판매자 닉네임
                 .storeId(raffle.getUser().getId())
                 .followCount(followCount) // 팔로우 수
