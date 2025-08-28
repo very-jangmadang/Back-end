@@ -10,6 +10,7 @@ import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.general.HomeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -48,12 +50,16 @@ public class HomeServiceImpl implements HomeService {
         List<HomeRaffleDTO> rafflesSortedByEndAtDTO = convertToHomeRaffleDTOList(rafflesSortedByEndAt, null);
 
         // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 안 했을 시)
-        Pageable pageableMore = PageRequest.of(page, size);
+        Pageable pageableMore = PageRequest.of(Math.max(page - 1, 0), size);
         Page<Raffle> moreRaffles = raffleRepository.findAllSortedByApply(now, pageableMore);
         List<Raffle> rafflesSortedByApply = moreRaffles.getContent();
 
         List<HomeRaffleDTO> rafflesSortedByApplyListDTO = convertToHomeRaffleDTOList(rafflesSortedByApply, null);
         PageInfo pageInfo = PageConverter.toPageInfo(moreRaffles);
+
+        log.info("[HOME] raffles (응모자순) 개수 = {}", rafflesSortedByApplyListDTO.size());
+        log.info("[HOME] PageInfo = {}", pageInfo);
+
 
         return getHomeResponseDTO(pageInfo, rafflesSortedByEndAtDTO, null, null, rafflesSortedByApplyListDTO);
     }
@@ -88,7 +94,7 @@ public class HomeServiceImpl implements HomeService {
 
 
         // 래플 둘러보기 -> 응모자순으로 래플 조회 (응모 안마감된것 우선, 로그인 했을 시 찜 여부도 같이 전달)
-        Pageable pageableMore = PageRequest.of(page, size);
+        Pageable pageableMore = PageRequest.of(Math.max(page - 1, 0), size);
         Page<Raffle> moreRaffles = raffleRepository.findAllSortedByApply(now, pageableMore);
         List<Raffle> rafflesSortedByApply = moreRaffles.getContent();
 
@@ -250,6 +256,14 @@ public class HomeServiceImpl implements HomeService {
 
 
     private List<HomeRaffleDTO> convertToHomeRaffleDTOList(List<Raffle> raffles, User user) {
+
+        if (raffles == null || raffles.isEmpty()) {
+            log.info("[convertToHomeRaffleDTOList] 입력된 raffles가 없음");
+            return Collections.emptyList();
+        }
+
+        log.info("[convertToHomeRaffleDTOList] 입력된 raffles 개수 = {}", raffles.size());
+
         List<Long> raffleIds = raffles.stream()
                 .map(Raffle::getId)
                 .toList();
