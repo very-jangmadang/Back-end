@@ -13,8 +13,6 @@ public class RaffleRequestDTO {
     @Getter
     @Builder
     public static class UploadDTO {
-
-//        int minTicket;
 //        int deliveryFee;
 
         @NotNull
@@ -22,6 +20,7 @@ public class RaffleRequestDTO {
         String category;
         String name;
 //        ItemStatus itemStatus;
+        int minTicket;
         String description;
         int ticketNum;
         LocalDateTime startAt;

@@ -53,9 +53,11 @@ public class Raffle extends BaseEntity {
     @Column(columnDefinition = "DATETIME(0)")
     private LocalDateTime endAt;
 
-    private int ticketNum;
+    private int ticketNum; // 래플 응모할 때 필요한 티켓
 
-    private int minTicket;
+    private int minTicket; // 래플 개최를 위한 최소한의 티켓 수
+
+    private int minUser; // 래플 개최를 위한 최소 인원 수 (minTicket/ticketNum)
 
     @Builder.Default
     private int view = 0; // 초기값 0
