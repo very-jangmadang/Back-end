@@ -1,6 +1,7 @@
 package com.example.demo.domain.dto.Mypage;
 
 import com.example.demo.domain.dto.Review.ReviewResponseDTO;
+import com.example.demo.entity.base.enums.RaffleStatus;
 import io.micrometer.common.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class MypageResponseDTO {
         private Long timeUntilEnd;
         private boolean finished;
         private boolean liked;
+        private RaffleStatus status;
     }
 
     @Getter
