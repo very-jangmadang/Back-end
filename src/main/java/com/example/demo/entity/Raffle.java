@@ -41,6 +41,7 @@ public class Raffle extends BaseEntity {
     @Column(length = 30)
     private String name;
 
+    @Column(length = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)
